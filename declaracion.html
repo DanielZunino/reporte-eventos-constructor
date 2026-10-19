@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--az:#0b3d91;--az2:#1565c0;--na:#f28c28;--ve:#2e7d32;--ro:#c62828;--gr:#eef2f8;--bo:#c9d3e3}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f6fb;color:#1a1a1a;font-size:16px}
+header{background:linear-gradient(90deg,var(--az),var(--az2));color:#fff;padding:14px 16px}
+header h1{margin:0;font-size:19px}header small{opacity:.9}
+main{max-width:720px;margin:0 auto;padding:14px 12px 40px}
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:14px;overflow:hidden}
+.card h2{margin:0;padding:10px 14px;font-size:15px;color:#fff;background:var(--az)}
+.card .in{padding:12px 14px}
+label{display:block;font-size:13px;font-weight:bold;color:#33435c;margin:10px 0 4px}
+input,textarea{width:100%;padding:10px;border:1px solid var(--bo);border-radius:8px;font-size:16px;font-family:inherit}
+textarea{min-height:200px;resize:vertical}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:5px 6px;border-bottom:1px solid #e3e7ef;vertical-align:top}td:first-child{color:#33435c;font-weight:bold;width:38%}
+.chips{display:flex;gap:6px}
+.chip{border:2px solid var(--bo);background:#fff;border-radius:18px;padding:8px 18px;cursor:pointer;font-size:15px;user-select:none}
+.chip.on{background:var(--az);border-color:var(--az);color:#fff}
+canvas{width:100%;height:190px;border:2px dashed #9aa7bd;border-radius:10px;background:#fff;touch-action:none;display:block}
+.fh{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.fh b{font-size:14px;color:var(--az)}
+.borrar{background:#ffcdd2;color:#8e0000;border:0;border-radius:8px;padding:6px 10px;font-weight:bold;cursor:pointer}
+.btn{background:var(--ve);color:#fff;border:0;border-radius:12px;padding:14px 18px;font-size:17px;font-weight:bold;cursor:pointer;width:100%}
+.btn:disabled{opacity:.5}
+.info{border-left:6px solid var(--az2);background:#e3f0ff;color:#0b3d91;padding:10px;border-radius:8px;font-size:14px}
+.ok{border-left:6px solid var(--ve);background:#e8f5e9;color:#1b5e20;padding:16px;border-radius:8px;font-size:16px}
+.mal{border-left:6px solid var(--ro);background:#fdecea;color:#8e0000;padding:16px;border-radius:8px;font-size:16px}
+.conf{display:flex;gap:8px;align-items:flex-start;font-size:14px;margin-top:12px}.conf input{width:22px;height:22px;flex:none}
+ol{font-size:14px;color:#33435c;padding-left:20px}
+</style>
+</head>
+<body>
+<header><h1>Toma de declaración</h1><small id="sub">Cargando...</small></header>
+<main id="m"><p>Cargando...</p></main>
+
+<script>
+/* Puente: fuera de Google (GitHub) usa la API del servidor sin sesión de Chrome */
+(function(){
+  if(window.google&&google.script&&google.script.run)return;
+  var API='https://script.google.com/macros/s/AKfycbyFetoPIT053n1kiihmhFB5XhUF9sti1t96umwnhKn2rIe2oseukyDzn1EZCLtHV7Qx/exec';
+  function runner(ok,ko){return new Proxy({},{get:function(_,fn){
+    if(fn==='withSuccessHandler')return function(h){return runner(h,ko)};
+    if(fn==='withFailureHandler')return function(h){return runner(ok,h)};
+    return function(){var args=Array.prototype.slice.call(arguments);
+      fetch(API,{method:'POST',credentials:'omit',redirect:'follow',body:JSON.stringify({fn:fn,args:args})})
+        .then(function(r){return r.json()})
+        .then(function(j){if(j.ok){ok&&ok(j.r)}else{ko&&ko(new Error(j.e))}})
+        .catch(function(e){ko&&ko(new Error('No hay conexión con el servidor. Revisa internet e intenta de nuevo.'))});
+    }}})}
+  window.google={script:{get run(){return runner(null,null)}}};
+})();
+</script>
+<script>
+var TK=new URLSearchParams(location.search).get('d')||'<?= tk ?>', D=null, HAB='', PD=null, PT=null;
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function msg(h,c){$('m').innerHTML='<div class="'+(c||'mal')+'">'+h+'</div>'}
+
+google.script.run.withSuccessHandler(pintar).withFailureHandler(function(e){msg(esc(e.message))}).getDeclaracion(TK);
+
+function pintar(r){
+  if(r.usada){$('sub').textContent='';msg('Este enlace ya fue usado (la declaración ya está firmada) o no es válido.');return}
+  D=r;var af=r.dec.rol==='Afectado',soloLK=r.tipos.length===1&&r.tipos[0]==='Ley Karin';
+  $('sub').textContent=r.cliente+' · Caso '+r.id;
+  var h='<div class="info">Lean juntos la declaración antes de firmar. Al enviar, el PDF firmado queda guardado en el caso y el enlace deja de funcionar.</div>';
+  h+='<div class="card" style="margin-top:12px"><h2>Evento</h2><div class="in"><table>'+
+    '<tr><td>Caso</td><td>'+esc(r.id)+'</td></tr><tr><td>Tipo</td><td>'+esc(r.tipos.join(' + '))+'</td></tr>'+
+    '<tr><td>Fecha / hora</td><td>'+esc(r.fecha+' '+r.hora)+'</td></tr><tr><td>Lugar</td><td>'+esc(r.area)+'</td></tr>'+
+    '<tr><td>Empresa / sucursal</td><td>'+esc(r.empresa+' / '+r.sucursal)+'</td></tr></table></div></div>';
+  h+='<div class="card"><h2>'+(af?'Declarante (trabajador / denunciante)':'Testigo')+'</h2><div class="in">'+
+    '<table><tr><td>Nombre</td><td><b>'+esc(r.dec.nombre)+'</b></td></tr></table>'+
+    '<label>RUN</label><input id="run" value="'+esc(r.dec.run)+'">'+
+    '<label>Cargo</label><input id="cargo" value="'+esc(r.dec.cargo)+'">';
+  if(af&&!soloLK){
+    h+='<label>¿Qué labor realizaba?</label><input id="labor" value="'+esc(r.pre.labor)+'">'+
+      '<label>¿Desarrollaba su trabajo habitual?</label><div class="chips" id="hab"><span class="chip" onclick="hab(\'SI\')">SI</span><span class="chip" onclick="hab(\'NO\')">NO</span></div>'+
+      '<label>¿Practica algún deporte? ¿Cuál?</label><input id="deporte" value="'+esc(r.pre.deporte)+'" placeholder="Dejar vacío si no practica">';
+  }
+  h+='</div></div>';
+  h+='<div class="card"><h2>Relato</h2><div class="in">'+
+    '<details><summary style="cursor:pointer;color:var(--az);font-weight:bold;font-size:14px">Preguntas guía</summary><ol>'+
+    '<li>Relate en orden todo lo que recuerda desde que comenzó la actividad.</li><li>¿Dónde estaba exactamente y qué hacía al momento del hecho?</li>'+
+    '<li>¿Cómo hizo el trabajo, paso a paso?</li><li>¿Cómo estaba el lugar, el equipo y el clima?</li><li>¿Quién estaba a cargo? ¿Qué instrucciones recibió?</li>'+
+    '<li>¿Ha pasado algo parecido antes?</li><li>¿Por qué cree que pasó? ¿Qué se pudo hacer para evitarlo?</li></ol></details>'+
+    '<label>YO, '+esc(r.dec.nombre.toUpperCase())+', DECLARO QUE:</label><textarea id="relato" placeholder="Con sus propias palabras...">'+esc(r.pre.relato)+'</textarea></div></div>';
+  h+='<div class="card"><h2>Firmas</h2><div class="in">'+
+    '<div class="fh"><b>Firma de '+esc(r.dec.nombre)+'</b><button class="borrar" onclick="PD.borrar()">Borrar</button></div><canvas id="cD"></canvas>'+
+    '<div class="fh"><b>Firma de '+esc(r.dec.tomador.nombre)+' (toma la declaración)</b><button class="borrar" onclick="PT.borrar()">Borrar</button></div><canvas id="cT"></canvas>'+
+    '<label class="conf"><input type="checkbox" id="conf"> El declarante leyó su declaración, está conforme con su contenido y declara que se ajusta a la verdad.</label>'+
+    '</div></div>';
+  h+='<button class="btn" id="enviar" onclick="enviar()">✍ Firmar y guardar declaración</button>';
+  $('m').innerHTML=h;
+  if(r.pre.habitual)hab(r.pre.habitual);
+  PD=pad('cD');PT=pad('cT');
+}
+function hab(v){HAB=v;document.querySelectorAll('#hab .chip').forEach(function(c){c.classList.toggle('on',c.textContent===v)})}
+
+function pad(id){
+  var c=$(id),x=c.getContext('2d'),dib=false,usado=false;
+  var r=c.getBoundingClientRect(),k=window.devicePixelRatio||1;
+  c.width=Math.round(r.width*k);c.height=Math.round(r.height*k);
+  x.scale(k,k);x.lineWidth=2.4;x.lineCap='round';x.lineJoin='round';x.strokeStyle='#0b2a66';
+  function pos(e){var b=c.getBoundingClientRect();return [e.clientX-b.left,e.clientY-b.top]}
+  c.addEventListener('pointerdown',function(e){e.preventDefault();dib=true;usado=true;try{c.setPointerCapture(e.pointerId)}catch(_){}var p=pos(e);x.beginPath();x.moveTo(p[0],p[1]);x.lineTo(p[0]+0.1,p[1]+0.1);x.stroke()});
+  c.addEventListener('pointermove',function(e){if(!dib)return;e.preventDefault();var p=pos(e);x.lineTo(p[0],p[1]);x.stroke()});
+  ['pointerup','pointercancel','pointerleave'].forEach(function(ev){c.addEventListener(ev,function(){dib=false})});
+  return {
+    borrar:function(){x.save();x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,c.width,c.height);x.restore();usado=false},
+    vacio:function(){return !usado},
+    png:function(){return c.toDataURL('image/png').split(',')[1]}
+  };
+}
+
+function val(i){var e=$(i);return e?e.value.trim():''}
+function enviar(){
+  if(!val('relato')){alert('Falta el relato.');return}
+  if(PD.vacio()){alert('Falta la firma del declarante.');return}
+  if(PT.vacio()){alert('Falta la firma de quien toma la declaración.');return}
+  if(!$('conf').checked){alert('Marca la casilla de conformidad.');return}
+  var b=$('enviar');b.disabled=true;b.textContent='Guardando... no cierres esta página';
+  google.script.run.withSuccessHandler(function(r){
+    window.scrollTo(0,0);
+    msg('<b>✔ Declaración firmada y guardada en el caso '+esc(r.id)+'.</b><br><br>Ya puedes cerrar esta página.','ok');
+  }).withFailureHandler(function(e){b.disabled=false;b.textContent='✍ Firmar y guardar declaración';alert('Error: '+e.message)})
+  .firmarDeclaracion(TK,{run:val('run'),cargo:val('cargo'),labor:val('labor'),habitual:HAB,deporte:val('deporte'),relato:val('relato'),firmaD:PD.png(),firmaT:PT.png()});
+}
+</script>
+</body>
+</html>
