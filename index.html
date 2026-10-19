@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html>
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--az:#0b3d91;--az2:#1565c0;--na:#f28c28;--ve:#2e7d32;--ro:#c62828;--gr:#eef2f8;--bo:#c9d3e3;--tx:#1a1a1a}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f6fb;color:var(--tx);font-size:15px}
+header{background:linear-gradient(90deg,var(--az),var(--az2));color:#fff;padding:14px 16px;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:18px}header small{opacity:.85}
+.tabs{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.tab{background:rgba(255,255,255,.18);border:0;color:#fff;padding:8px 14px;border-radius:20px;font-weight:bold;cursor:pointer}
+.tab.on{background:var(--na)}
+.salir{float:right;background:none;border:1px solid rgba(255,255,255,.5);color:#fff;border-radius:14px;padding:4px 10px;cursor:pointer;font-size:12px}
+main{max-width:920px;margin:0 auto;padding:14px 12px 80px}
+.card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:14px;overflow:hidden}
+.card h2{margin:0;padding:10px 14px;font-size:15px;color:#fff;background:var(--az);display:flex;align-items:center;gap:8px}
+.card h2 .n{background:var(--na);border-radius:50%;min-width:24px;height:24px;padding:0 4px;display:inline-flex;align-items:center;justify-content:center;font-size:12px}
+.card .in{padding:12px 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+label{display:block;font-size:12px;font-weight:bold;color:#33435c;margin-bottom:3px}
+input,select,textarea{width:100%;padding:9px;border:1px solid var(--bo);border-radius:8px;font-size:15px;font-family:inherit;background:#fff}
+input[type=checkbox]{width:auto}
+textarea{min-height:90px;resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:2px solid var(--bo);background:#fff;border-radius:18px;padding:6px 12px;cursor:pointer;font-size:13px;user-select:none;display:inline-block;text-decoration:none;color:inherit}
+.chip.on{background:var(--az);border-color:var(--az);color:#fff}
+.chip.t-on{background:var(--na);border-color:var(--na);color:#fff;font-weight:bold}
+.si-no{display:flex;gap:6px;flex-wrap:wrap}
+.si-no .chip{min-width:60px;text-align:center}
+.alerta{border-left:6px solid var(--ro);background:#fdecea;color:#8e0000;padding:10px;border-radius:8px;margin:10px 0;font-weight:bold;font-size:13px}
+.info{border-left:6px solid var(--az2);background:#e3f0ff;color:#0b3d91;padding:10px;border-radius:8px;margin:10px 0;font-size:13px}
+.trab{background:var(--gr);border-radius:10px;padding:10px;margin-top:10px}
+.sug{border:1px solid var(--bo);border-radius:8px;max-height:240px;overflow:auto;background:#fff;margin-top:4px}
+.sug div{padding:8px 10px;border-bottom:1px solid #eee;cursor:pointer}
+.sug div:hover{background:var(--gr)}
+.sug small{color:#666}
+.tag{font-size:11px;padding:1px 6px;border-radius:8px;background:#ddd;margin-left:4px}
+.tag.ina{background:#ffcdd2;color:#8e0000}
+.eva{display:grid;grid-template-columns:repeat(11,1fr);gap:3px}
+.eva div{text-align:center;padding:10px 0;border-radius:6px;cursor:pointer;font-weight:bold;opacity:.55;border:3px solid transparent}
+.eva div.on{opacity:1;border-color:#000;transform:scale(1.08)}
+.eva-l{display:flex;justify-content:space-between;font-size:11px;color:#555;margin-top:3px}
+.fila4{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 34px;gap:6px;margin-bottom:6px}
+.fila3{display:grid;grid-template-columns:2fr 1fr 1fr 34px;gap:6px;margin-bottom:6px}
+.fila4.ok select{background:#e8f5e9;color:var(--ve);font-weight:bold}
+.x{background:#ffcdd2;border:0;border-radius:8px;cursor:pointer;color:#8e0000;font-weight:bold}
+.btn{background:var(--az);color:#fff;border:0;border-radius:10px;padding:11px 16px;font-size:15px;font-weight:bold;cursor:pointer;text-decoration:none;display:inline-block}
+.btn.na{background:var(--na)}.btn.ve{background:var(--ve)}.btn.gr{background:#666}.btn.sm{padding:6px 10px;font-size:13px}
+.btn:disabled{opacity:.5}
+.testigo{border:1px dashed var(--bo);border-radius:10px;padding:10px;margin-bottom:8px;background:#fafbfe}
+.grupo{font-size:12px;font-weight:bold;color:var(--az);margin:8px 0 4px}
+.hide{display:none!important}
+.fotos{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
+.fotos img{width:90px;height:90px;object-fit:cover;border-radius:8px;border:1px solid var(--bo);cursor:pointer}
+.barra{position:fixed;bottom:0;left:0;right:0;background:#fff;box-shadow:0 -2px 8px rgba(0,0,0,.12);padding:10px;text-align:center;z-index:5}
+#login{max-width:360px;margin:60px auto;text-align:center}
+#login input{margin-bottom:8px}
+table.lista{width:100%;border-collapse:collapse;font-size:13px}
+table.lista th{background:var(--az);color:#fff;padding:7px;text-align:left}
+table.lista td{border-bottom:1px solid #e3e7ef;padding:7px;vertical-align:top}
+table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)}
+.est{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:bold;color:#fff;background:#888;display:inline-block}
+.est.ABIERTO,.est.PENDIENTE{background:var(--na)}.est.CERRADO,.est.FIRMADA{background:var(--ve)}.est.SIN{background:var(--ro)}
+.res{background:#e8f5e9;border-left:6px solid var(--ve);padding:12px;border-radius:8px}
+.res a,.res button{margin:6px 8px 0 0}
+.doc{font-size:13px;margin:2px 0}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+.kpi{background:var(--gr);border-radius:10px;padding:10px;text-align:center}
+.kpi b{display:block;font-size:24px;color:var(--az)}.kpi span{font-size:12px;color:#33435c}
+.kpi.ro b{color:var(--ro)}.kpi.na b{color:var(--na)}.kpi.ve b{color:var(--ve)}
+.barras div{display:grid;grid-template-columns:120px 1fr 34px;gap:6px;align-items:center;font-size:12px;margin:3px 0}
+.barras i{display:block;height:16px;background:var(--az2);border-radius:4px}
+.toast{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:var(--ve);color:#fff;padding:10px 18px;border-radius:20px;z-index:9;font-weight:bold}
+@media(max-width:600px){.fila4,.fila3{grid-template-columns:1fr 1fr}.fila4 input:first-child,.fila3 input:first-child{grid-column:1/-1}.eva div{padding:8px 0;font-size:12px}.barras div{grid-template-columns:90px 1fr 30px}}
+</style>
+</head>
+<body>
+
+<div id="login" class="card">
+  <h2 style="justify-content:center">Acceso al sistema</h2>
+  <div class="in">
+    <p>Reporte e investigación de eventos<br><b>Constructor Center</b></p>
+    <input id="usuario" placeholder="Usuario" autocomplete="username">
+    <input id="clave" type="password" placeholder="Clave (nombre + año de nacimiento, ej: daniel1987)" autocomplete="current-password" onkeydown="if(event.key==='Enter')entrar()">
+    <div style="display:flex;justify-content:space-between;font-size:14px;margin:4px 2px">
+      <label style="display:flex;gap:6px;align-items:center;margin:0;font-weight:normal;font-size:14px"><input type="checkbox" id="verClave" onchange="$('clave').type=this.checked?'text':'password'"> Ver clave</label>
+      <label style="display:flex;gap:6px;align-items:center;margin:0;font-weight:normal;font-size:14px"><input type="checkbox" id="recordar"> Recordar clave</label>
+    </div>
+    <p><button class="btn" onclick="entrar()">Entrar</button></p>
+    <p id="loginMsg" style="color:var(--ro)"></p>
+  </div>
+</div>
+
+<div id="app" class="hide">
+<header>
+  <button class="salir" onclick="salir()">Salir</button>
+  <h1>Reporte e Investigación de Eventos</h1>
+  <small id="hola"></small>
+  <div class="tabs">
+    <button class="tab on" id="tNuevo" onclick="nuevoCaso()">+ Nuevo caso</button>
+    <button class="tab" id="tCasos" onclick="vista('casos')">Casos registrados</button>
+    <button class="tab" id="tPanel" onclick="vista('panel')">Panel</button>
+  </div>
+</header>
+
+<main id="vNuevo">
+
+  <!-- BARRA DE EDICIÓN -->
+  <div class="card hide" id="cEstado"><div class="in" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <b id="edTitulo" style="font-size:16px"></b><span id="edEstado" class="est"></span>
+    <a id="edPdf" target="_blank" class="btn sm ve">Ver PDF</a>
+    <a id="edCarpeta" target="_blank" class="btn sm">Carpeta</a>
+    <button id="edCerrar" class="btn sm na" onclick="cerrarCaso()">Cerrar caso</button>
+    <button class="btn sm gr" onclick="nuevoCaso()">Salir de edición</button>
+  </div></div>
+
+  <!-- 1 TIPO -->
+  <div class="card"><h2><span class="n">1</span>Tipo de evento <small style="font-weight:normal">(puedes marcar más de uno)</small></h2><div class="in">
+    <div class="chips" id="tipos"></div>
+    <div id="bGravedad" class="hide" style="margin-top:12px">
+      <label>Gravedad</label>
+      <div class="si-no" data-campo="gravedad" data-opc="Leve,Grave,Fatal"></div>
+    </div>
+    <div id="alertaGrave" class="alerta hide">⚠ ACCIDENTE GRAVE O FATAL: suspender de inmediato las faenas afectadas, evacuar si es necesario y avisar de inmediato a la Inspección del Trabajo y a la SEREMI de Salud (art. 76 Ley 16.744). Avisar también al organismo administrador.</div>
+    <div id="infoDiat" class="info hide">Recuerda: la DIAT (accidente) o DIEP (enfermedad) se emite dentro de las 24 horas de conocido el hecho.</div>
+    <div id="infoKarin" class="info hide">Ley Karin: adoptar medidas de resguardo de inmediato, ofrecer atención psicológica del organismo administrador y, dentro de 3 días hábiles, informar a la Dirección del Trabajo si la investigación la hace la empresa o se remite a la DT. Este caso queda <b>reservado</b>: solo lo ve el administrador.</div>
+  </div></div>
+
+  <!-- 2 TRABAJADOR -->
+  <div class="card"><h2><span class="n">2</span>Trabajador involucrado</h2><div class="in">
+    <label>Buscar por nombre o RUN</label>
+    <input id="buscar" placeholder="Escribe nombre o RUN..." oninput="sugerir()" autocomplete="off">
+    <div id="sug" class="sug hide"></div>
+    <p style="margin:8px 0 0"><span class="chip" id="manualChip" onclick="modoManual()">No está en la nómina (contratista / tercero / nuevo)</span></p>
+    <div id="trab" class="trab hide">
+      <div class="grid">
+        <div><label>Nombre completo</label><input id="t_nombre"></div>
+        <div><label>RUN</label><input id="t_run"></div>
+        <div><label>Empresa</label><input id="t_empresa" list="empresas"></div>
+        <div><label>Sucursal</label><input id="t_sucursal"></div>
+        <div><label>Cargo</label><input id="t_cargo"></div>
+        <div><label>Fecha ingreso (DD-MM-AAAA)</label><input id="t_ingreso" oninput="calc()"></div>
+        <div><label>Fecha nacimiento (DD-MM-AAAA)</label><input id="t_nacimiento" oninput="calc()"></div>
+        <div><label>Nacionalidad</label><input id="t_nacionalidad"></div>
+        <div><label>Dirección</label><input id="t_direccion"></div>
+        <div><label>Comuna</label><input id="t_comuna"></div>
+        <div><label>Teléfono</label><input id="t_telefono"></div>
+        <div><label>Sistema de salud</label><input id="t_salud"></div>
+        <div><label>Contacto de emergencia</label><input id="t_emergencia"></div>
+        <div><label>Jefatura directa</label><input id="t_jefatura"></div>
+        <div><label>Edad (auto)</label><input id="edad" readonly></div>
+        <div><label>Antigüedad (auto)</label><input id="antiguedad" readonly></div>
+      </div>
+    </div>
+    <datalist id="empresas"><option>Constructor Center</option><option>Full Rental Ltda.</option><option>Sotraman Ltda.</option><option>Solintev</option><option>Sopreser Ltda.</option></datalist>
+  </div></div>
+
+  <!-- 3 EVENTO -->
+  <div class="card"><h2><span class="n">3</span>Datos del evento</h2><div class="in">
+    <div class="grid">
+      <div><label>Fecha del evento *</label><input type="date" id="fecha" onchange="calc()"></div>
+      <div><label>Hora aproximada</label><input type="time" id="hora"></div>
+      <div><label>Área / lugar exacto</label><input id="area" placeholder="Ej: bodega 2, patio de carga"></div>
+      <div><label>Horario entrada</label><input type="time" id="horaEntrada"></div>
+      <div><label>Horario salida</label><input type="time" id="horaSalida"></div>
+      <div><label>Tipo de contrato</label><select id="contrato"><option></option><option>Indefinido</option><option>A plazo fijo</option><option>Por obra o faena</option><option>Contratista / externo</option></select></div>
+      <div><label>Dotación sucursal — hombres</label><input type="number" id="hombres" min="0"></div>
+      <div><label>Dotación sucursal — mujeres</label><input type="number" id="mujeres" min="0"></div>
+      <div><label>Estatura (cm)</label><input type="number" id="estatura"></div>
+      <div><label>Peso (kg)</label><input type="number" id="peso"></div>
+    </div>
+  </div></div>
+
+  <!-- 4 DECLARACIÓN -->
+  <div class="card" id="cDeclaracion"><h2><span class="n">4</span>Declaración del trabajador</h2><div class="in">
+    <div class="info" style="margin-top:0">Se completa sola cuando el trabajador firma su declaración por enlace (sección 9). Puedes adelantar datos aquí.</div>
+    <div class="grid">
+      <div><label>¿Qué labor realizaba?</label><input id="labor"></div>
+      <div><label>¿Desarrollaba su trabajo habitual?</label><div class="si-no" data-campo="habitual" data-opc="SI,NO"></div></div>
+      <div><label>¿Practica algún deporte? ¿Cuál?</label><input id="deporte" placeholder="Dejar vacío si no practica"></div>
+    </div>
+    <label style="margin-top:10px">Relato en sus propias palabras (YO ... DECLARO QUE:)</label>
+    <textarea id="declaracion" placeholder="Qué estaba haciendo, cómo ocurrió, qué pasó después..."></textarea>
+  </div></div>
+
+  <!-- 5 LESIÓN -->
+  <div class="card hide" id="cLesion"><h2><span class="n">5</span>Lesión, atención y días perdidos</h2><div class="in">
+    <label>Parte(s) del cuerpo comprometida(s)</label>
+    <div id="partes"></div>
+    <div class="grid" style="margin-top:10px">
+      <div><label>Tipo de lesión</label><select id="tipoLesion"><option></option><option>Golpe / contusión</option><option>Corte / herida</option><option>Torcedura / esguince</option><option>Lumbago / sobreesfuerzo</option><option>Fractura (posible)</option><option>Quemadura</option><option>Cuerpo extraño en ojo</option><option>Atrapamiento</option><option>Dolor / molestia sin lesión visible</option><option>Otra</option></select></div>
+      <div><label>Centro de atención / OAL</label><input id="centro" placeholder="Ej: Mutual, ACHS, ISL — sede"></div>
+      <div><label>N° folio DIAT / DIEP</label><input id="folioDiat"></div>
+    </div>
+    <label style="margin-top:12px">Escala del dolor EVA (toca un número)</label>
+    <div class="eva" id="eva"></div>
+    <div class="eva-l"><span>sin dolor</span><span>leve</span><span>moderado</span><span>severo</span><span>insoportable</span></div>
+    <div class="grid" style="margin-top:12px">
+      <div><label>¿Requiere atención médica inmediata en el OAL?</label><div class="si-no" data-campo="requiereAtencion" data-opc="SI,NO"></div></div>
+      <div><label>¿Acepta ser derivado al organismo administrador?</label><div class="si-no" data-campo="aceptaDerivacion" data-opc="SI,NO"></div></div>
+      <div id="bNegativa" class="hide"><label>Motivo de la negativa</label><input id="motivoNegativa"></div>
+    </div>
+    <div class="grupo" style="margin-top:14px">Reposo y días perdidos <small style="font-weight:normal;color:#666">(se puede completar después, editando el caso)</small></div>
+    <div class="grid">
+      <div><label>Reposo desde</label><input type="date" id="reposoDesde" onchange="calcDias()"></div>
+      <div><label>Reposo hasta</label><input type="date" id="reposoHasta" onchange="calcDias()"></div>
+      <div><label>Días perdidos (auto, corridos)</label><input type="number" id="diasPerdidos" min="0"></div>
+      <div><label>Fecha de alta</label><input type="date" id="fechaAlta"></div>
+    </div>
+  </div></div>
+
+  <!-- TRAYECTO -->
+  <div class="card hide" id="cTrayecto"><h2><span class="n">T</span>Accidente de trayecto</h2><div class="in">
+    <div class="grid">
+      <div><label>Sentido</label><select id="trayectoSentido"><option></option><option>Casa → Trabajo</option><option>Trabajo → Casa</option><option>Entre dos trabajos</option></select></div>
+      <div><label>Origen</label><input id="trayectoOrigen"></div>
+      <div><label>Destino</label><input id="trayectoDestino"></div>
+      <div><label>Medio de transporte</label><input id="trayectoMedio" placeholder="A pie, bus, vehículo propio..."></div>
+    </div>
+    <label style="margin-top:10px">Medio de prueba</label>
+    <input id="trayectoPrueba" placeholder="Constancia de Carabineros, testigos, atención de urgencia, etc.">
+  </div></div>
+
+  <!-- DAÑO MATERIAL -->
+  <div class="card hide" id="cDano"><h2><span class="n">D</span>Daño material</h2><div class="in">
+    <div class="grid">
+      <div><label>Bien / equipo / vehículo afectado</label><input id="danoBien" placeholder="Ej: grúa horquilla, rack, rampla"></div>
+      <div><label>Patente / código / N° interno</label><input id="danoCodigo"></div>
+      <div><label>Costo estimado ($)</label><input id="danoCosto"></div>
+      <div><label>¿Involucra terceros?</label><div class="si-no" data-campo="danoTerceros" data-opc="SI,NO"></div></div>
+    </div>
+    <label style="margin-top:10px">Descripción del daño</label><textarea id="danoDesc"></textarea>
+  </div></div>
+
+  <!-- EP -->
+  <div class="card hide" id="cEP"><h2><span class="n">EP</span>Posible enfermedad profesional</h2><div class="in">
+    <label>Agente / factor de riesgo sospechado</label>
+    <div class="chips" data-multi="epAgente" data-opc="Ergonómico / manejo manual de carga,Movimientos repetitivos,Psicosocial / salud mental,Ruido,Polvo,Químico,Vibraciones,Temperatura,Radiación UV,Otro"></div>
+    <div class="grid" style="margin-top:10px">
+      <div><label>Fecha de inicio de síntomas</label><input type="date" id="epInicio"></div>
+      <div><label>Tiempo de exposición en el puesto</label><input id="epExposicion"></div>
+    </div>
+    <label style="margin-top:10px">Síntomas que refiere</label><textarea id="epSintomas"></textarea>
+    <label>Tareas que realiza y frecuencia</label><textarea id="epTareas"></textarea>
+  </div></div>
+
+  <!-- LEY KARIN -->
+  <div class="card hide" id="cKarin"><h2><span class="n">LK</span>Denuncia Ley Karin</h2><div class="in">
+    <label>Conducta denunciada</label>
+    <div class="chips" data-multi="lkConducta" data-opc="Acoso laboral,Acoso sexual,Violencia en el trabajo ejercida por terceros"></div>
+    <div class="grid" style="margin-top:10px">
+      <div><label>Fecha de recepción de la denuncia</label><input type="date" id="lkRecepcion" onchange="plazoDT()"></div>
+      <div><label>Forma de recepción</label><select id="lkForma"><option></option><option>Escrita</option><option>Verbal (se levantó acta)</option><option>Correo electrónico</option><option>Canal de denuncias</option></select></div>
+      <div><label>Investigación</label><select id="lkInvestiga"><option></option><option>Interna (la empresa investiga)</option><option>Remitida a la Dirección del Trabajo</option></select></div>
+      <div><label>Fecha aviso a la DT</label><input type="date" id="lkAvisoDT"><small id="lkPlazo" style="color:var(--ro);font-weight:bold"></small></div>
+      <div><label>Derivación a atención psicológica OAL</label><div class="si-no" data-campo="lkPsico" data-opc="SI,NO,Rechazada"></div></div>
+    </div>
+    <label style="margin-top:10px">Persona denunciada (nombre / cargo / relación)</label><input id="lkDenunciado">
+    <label style="margin-top:10px">Relato de los hechos denunciados</label><textarea id="lkRelato"></textarea>
+    <label>Medidas de resguardo adoptadas</label>
+    <div class="chips" data-multi="lkResguardo" data-opc="Separación de espacios físicos,Redistribución de jornada,Cambio de dependencia jerárquica,Atención psicológica temprana,Teletrabajo temporal,Otra"></div>
+  </div></div>
+
+  <!-- MEDIDAS INMEDIATAS -->
+  <div class="card"><h2><span class="n">6</span>Medidas correctivas inmediatas</h2><div class="in">
+    <div id="inmediatas"></div>
+    <button class="btn sm" onclick="addMedida('inmediatas')">+ Agregar medida</button>
+  </div></div>
+
+  <!-- INVESTIGACIÓN -->
+  <div class="card"><h2><span class="n">7</span>Investigación <small style="font-weight:normal">(supervisor directo)</small></h2><div class="in">
+    <label>Descripción del evento</label>
+    <textarea id="descripcion" placeholder="Secuencia de hechos: antes, durante y después"></textarea>
+
+    <div class="grupo">Testigos / entrevistados</div>
+    <div id="testigos"></div>
+    <button class="btn sm" onclick="addTestigo()">+ Agregar testigo</button>
+    <details style="margin-top:8px"><summary style="cursor:pointer;color:var(--az);font-weight:bold;font-size:13px">Preguntas guía para la entrevista</summary>
+      <ol style="font-size:13px;color:#33435c">
+        <li>Relate en orden todo lo que recuerda desde que comenzó la actividad.</li>
+        <li>¿Dónde estaba exactamente y qué hacía al momento del hecho?</li>
+        <li>¿Cómo hizo el trabajo, paso a paso?</li>
+        <li>¿Cómo estaba el lugar, el equipo y el clima ese día?</li>
+        <li>¿Cómo se hace normalmente este trabajo? ¿Se hizo igual esta vez?</li>
+        <li>¿Cómo estaban las herramientas y materiales?</li>
+        <li>¿Quién estaba a cargo? ¿Qué instrucciones recibió?</li>
+        <li>¿Ha pasado algo parecido antes?</li>
+        <li>¿Por qué cree que pasó? ¿Qué se pudo hacer para evitarlo?</li>
+      </ol>
+    </details>
+
+    <div class="grupo" style="margin-top:14px">CAUSAS INMEDIATAS — Acciones inseguras <small style="font-weight:normal;color:#666">(toca para agregar)</small></div>
+    <div class="chips" data-append="accInseguras" data-opc="No usar EPP,Operar sin autorización,Posición o postura insegura,Levantar carga en forma incorrecta,Trabajar a velocidad inadecuada,Usar equipo defectuoso,Distracción / uso de celular,No respetar procedimiento,Subirse a racks,Viajar en horquillas,Exceso de confianza"></div>
+    <textarea id="accInseguras" style="margin-top:6px"></textarea>
+    <div class="grupo">CAUSAS INMEDIATAS — Condiciones inseguras</div>
+    <div class="chips" data-append="condInseguras" data-opc="Piso resbaladizo o irregular,Orden y aseo deficiente,Iluminación insuficiente,Equipo o herramienta en mal estado,Bordes cortantes sin protección,Carga mal estibada,Falta de señalización,Espacio reducido,Protecciones ausentes,Condiciones climáticas"></div>
+    <textarea id="condInseguras" style="margin-top:6px"></textarea>
+    <div class="grupo">CAUSAS BÁSICAS — Factores personales</div>
+    <div class="chips" data-append="factPersonales" data-opc="Falta de conocimiento,Falta de habilidad / experiencia,Fatiga / cansancio,Motivación inadecuada,Capacidad física inadecuada,Estrés"></div>
+    <textarea id="factPersonales" style="margin-top:6px"></textarea>
+    <div class="grupo">CAUSAS BÁSICAS — Factores del trabajo</div>
+    <div class="chips" data-append="factTrabajo" data-opc="Supervisión insuficiente,Procedimiento inexistente o inadecuado,Mantención deficiente,Herramientas / equipos inadecuados,Capacitación insuficiente,Planificación deficiente,Compras / estándares inadecuados"></div>
+    <textarea id="factTrabajo" style="margin-top:6px"></textarea>
+
+    <div class="grupo" style="margin-top:14px">Medidas correctivas a implementar <small style="font-weight:normal;color:#666">(marca "Cumplida" cuando se ejecute)</small></div>
+    <div id="medidas"></div>
+    <button class="btn sm" onclick="addMedida('medidas')">+ Agregar medida</button>
+
+    <div class="grupo" style="margin-top:14px">Participantes de la investigación</div>
+    <div id="participantes"></div>
+    <button class="btn sm" onclick="addParticipante()">+ Agregar participante</button>
+  </div></div>
+
+  <!-- FOTOS -->
+  <div class="card"><h2><span class="n">8</span>Fotos</h2><div class="in">
+    <input type="file" id="fotosIn" accept="image/*" multiple onchange="cargarFotos(this)">
+    <div class="fotos" id="fotosPrev"></div>
+  </div></div>
+
+  <!-- 9 DECLARACIÓN CON FIRMA -->
+  <div class="card" id="cDecl"><h2><span class="n">9</span>Toma de declaración con firma</h2><div class="in">
+    <div class="info" style="margin-top:0">Quien toma la declaración recibe un <b>enlace</b>. Lo abre en el celular junto al declarante, completan el relato, <b>firman ambos en la pantalla</b> y el PDF firmado se guarda solo en la carpeta del caso.</div>
+    <div id="decLista"></div>
+    <div class="grid">
+      <div><label>¿Quién declara?</label><select id="decRol" onchange="rolDecl()"><option value="Afectado">Trabajador involucrado / denunciante</option><option value="Testigo">Testigo</option></select></div>
+      <div class="bTes hide"><label>Nombre del testigo</label><input id="decNombre" list="dlNomina" onchange="autoDec()"></div>
+      <div class="bTes hide"><label>RUN del testigo</label><input id="decRun"></div>
+      <div class="bTes hide"><label>Cargo del testigo</label><input id="decCargo"></div>
+    </div>
+    <label style="margin-top:10px">¿Quién toma la declaración?</label>
+    <div class="si-no" data-campo="decModo" data-opc="Yo ahora,Otra persona"></div>
+    <div id="bTomador" class="grid hide" style="margin-top:8px">
+      <div><label>Nombre</label><input id="tomNombre" list="dlNomina" onchange="autoTom()"></div>
+      <div><label>Cargo</label><input id="tomCargo"></div>
+      <div><label>Correo (le llega el enlace)</label><input id="tomCorreo" type="email"></div>
+    </div>
+    <p id="bBtnDecl" class="hide"><button class="btn sm na" onclick="crearDecl()">Crear enlace de declaración</button></p>
+    <div id="decRes"></div>
+  </div></div>
+
+  <!-- 10 CHARLA -->
+  <div class="card"><h2><span class="n">10</span>Capacitación a asignar al trabajador</h2><div class="in">
+    <select id="charla"><option value="">— Ninguna —</option></select>
+    <small style="color:#666">Queda en la hoja "Asignaciones" del registro, para el sistema de capacitaciones.</small>
+  </div></div>
+
+  <!-- DOCUMENTOS (solo edición) -->
+  <div class="card hide" id="cDocs"><h2><span class="n">📎</span>Documentos del caso</h2><div class="in">
+    <div class="info" style="margin-top:0">Si la declaración se hizo en papel, súbela escaneada o en foto en la carpeta 1 y marca "Es la declaración firmada".</div>
+    <div id="docs"></div>
+  </div></div>
+
+  <div id="resultado"></div>
+</main>
+
+<main id="vCasos" class="hide">
+  <div class="card"><h2>Casos registrados</h2><div class="in">
+    <div class="grid">
+      <div><label>Buscar</label><input id="fCasos" oninput="pintarCasos()" placeholder="Nombre, sucursal, tipo..."></div>
+      <div><label>Estado</label><select id="fEstado" onchange="pintarCasos()"><option value="">Todos</option><option>ABIERTO</option><option>CERRADO</option></select></div>
+      <div style="align-self:end"><a id="linkRegistro" target="_blank" class="btn sm na hide">Abrir planilla de registro</a></div>
+    </div>
+    <p style="font-size:12px;color:#666;margin:8px 0 0">Toca un caso para abrirlo y completarlo.</p>
+    <div style="overflow-x:auto;margin-top:6px"><table class="lista"><thead><tr><th>Caso</th><th>Fecha</th><th>Trabajador</th><th>Tipo</th><th>Sucursal</th><th>Declaración</th><th>Med. pend.</th><th>Estado</th></tr></thead><tbody id="tbCasos"></tbody></table></div>
+  </div></div>
+</main>
+
+<main id="vPanel" class="hide">
+  <div class="card"><h2>Panel de indicadores</h2><div class="in">
+    <div class="grid">
+      <div><label>Año</label><select id="pAnio" onchange="pintarPanel()"></select></div>
+      <div><label>Dotación promedio (activos en nómina; puedes corregirla)</label><input id="pDot" type="number" min="0" oninput="pintarPanel()"></div>
+    </div>
+    <div class="kpis" id="kpis" style="margin-top:12px"></div>
+  </div></div>
+  <div class="card"><h2>Casos por mes</h2><div class="in barras" id="bMes"></div></div>
+  <div class="card"><h2>Casos por tipo</h2><div class="in barras" id="bTipo"></div></div>
+  <div class="card"><h2>Casos por sucursal</h2><div class="in barras" id="bSuc"></div></div>
+  <div class="card"><h2>Medidas correctivas vencidas</h2><div class="in" style="overflow-x:auto"><table class="lista"><thead><tr><th>Caso</th><th>Medida</th><th>Responsable</th><th>Plazo</th><th>Sucursal</th></tr></thead><tbody id="tbVenc"></tbody></table></div></div>
+  <p style="font-size:12px;color:#666">Tasa de accidentabilidad = accidentes del trabajo con tiempo perdido ÷ dotación × 100. Tasa de siniestralidad = días perdidos (accidentes del trabajo y EP) ÷ dotación × 100. No incluye trayecto.</p>
+</main>
+
+<div class="barra" id="barra"><button class="btn ve" id="btnGuardar" onclick="guardar()">💾 Guardar caso y generar PDF</button></div>
+</div>
+
+<script>
+/* Puente: fuera de Google (GitHub) usa la API del servidor sin sesión de Chrome */
+(function(){
+  if(window.google&&google.script&&google.script.run)return;
+  var API='https://script.google.com/macros/s/AKfycbyFetoPIT053n1kiihmhFB5XhUF9sti1t96umwnhKn2rIe2oseukyDzn1EZCLtHV7Qx/exec';
+  function runner(ok,ko){return new Proxy({},{get:function(_,fn){
+    if(fn==='withSuccessHandler')return function(h){return runner(h,ko)};
+    if(fn==='withFailureHandler')return function(h){return runner(ok,h)};
+    return function(){var args=Array.prototype.slice.call(arguments);
+      fetch(API,{method:'POST',credentials:'omit',redirect:'follow',body:JSON.stringify({fn:fn,args:args})})
+        .then(function(r){return r.json()})
+        .then(function(j){if(j.ok){ok&&ok(j.r)}else{ko&&ko(new Error(j.e))}})
+        .catch(function(e){ko&&ko(new Error('No hay conexión con el servidor. Revisa internet e intenta de nuevo.'))});
+    }}})}
+  window.google={script:{get run(){return runner(null,null)}}};
+})();
+</script>
+<script>
+var TOKEN='', USR=null, CHARLAS=[], NOMINA=[], ST={}, EDIT=null, CASOS=[], MEDS=[], DOT=0, SUBS=[];
+var TIPOS=['Accidente del trabajo','Accidente de trayecto','Incidente / cuasi accidente','Daño material','Posible enfermedad profesional','Ley Karin'];
+var PARTES={
+ 'Cabeza y cara':['Cráneo','Frente','Nuca','Ojo|','Oreja|','Nariz','Mejilla|','Boca','Mandíbula','Mentón','Cuello'],
+ 'Tronco':['Hombro|','Pecho','Tórax','Costado|','Abdomen','Espalda alta','Zona lumbar','Cadera|','Glúteos','Axila|'],
+ 'Brazos y manos':['Brazo|','Codo|','Antebrazo|','Muñeca|','Mano|','Dedos mano|'],
+ 'Piernas y pies':['Muslo|','Rodilla|','Canilla|','Pantorrilla|','Tobillo|','Talón|','Pie|','Dedos pie|']};
+var EVAC=['#1b9e3e','#5cb85c','#8bc34a','#cddc39','#ffeb3b','#ffc107','#ff9800','#ff7043','#f4511e','#e53935','#b71c1c'];
+var FIELDS=['fecha','hora','area','horaEntrada','horaSalida','contrato','hombres','mujeres','estatura','peso','edad','antiguedad',
+ 'labor','deporte','declaracion','tipoLesion','motivoNegativa','centro','folioDiat','reposoDesde','reposoHasta','diasPerdidos','fechaAlta',
+ 'trayectoSentido','trayectoOrigen','trayectoDestino','trayectoMedio','trayectoPrueba','danoBien','danoCodigo','danoCosto','danoDesc',
+ 'epInicio','epExposicion','epSintomas','epTareas','lkRecepcion','lkForma','lkInvestiga','lkAvisoDT','lkDenunciado','lkRelato',
+ 'descripcion','accInseguras','condInseguras','factPersonales','factTrabajo','charla'];
+var SINGLE=['gravedad','habitual','requiereAtencion','aceptaDerivacion','danoTerceros','lkPsico'];
+var MULTI=['epAgente','lkConducta','lkResguardo'];
+var CAMPOS_T=['nombre','run','empresa','sucursal','cargo','ingreso','nacimiento','nacionalidad','direccion','comuna','telefono','salud','emergencia','jefatura'];
+
+function $(i){return document.getElementById(i)}
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){return null}}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function hoyISO(){var h=new Date();return new Date(h-h.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
+function fDMA(iso){if(!iso)return '';var p=String(iso).split('-');return p.length===3&&p[0].length===4?p[2]+'-'+p[1]+'-'+p[0]:iso}
+function toast(t){var d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(function(){d.remove()},2500)}
+function run(){return google.script.run.withFailureHandler(err)}
+function err(e){
+  var m=(e&&e.message)||String(e);
+  if(/SESION/.test(m)){var c=credGuardada();ls('tk_eventos',null);if(c){toast('Reconectando...');entrar();return}salir();$('loginMsg').textContent='Tu sesión expiró. Vuelve a entrar.';return}
+  var b=$('btnGuardar');b.disabled=false;b.textContent=EDIT?'💾 Guardar cambios y regenerar PDF':'💾 Guardar caso y generar PDF';
+  alert('Error: '+m);
+}
+
+// ---------- LOGIN ----------
+function entrar(){
+  var u=$('usuario').value.trim(),c=$('clave').value.trim();if(!u||!c)return;
+  $('loginMsg').textContent='Validando...';
+  google.script.run.withSuccessHandler(function(r){
+    if($('recordar').checked)ls('cred_eventos',JSON.stringify({u:u,c:c}));else ls('cred_eventos',null);
+    arrancar(r);
+  }).withFailureHandler(function(e){$('loginMsg').textContent=e.message}).login(u,c);
+}
+function credGuardada(){try{return JSON.parse(ls('cred_eventos')||'null')}catch(e){return null}}
+function arrancar(r){
+  TOKEN=r.token;USR=r.u;CHARLAS=r.charlas||[];ls('tk_eventos',TOKEN);
+  $('login').classList.add('hide');$('app').classList.remove('hide');
+  $('hola').textContent=USR.nombre+' · '+(USR.rol==='ADMIN'?'Administrador':'Gerente — '+USR.sucursal);
+  init();
+}
+function salir(){ls('tk_eventos',null);TOKEN='';$('app').classList.add('hide');$('login').classList.remove('hide');$('loginMsg').textContent='';rellenar()}
+function rellenar(){var c=credGuardada();if(c){$('usuario').value=c.u;$('clave').value=c.c;$('recordar').checked=true}}
+window.onload=function(){
+  rellenar();
+  var tk=ls('tk_eventos'),c=credGuardada();
+  if(tk)google.script.run.withSuccessHandler(arrancar).withFailureHandler(function(){ls('tk_eventos',null);if(c)entrar()}).sesion(tk);
+  else if(c)entrar();
+};
+
+var INIT=false;
+function init(){
+  if(!INIT){
+    INIT=true;
+    $('tipos').innerHTML=TIPOS.map(function(t,i){return '<span class="chip" data-t="'+i+'" onclick="toggleTipo('+i+')">'+t+'</span>'}).join('');
+    var h='';
+    for(var g in PARTES){
+      h+='<div class="grupo">'+g+'</div><div class="chips">';
+      PARTES[g].forEach(function(p){
+        if(p.indexOf('|')>-1){var b=p.replace('|','');h+=chipParte(b+' der.')+chipParte(b+' izq.')}else h+=chipParte(p);
+      });
+      h+='</div>';
+    }
+    $('partes').innerHTML=h;
+    $('eva').innerHTML=EVAC.map(function(c,i){return '<div data-e="'+i+'" style="background:'+c+';color:'+(i>7?'#fff':'#000')+'" onclick="setEva('+i+')">'+i+'</div>'}).join('');
+    document.querySelectorAll('.si-no').forEach(function(el){
+      var campo=el.dataset.campo;
+      el.innerHTML=el.dataset.opc.split(',').map(function(o){return '<span class="chip" data-v="'+o+'" onclick="setSN(\''+campo+'\',\''+o+'\')">'+o+'</span>'}).join('');
+    });
+    document.querySelectorAll('[data-multi]').forEach(function(el){
+      var campo=el.dataset.multi;
+      el.innerHTML=el.dataset.opc.split(',').map(function(o){return '<span class="chip" data-v="'+o+'" onclick="toggleMulti(\''+campo+'\',\''+o+'\')">'+o+'</span>'}).join('');
+    });
+    document.querySelectorAll('[data-append]').forEach(function(el){
+      var campo=el.dataset.append;
+      el.innerHTML=el.dataset.opc.split(',').map(function(o){return '<span class="chip" onclick="appendTxt(\''+campo+'\',\''+o+'\',this)">'+o+'</span>'}).join('');
+    });
+    $('charla').innerHTML='<option value="">— Ninguna —</option>'+CHARLAS.map(function(c){return '<option>'+esc(c)+'</option>'}).join('');
+  }
+  nuevoCaso();
+  $('buscar').placeholder='Cargando nómina...';
+  run().withSuccessHandler(function(n){NOMINA=n;$('buscar').placeholder='Escribe nombre o RUN... ('+n.length+' en nómina)';dlNomina(true)}).getNomina(TOKEN);
+}
+function chipParte(p){return '<span class="chip" data-p="'+p+'" onclick="toggleParte(\''+p+'\')">'+p+'</span>'}
+
+// ---------- LIMPIAR / NUEVO ----------
+function limpiar(){
+  ST={tipos:[],partes:[],eva:'',fotos:[],fotosNuevas:[],decModo:''};
+  SINGLE.forEach(function(k){ST[k]=''});MULTI.forEach(function(k){ST[k]=[]});
+  document.querySelectorAll('#vNuevo .chip').forEach(function(c){c.classList.remove('on','t-on')});
+  document.querySelectorAll('#vNuevo input,#vNuevo textarea,#vNuevo select').forEach(function(e){
+    if(e.type==='checkbox'||e.type==='radio')e.checked=false;else e.value='';
+  });
+  $('decRol').value='Afectado';
+  ['inmediatas','medidas','participantes','testigos','fotosPrev','decLista','decRes','docs','resultado'].forEach(function(i){$(i).innerHTML=''});
+  $('trab').classList.add('hide');$('sug').classList.add('hide');
+  aplicarTipos();rolDecl();modoDecl();
+}
+function nuevoCaso(){
+  limpiar();EDIT=null;
+  addMedida('inmediatas');addMedida('medidas');addParticipante();
+  $('fecha').value=hoyISO();
+  ['cEstado','cDocs','bBtnDecl'].forEach(function(i){$(i).classList.add('hide')});
+  $('btnGuardar').textContent='💾 Guardar caso y generar PDF';
+  vista('nuevo');window.scrollTo(0,0);
+}
+
+// ---------- TIPOS / CHIPS ----------
+function toggleTipo(i){var t=TIPOS[i],k=ST.tipos.indexOf(t);if(k>-1)ST.tipos.splice(k,1);else ST.tipos.push(t);aplicarTipos()}
+function has(t){return ST.tipos.indexOf(t)>-1}
+function aplicarTipos(){
+  document.querySelectorAll('#tipos .chip').forEach(function(c){c.classList.toggle('t-on',has(TIPOS[+c.dataset.t]))});
+  var acc=has('Accidente del trabajo')||has('Accidente de trayecto');
+  $('bGravedad').classList.toggle('hide',!acc);
+  $('cLesion').classList.toggle('hide',!(acc||has('Posible enfermedad profesional')));
+  $('cTrayecto').classList.toggle('hide',!has('Accidente de trayecto'));
+  $('cDano').classList.toggle('hide',!has('Daño material'));
+  $('cEP').classList.toggle('hide',!has('Posible enfermedad profesional'));
+  $('cKarin').classList.toggle('hide',!has('Ley Karin'));
+  $('infoKarin').classList.toggle('hide',!has('Ley Karin'));
+  $('infoDiat').classList.toggle('hide',!(acc||has('Posible enfermedad profesional')));
+  $('cDeclaracion').classList.toggle('hide',has('Ley Karin')&&ST.tipos.length===1);
+  alertaGrave();
+}
+function alertaGrave(){var g=ST.gravedad;$('alertaGrave').classList.toggle('hide',!((g==='Grave'||g==='Fatal')&&!$('bGravedad').classList.contains('hide')))}
+function setSN(campo,v,forzar){
+  var el=document.querySelector('.si-no[data-campo="'+campo+'"]');
+  ST[campo]=(ST[campo]===v&&!forzar)?'':v;
+  el.querySelectorAll('.chip').forEach(function(c){c.classList.toggle('on',c.dataset.v===ST[campo])});
+  if(campo==='gravedad')alertaGrave();
+  if(campo==='aceptaDerivacion')$('bNegativa').classList.toggle('hide',ST[campo]!=='NO');
+  if(campo==='decModo')modoDecl();
+}
+function toggleMulti(campo,v){var a=ST[campo],i=a.indexOf(v);if(i>-1)a.splice(i,1);else a.push(v);pintarMulti(campo)}
+function pintarMulti(campo){document.querySelectorAll('[data-multi="'+campo+'"] .chip').forEach(function(c){c.classList.toggle('on',ST[campo].indexOf(c.dataset.v)>-1)})}
+function toggleParte(p){var i=ST.partes.indexOf(p);if(i>-1)ST.partes.splice(i,1);else ST.partes.push(p);pintarPartes()}
+function pintarPartes(){document.querySelectorAll('#partes .chip').forEach(function(c){c.classList.toggle('on',ST.partes.indexOf(c.dataset.p)>-1)})}
+function appendTxt(campo,v,el){var t=$(campo);t.value=(t.value?t.value.replace(/\s*$/,'')+'\n':'')+'• '+v;el.classList.add('on')}
+function setEva(i){ST.eva=ST.eva===i?'':i;document.querySelectorAll('#eva div').forEach(function(d){d.classList.toggle('on',String(d.dataset.e)===String(ST.eva))})}
+
+// ---------- TRABAJADOR ----------
+function norm(s){return String(s||'').toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[.\-\s]/g,'')}
+function sugerir(){
+  var q=$('buscar').value.trim(),box=$('sug');
+  if(q.length<2){box.classList.add('hide');return}
+  var qn=norm(q);
+  var r=NOMINA.filter(function(w){return norm(w.nombre).indexOf(qn)>-1||norm(w.run).indexOf(qn)>-1}).slice(0,15);
+  box.innerHTML=r.length?r.map(function(w){var i=NOMINA.indexOf(w);
+    return '<div onclick="elegir('+i+')"><b>'+esc(w.nombre)+'</b>'+(w.situacion==='INACTIVO'?'<span class="tag ina">INACTIVO</span>':'')+'<br><small>'+esc(w.run)+' · '+esc(w.cargo)+' · '+esc(w.sucursal)+' · '+esc(w.empresa)+'</small></div>'}).join('')
+    :'<div><small>Sin resultados. Usa "No está en la nómina".</small></div>';
+  box.classList.remove('hide');
+}
+function elegir(i){var w=NOMINA[i];CAMPOS_T.forEach(function(k){$('t_'+k).value=w[k]||''});$('sug').classList.add('hide');$('buscar').value=w.nombre;$('trab').classList.remove('hide');calc()}
+function modoManual(){CAMPOS_T.forEach(function(k){$('t_'+k).value=''});$('trab').classList.remove('hide');$('manualChip').classList.add('on');$('t_nombre').focus()}
+function dma(s){var m=String(s||'').match(/^(\d{1,2})-(\d{1,2})-(\d{4})/);return m?new Date(+m[3],+m[2]-1,+m[1]):null}
+function calc(){
+  var f=$('fecha').value?new Date($('fecha').value+'T12:00'):new Date();
+  var n=dma($('t_nacimiento').value),ing=dma($('t_ingreso').value);
+  if(n){var e=f.getFullYear()-n.getFullYear();if(f<new Date(f.getFullYear(),n.getMonth(),n.getDate()))e--;$('edad').value=e}else $('edad').value='';
+  if(ing){var mm=(f.getFullYear()-ing.getFullYear())*12+(f.getMonth()-ing.getMonth());if(f.getDate()<ing.getDate())mm--;
+    $('antiguedad').value=mm<0?'':(Math.floor(mm/12)?Math.floor(mm/12)+' año(s) ':'')+(mm%12)+' mes(es)'}else $('antiguedad').value='';
+}
+function calcDias(){
+  var a=$('reposoDesde').value,b=$('reposoHasta').value;
+  if(a&&b){var d=Math.round((new Date(b+'T12:00')-new Date(a+'T12:00'))/864e5)+1;if(d>0)$('diasPerdidos').value=d}
+}
+
+// ---------- FILAS DINÁMICAS ----------
+function setK(row,o){row.querySelectorAll('[data-k]').forEach(function(e){if(o[e.dataset.k]!=null)e.value=o[e.dataset.k]})}
+function addMedida(cont,m){
+  var d=document.createElement('div');d.className='fila4';
+  d.innerHTML='<input placeholder="Medida" data-k="medida"><input placeholder="Responsable" data-k="responsable"><input type="date" data-k="plazo" title="Plazo"><select data-k="estado" onchange="estMedida(this)"><option>Pendiente</option><option>Cumplida</option></select><input type="hidden" data-k="cumplida"><button class="x" onclick="this.parentNode.remove()">✕</button>';
+  $(cont).appendChild(d);
+  if(m){setK(d,m);d.classList.toggle('ok',m.estado==='Cumplida')}
+}
+function estMedida(sel){var r=sel.parentNode,h=r.querySelector('[data-k="cumplida"]');h.value=sel.value==='Cumplida'?hoyISO():'';r.classList.toggle('ok',sel.value==='Cumplida')}
+function addParticipante(p){
+  var d=document.createElement('div');d.className='fila3';
+  d.innerHTML='<input placeholder="Nombre" data-k="nombre" list="dlNomina" onchange="autoPersona(this)"><input placeholder="RUN" data-k="run"><input placeholder="Cargo" data-k="cargo"><button class="x" onclick="this.parentNode.remove()">✕</button>';
+  $('participantes').appendChild(d);if(p)setK(d,p);
+}
+function addTestigo(w){
+  var d=document.createElement('div');d.className='testigo';
+  d.innerHTML='<div class="grid"><div><label>Nombre</label><input data-k="nombre" list="dlNomina" onchange="autoPersona(this)"></div><div><label>RUN</label><input data-k="run"></div><div><label>Cargo</label><input data-k="cargo"></div><div><label>Antigüedad</label><input data-k="antiguedad"></div><div><label>Clasificación</label><select data-k="clase"><option>Testigo directo</option><option>Testigo indirecto</option><option>Involucrado</option></select></div></div><label style="margin-top:8px">Relato del testigo</label><textarea data-k="relato"></textarea><button class="btn sm" style="background:var(--ro);margin-top:6px" onclick="this.parentNode.remove()">Quitar testigo</button>';
+  $('testigos').appendChild(d);if(w)setK(d,w);
+}
+function dlNomina(rehacer){
+  var dl=$('dlNomina');if(dl&&!rehacer)return;
+  if(!dl){dl=document.createElement('datalist');dl.id='dlNomina';document.body.appendChild(dl)}
+  dl.innerHTML=NOMINA.map(function(w){return '<option value="'+esc(w.nombre)+'">'}).join('');
+}
+function buscaW(n){return NOMINA.find(function(x){return x.nombre===n})}
+function autoPersona(inp){
+  var w=buscaW(inp.value);if(!w)return;
+  var p=inp.closest('.testigo')||inp.parentNode;
+  var s=function(k,v){var e=p.querySelector('[data-k="'+k+'"]');if(e&&!e.value)e.value=v};
+  s('run',w.run);s('cargo',w.cargo);
+  var ing=dma(w.ingreso);if(ing){var mm=Math.max(0,Math.round((new Date()-ing)/2.63e9));s('antiguedad',(Math.floor(mm/12)?Math.floor(mm/12)+' año(s) ':'')+(mm%12)+' mes(es)')}
+}
+function filas(cont,sel){
+  return Array.prototype.map.call($(cont).querySelectorAll(sel),function(r){
+    var o={};r.querySelectorAll('[data-k]').forEach(function(e){o[e.dataset.k]=e.value.trim()});return o});
+}
+
+// ---------- LEY KARIN plazo ----------
+function plazoDT(){
+  var v=$('lkRecepcion').value;if(!v){$('lkPlazo').textContent='';return}
+  var d=new Date(v+'T12:00'),n=0;while(n<3){d.setDate(d.getDate()+1);if(d.getDay()!==0&&d.getDay()!==6)n++}
+  $('lkPlazo').textContent='Plazo máximo aprox.: '+d.toLocaleDateString('es-CL')+' (3 días hábiles; revisa feriados)';
+}
+
+// ---------- FOTOS ----------
+function cargarFotos(inp){
+  Array.prototype.forEach.call(inp.files,function(f){
+    var rd=new FileReader();rd.onload=function(){
+      var img=new Image();img.onload=function(){
+        var max=1400,w=img.width,h=img.height;if(w>max||h>max){var k=max/Math.max(w,h);w=Math.round(w*k);h=Math.round(h*k)}
+        var c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+        var url=c.toDataURL('image/jpeg',0.75);ST.fotosNuevas.push({data:url.split(',')[1],url:url});pintarFotos();
+      };img.src=rd.result;
+    };rd.readAsDataURL(f);
+  });
+  inp.value='';
+}
+function pintarFotos(){
+  var h=ST.fotos.map(function(f,i){return '<a class="chip" target="_blank" href="'+f.url+'">📷 Foto '+(i+1)+'</a><button class="x" style="height:30px" title="Quitar del reporte" onclick="ST.fotos.splice('+i+',1);pintarFotos()">✕</button>'}).join('');
+  $('fotosPrev').innerHTML=h;
+  ST.fotosNuevas.forEach(function(f,i){var im=document.createElement('img');im.src=f.url;im.title='Toca para quitar';im.onclick=function(){ST.fotosNuevas.splice(i,1);pintarFotos()};$('fotosPrev').appendChild(im)});
+}
+
+// ---------- DECLARACIÓN ----------
+function rolDecl(){var t=$('decRol').value==='Testigo';document.querySelectorAll('.bTes').forEach(function(e){e.classList.toggle('hide',!t)})}
+function modoDecl(){
+  $('bTomador').classList.toggle('hide',ST.decModo!=='Otra persona');
+  $('bBtnDecl').classList.toggle('hide',!(EDIT&&ST.decModo));
+}
+function autoDec(){var w=buscaW($('decNombre').value);if(w){$('decRun').value=w.run;$('decCargo').value=w.cargo}}
+function autoTom(){var w=buscaW($('tomNombre').value);if(w&&!$('tomCargo').value)$('tomCargo').value=w.cargo}
+function solicitud(){
+  if(!ST.decModo)return null;
+  var s={rol:$('decRol').value,nombre:$('decNombre').value.trim(),run:$('decRun').value.trim(),cargo:$('decCargo').value.trim()};
+  if(s.rol==='Testigo'&&!s.nombre){alert('Escribe el nombre del testigo.');return false}
+  if(ST.decModo==='Yo ahora')s.tomador={nombre:USR.nombre,cargo:USR.cargo||'',correo:''};
+  else{
+    s.tomador={nombre:$('tomNombre').value.trim(),cargo:$('tomCargo').value.trim(),correo:$('tomCorreo').value.trim()};
+    if(!s.tomador.nombre){alert('Escribe quién tomará la declaración.');return false}
+  }
+  return s;
+}
+function linkBox(link,nombre,id){
+  if(!link)return '';
+  var msg='Hola, te comparto el enlace para tomar la declaración'+(nombre?' de '+nombre:'')+' (Caso '+(id||(EDIT?EDIT.id:''))+'): ';
+  return '<div class="res" style="margin-top:8px"><b>Enlace de declaración listo</b><br>'+
+    '<a class="btn sm na" target="_blank" href="'+link+'">✍ Tomar y firmar ahora</a>'+
+    '<a class="btn sm ve" target="_blank" href="https://wa.me/?text='+encodeURIComponent(msg+link)+'">Enviar por WhatsApp</a>'+
+    '<button class="btn sm" onclick="copiar(\''+link+'\')">Copiar enlace</button></div>';
+}
+function copiar(t){try{navigator.clipboard.writeText(t).then(function(){toast('Enlace copiado')},function(){prompt('Copia el enlace:',t)})}catch(e){prompt('Copia el enlace:',t)}}
+function crearDecl(){
+  var s=solicitud();if(!s)return;
+  run().withSuccessHandler(function(r){
+    pintarDecl(r.decls);$('decRes').innerHTML=linkBox(r.link,s.rol==='Testigo'?s.nombre:EDIT.trabajador.nombre);
+    setSN('decModo','');$('tomNombre').value=$('tomCargo').value=$('tomCorreo').value=$('decNombre').value=$('decRun').value=$('decCargo').value='';
+    toast(s.tomador.correo?'Enlace creado y enviado por correo':'Enlace creado');
+  }).solicitarDeclaracion(TOKEN,EDIT.id,s);
+}
+function pintarDecl(decls){
+  if(!decls||!decls.length){$('decLista').innerHTML='';return}
+  $('decLista').innerHTML='<table class="lista" style="margin-bottom:10px"><thead><tr><th>Declarante</th><th>Toma</th><th>Estado</th><th></th></tr></thead><tbody>'+
+    decls.map(function(x){
+      var acc=x.estado==='FIRMADA'?'<a target="_blank" href="'+x.pdfUrl+'">Ver PDF firmado</a>'
+        :'<a target="_blank" href="'+x.link+'">Abrir</a> · <a href="#" onclick="copiar(\''+x.link+'\');return false">Copiar</a> · <a target="_blank" href="https://wa.me/?text='+encodeURIComponent('Enlace para tomar la declaración de '+x.nombre+': '+x.link)+'">WhatsApp</a>';
+      return '<tr><td><b>'+esc(x.nombre)+'</b><br><small>'+(x.rol==='Afectado'?'Trabajador / denunciante':'Testigo')+'</small></td><td>'+esc(x.tomador.nombre)+'</td><td><span class="est '+x.estado+'">'+x.estado+'</span><br><small>'+esc(x.firmada||x.creada)+'</small></td><td style="font-size:12px">'+acc+'</td></tr>'}).join('')+
+    '</tbody></table>';
+}
+
+// ---------- DOCUMENTOS ----------
+function pintarDocs(docs){
+  SUBS=docs.map(function(x){return x.sub});
+  $('docs').innerHTML=docs.map(function(x,i){
+    return '<div class="grupo">'+esc(x.sub)+'</div>'+
+      (x.files.length?x.files.map(function(f){return '<div class="doc">📄 <a target="_blank" href="'+f.url+'">'+esc(f.nombre)+'</a></div>'}).join(''):'<div class="doc" style="color:#999">Sin archivos</div>')+
+      '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 8px"><input type="file" id="up'+i+'" style="max-width:260px" onchange="subir('+i+',this)">'+
+      (i===0?'<label style="display:flex;gap:4px;align-items:center;margin:0"><input type="checkbox" id="upFirmada"> Es la declaración firmada</label>':'')+
+      '<small id="upMsg'+i+'" style="color:var(--ve)"></small></div>';
+  }).join('');
+}
+function subir(i,inp){
+  var f=inp.files[0];if(!f)return;
+  if(f.size>25e6){alert('Archivo muy grande (máx. 25 MB).');inp.value='';return}
+  $('upMsg'+i).textContent='Subiendo...';
+  var firm=i===0&&$('upFirmada')&&$('upFirmada').checked;
+  var rd=new FileReader();rd.onload=function(){
+    run().withSuccessHandler(function(){toast('Archivo subido');editar(EDIT.id,true)})
+      .subirDoc(TOKEN,EDIT.id,SUBS[i],f.name,rd.result.split(',')[1],f.type,firm);
+  };rd.readAsDataURL(f);
+}
+
+// ---------- GUARDAR ----------
+function v(i){return ($(i).value||'').trim()}
+function guardar(){
+  if(!ST.tipos.length){alert('Marca el tipo de evento.');return}
+  if(!v('t_nombre')){alert('Selecciona o ingresa el trabajador.');return}
+  if(!v('fecha')){alert('Ingresa la fecha del evento.');return}
+  var d=EDIT?JSON.parse(JSON.stringify(EDIT)):{};
+  d.id=EDIT?EDIT.id:'';
+  d.tipos=ST.tipos.slice();
+  d.gravedad=$('bGravedad').classList.contains('hide')?'':(ST.gravedad||'');
+  d.trabajador={};CAMPOS_T.forEach(function(k){d.trabajador[k]=v('t_'+k)});
+  d.sucursal=d.trabajador.sucursal;
+  FIELDS.forEach(function(k){d[k]=v(k)});
+  SINGLE.forEach(function(k){d[k]=ST[k]||''});
+  MULTI.forEach(function(k){d[k]=ST[k].slice()});
+  d.partes=ST.partes.slice();d.eva=ST.eva;
+  d.inmediatas=filas('inmediatas','.fila4');d.medidas=filas('medidas','.fila4');
+  d.participantes=filas('participantes','.fila3');d.testigos=filas('testigos','.testigo');
+  d.fotos=ST.fotos.slice();d.fotosNuevas=ST.fotosNuevas.map(function(f){return {data:f.data}});
+  if(!EDIT){
+    d.registradoPor=USR.nombre;
+    var s=solicitud();if(s===false)return;if(s)d.solicitud=s;
+  }
+  delete d._estado;
+  var b=$('btnGuardar');b.disabled=true;b.textContent='Guardando... (puede tardar unos segundos)';
+  run().withSuccessHandler(function(r){
+    b.disabled=false;
+    if(EDIT){toast('Caso '+r.id+' actualizado');editar(r.id,true);return}
+    b.textContent='💾 Guardar caso y generar PDF';
+    $('resultado').innerHTML='<div class="res"><b>✔ Caso '+r.id+' guardado.</b><br>'+
+      '<a class="btn sm ve" target="_blank" href="'+r.pdf+'">Ver PDF</a>'+
+      '<a class="btn sm" target="_blank" href="'+r.carpeta+'">Abrir carpeta del caso</a>'+
+      (r.registro?'<a class="btn sm na" target="_blank" href="'+r.registro+'">Planilla de registro</a>':'')+
+      '<p style="margin:8px 0 0"><button class="btn sm" onclick="editar(\''+r.id+'\')">Seguir completando este caso</button><button class="btn sm gr" onclick="nuevoCaso()">Registrar otro caso</button></p></div>'+
+      linkBox(r.link,(d.solicitud&&d.solicitud.rol==='Testigo')?d.solicitud.nombre:d.trabajador.nombre,r.id);
+    $('resultado').scrollIntoView({behavior:'smooth'});
+  }).guardarCaso(TOKEN,d);
+}
+
+// ---------- EDITAR ----------
+function editar(id,quieto){
+  if(!quieto)toast('Abriendo caso '+id+'...');
+  run().withSuccessHandler(function(r){cargarEnForm(r.d,r.docs);if(!quieto)window.scrollTo(0,0)}).getCaso(TOKEN,id);
+}
+function cargarEnForm(d,docs){
+  limpiar();EDIT=d;vista('nuevo');
+  ST.tipos=(d.tipos||[]).slice();aplicarTipos();
+  SINGLE.forEach(function(k){if(d[k])setSN(k,d[k],true)});
+  MULTI.forEach(function(k){ST[k]=Array.isArray(d[k])?d[k].slice():(d[k]?String(d[k]).split(', '):[]);pintarMulti(k)});
+  ST.partes=(d.partes||[]).slice();pintarPartes();
+  if(d.eva!==''&&d.eva!=null)setEva(+d.eva);
+  FIELDS.forEach(function(k){if($(k))$(k).value=d[k]==null?'':d[k]});
+  CAMPOS_T.forEach(function(k){$('t_'+k).value=(d.trabajador||{})[k]||''});
+  $('trab').classList.remove('hide');$('buscar').value=(d.trabajador||{}).nombre||'';calc();
+  if(d.edad)$('edad').value=d.edad;if(d.antiguedad)$('antiguedad').value=d.antiguedad;
+  (d.inmediatas&&d.inmediatas.length?d.inmediatas:[{}]).forEach(function(m){addMedida('inmediatas',m)});
+  (d.medidas&&d.medidas.length?d.medidas:[{}]).forEach(function(m){addMedida('medidas',m)});
+  (d.participantes&&d.participantes.length?d.participantes:[{}]).forEach(addParticipante);
+  (d.testigos||[]).forEach(addTestigo);
+  ST.fotos=(d.fotos||[]).slice();pintarFotos();
+  plazoDT();
+  pintarDecl(d._srv.declaraciones);pintarDocs(docs);
+  $('cEstado').classList.remove('hide');$('cDocs').classList.remove('hide');
+  $('edTitulo').textContent='Caso '+d.id+' — '+(d.trabajador||{}).nombre;
+  var est=d._estado||'ABIERTO';$('edEstado').textContent=est;$('edEstado').className='est '+est;
+  $('edPdf').href=d._srv.pdfUrl;$('edCarpeta').href=d._srv.carpetaUrl;
+  $('edCerrar').classList.toggle('hide',USR.rol!=='ADMIN');
+  $('edCerrar').textContent=est==='CERRADO'?'Reabrir caso':'Cerrar caso';
+  $('btnGuardar').textContent='💾 Guardar cambios y regenerar PDF';
+}
+function cerrarCaso(){
+  var est=EDIT._estado==='CERRADO'?'ABIERTO':'CERRADO';
+  run().withSuccessHandler(function(r){
+    if(!r.ok){
+      if(!confirm('Todavía falta para cerrar el caso:\n\n- '+r.faltan.join('\n- ')+'\n\n¿Cerrarlo igual?'))return;
+      run().withSuccessHandler(function(){toast('Caso cerrado');editar(EDIT.id,true)}).cambiarEstado(TOKEN,EDIT.id,est,true);return;
+    }
+    toast(est==='CERRADO'?'Caso cerrado':'Caso reabierto');editar(EDIT.id,true);
+  }).cambiarEstado(TOKEN,EDIT.id,est,false);
+}
+
+// ---------- VISTAS ----------
+function vista(x){
+  ['nuevo','casos','panel'].forEach(function(k){
+    var K=k.charAt(0).toUpperCase()+k.slice(1);$('v'+K).classList.toggle('hide',x!==k);$('t'+K).classList.toggle('on',x===k);
+  });
+  $('barra').classList.toggle('hide',x!=='nuevo');
+  if(x==='casos'||x==='panel')cargarCasos(x);
+}
+function cargarCasos(x){
+  if(x==='casos')$('tbCasos').innerHTML='<tr><td colspan="8">Cargando...</td></tr>';
+  run().withSuccessHandler(function(r){
+    CASOS=r.casos;MEDS=r.medidas;DOT=r.dotacion;
+    if(r.url){$('linkRegistro').href=r.url;$('linkRegistro').classList.remove('hide')}
+    if(x==='casos')pintarCasos();else iniPanel();
+  }).getCasos(TOKEN);
+}
+function pintarCasos(){
+  var q=norm($('fCasos').value),e=$('fEstado').value;
+  var r=CASOS.filter(function(c){return (!e||c['Estado']===e)&&(!q||norm(Object.values(c).join(' ')).indexOf(q)>-1)});
+  $('tbCasos').innerHTML=r.length?r.map(function(c){
+    var dec=c['Declaración']||'',dcl=dec.indexOf('FIRMADA')===0?'FIRMADA':dec.indexOf('PENDIENTE')===0?'PENDIENTE':dec?'SIN':'';
+    var mp=+c['Medidas pendientes']||0;
+    return '<tr class="cl" onclick="editar(\''+c['ID']+'\')"><td><b>'+esc(c['ID'])+'</b></td><td>'+esc(c['Fecha evento'])+'</td><td>'+esc(c['Trabajador'])+'<br><small>'+esc(c['Cargo'])+'</small></td><td>'+esc(c['Tipo de evento'])+(c['Gravedad']?' <small>('+esc(c['Gravedad'])+')</small>':'')+'</td><td>'+esc(c['Sucursal'])+'</td>'+
+      '<td>'+(dcl?'<span class="est '+dcl+'">'+esc(dec.split(' — ')[0].split(' · ')[0])+'</span>':'<small>—</small>')+'</td>'+
+      '<td style="text-align:center;font-weight:bold;color:'+(mp?'var(--ro)':'var(--ve)')+'">'+(c['Datos']?mp:'—')+'</td>'+
+      '<td><span class="est '+esc(c['Estado'])+'">'+esc(c['Estado'])+'</span></td></tr>'}).join('')
+    :'<tr><td colspan="8">Sin casos.</td></tr>';
+}
+
+// ---------- PANEL ----------
+function iniPanel(){
+  var anios={};anios[new Date().getFullYear()]=1;
+  CASOS.forEach(function(c){var a=String(c['Fecha evento']).slice(-4);if(/^\d{4}$/.test(a))anios[a]=1});
+  var sel=$('pAnio'),act=sel.value;
+  sel.innerHTML=Object.keys(anios).sort().reverse().map(function(a){return '<option>'+a+'</option>'}).join('');
+  if(act&&anios[act])sel.value=act;
+  if(!$('pDot').value)$('pDot').value=DOT||'';
+  pintarPanel();
+}
+function barras(id,obj,orden){
+  var ks=orden||Object.keys(obj).sort(function(a,b){return obj[b]-obj[a]}),max=Math.max.apply(null,ks.map(function(k){return obj[k]||0}).concat([1]));
+  $(id).innerHTML=ks.length?ks.map(function(k){var n=obj[k]||0;return '<div><span>'+esc(k)+'</span><i style="width:'+(n/max*100)+'%"></i><b>'+n+'</b></div>'}).join(''):'<small>Sin datos</small>';
+}
+function pintarPanel(){
+  var anio=$('pAnio').value,dot=+$('pDot').value||0;
+  var cs=CASOS.filter(function(c){return String(c['Fecha evento']).slice(-4)===anio});
+  var porMes={},porTipo={},porSuc={},dias=0,ctp=0,graves=0,abiertos=0,declP=0;
+  var MES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  cs.forEach(function(c){
+    var m=MES[(+String(c['Fecha evento']).slice(3,5))-1];if(m)porMes[m]=(porMes[m]||0)+1;
+    String(c['Tipo de evento']).split(' + ').forEach(function(t){if(t)porTipo[t]=(porTipo[t]||0)+1});
+    var s=c['Sucursal']||'(sin sucursal)';porSuc[s]=(porSuc[s]||0)+1;
+    var tp=String(c['Tipo de evento']),dp=+c['Días perdidos']||0;
+    if(tp.indexOf('Accidente del trabajo')>-1||tp.indexOf('Posible enfermedad profesional')>-1)dias+=dp;
+    if(tp.indexOf('Accidente del trabajo')>-1&&dp>0)ctp++;
+    if(c['Gravedad']==='Grave'||c['Gravedad']==='Fatal')graves++;
+    if(c['Estado']==='ABIERTO')abiertos++;
+    if(/^(PENDIENTE|SIN)/.test(c['Declaración']||''))declP++;
+  });
+  var hoy=new Date();hoy.setHours(0,0,0,0);
+  var ids={};cs.forEach(function(c){ids[c['ID']]=1});
+  var venc=MEDS.filter(function(m){var p=dma(m['Plazo']);return ids[m['ID caso']]&&m['Estado']!=='Cumplida'&&p&&p<hoy});
+  var k=function(n,t,c){return '<div class="kpi '+(c||'')+'"><b>'+n+'</b><span>'+t+'</span></div>'};
+  $('kpis').innerHTML=k(cs.length,'Casos '+anio)+k(porTipo['Accidente del trabajo']||0,'Accidentes del trabajo','na')+
+    k(ctp,'Con tiempo perdido','na')+k(dias,'Días perdidos','ro')+
+    k(dot?(ctp/dot*100).toFixed(2)+'%':'—','Tasa accidentabilidad')+k(dot?(dias/dot*100).toFixed(1):'—','Tasa siniestralidad')+
+    k(graves,'Graves / fatales','ro')+k(abiertos,'Casos abiertos','na')+k(declP,'Declaraciones pendientes','ro')+k(venc.length,'Medidas vencidas','ro');
+  barras('bMes',porMes,MES);barras('bTipo',porTipo);barras('bSuc',porSuc);
+  $('tbVenc').innerHTML=venc.length?venc.map(function(m){return '<tr class="cl" onclick="editar(\''+m['ID caso']+'\')"><td>'+esc(m['ID caso'])+'</td><td>'+esc(m['Medida'])+'</td><td>'+esc(m['Responsable'])+'</td><td style="color:var(--ro);font-weight:bold">'+esc(m['Plazo'])+'</td><td>'+esc(m['Sucursal'])+'</td></tr>'}).join('')
+    :'<tr><td colspan="5" style="color:var(--ve)">✔ Sin medidas vencidas</td></tr>';
+}
+</script>
+</body>
+</html>
