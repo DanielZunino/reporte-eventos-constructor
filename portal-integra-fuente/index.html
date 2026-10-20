@@ -27,7 +27,9 @@ button:focus-visible,a:focus-visible,input:focus{outline:3px solid #F7B267;outli
 .circ{position:absolute;border-radius:50%;background:rgba(255,255,255,.08)}
 .globo{position:relative;background:#fff;color:var(--tinta);border-radius:20px;padding:14px 22px;font-size:19px;font-weight:800;box-shadow:0 8px 24px rgba(0,0,0,.18);max-width:320px;text-align:center}
 .marca{display:flex;align-items:center;gap:16px}
-.placa{border-radius:16px;background:var(--prim);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0}
+.placa img{width:100%;height:100%;object-fit:contain;display:block}
+.placa.con-logo{padding:4px;box-shadow:inset 0 0 0 1px #E3E8F0}
+.placa{overflow:hidden;border-radius:16px;background:var(--prim);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0}
 .form{flex-grow:1;display:flex;flex-direction:column;justify-content:center;gap:22px;max-width:420px;width:100%;align-self:center}
 .kicker{margin:0;font-size:14px;font-weight:800;color:var(--prim);letter-spacing:.08em;text-transform:uppercase}
 h1{margin:0}
@@ -255,6 +257,7 @@ h1{margin:0}
 </div>
 
 <script src="supabase.js"></script>
+<script src="logos.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
 (function () {
@@ -266,7 +269,7 @@ h1{margin:0}
   var TEMAS = {
     'constructor-center': ['Constructor Center', '#B3261E'], 'perello': ['Perelló', '#1B6B3A'], 'zg': ['ZG', '#2E4A8A'],
     'oym': ['OYM', '#8A4B00'], 'claudio-lagos': ['Claudio Lagos', '#4B3FB0'], 'maestranza-ali': ['Maestranza ALI', '#0E6E7A'],
-    'maestranza-gala': ['Maestranza Gala', '#A3245F'], 'prosip': ['PROSIP', '#1B6B3A'], 'comfrut': ['COMFRUT Nursery', '#2E7D32'],
+    'maestranza-gala': ['Maestranza Gala', '#A3245F'], 'prosip': ['PROSIP', '#1B6B3A'], 'comfrut': ['Comfrut Nursery', '#2E7D32'],
     'hotel-salto-del-laja': ['Hotel Salto del Laja', '#1E5FA8'], 'notaria-ali': ['Notaría ALI', '#5B4636'], 'flete-norte': ['Flete Norte', '#C25E0C'],
     'plaza-propiedades': ['Plaza Propiedades', '#2E4A8A'], 'agro-troncos-viejos': ['Agro Troncos Viejos', '#6B5B1F'], 'montasip': ['Montasip', '#0E6E7A']
   };
@@ -302,6 +305,13 @@ h1{margin:0}
 
   function saludo() { var h = new Date().getHours(); return h < 12 ? 'Buenos días' : (h < 20 ? 'Buenas tardes' : 'Buenas noches'); }
   function iniciales(n) { var p = (n || '').replace(/[^A-Za-zÁÉÍÓÚÑáéíóúñ ]/g, '').split(' ').filter(Boolean); return (p.length > 1 ? p[0][0] + p[1][0] : (p[0] || '--').slice(0, 2)).toUpperCase(); }
+  /* Logo de la empresa dentro de la placa; si no hay logo, quedan las iniciales */
+  function logoDe(slug) { return (window.LOGOS && slug && window.LOGOS[slug]) || null; }
+  function ponerPlaca(nodo, slug, nombre, color) {
+    var lg = logoDe(slug); nodo.textContent = '';
+    if (lg) { nodo.classList.add('con-logo'); nodo.style.background = lg.bg; var im = document.createElement('img'); im.src = lg.src; im.alt = 'Logo ' + nombre; nodo.appendChild(im); }
+    else { nodo.classList.remove('con-logo'); nodo.style.background = color || ''; nodo.textContent = iniciales(nombre); }
+  }
   function oscurecer(hex) { var n = parseInt(hex.slice(1), 16); var f = function (x) { return Math.max(0, Math.round(x * 0.75)); }; return '#' + ((1 << 24) + (f(n >> 16 & 255) << 16) + (f(n >> 8 & 255) << 8) + f(n & 255)).toString(16).slice(1); }
   function tema(color) { document.documentElement.style.setProperty('--prim', color || '#2E4A8A'); }
   function mostrar(id) { ['cargando', 'login', 'admin', 'panel'].forEach(function (x) { $(x).classList.toggle('oculto', x !== id); }); window.scrollTo(0, 0); }
@@ -316,10 +326,10 @@ h1{margin:0}
     if (t) {
       tema(t[1]);
       document.documentElement.style.setProperty('--acc', '#E8731A');
-      $('l-nombre').textContent = t[0]; $('l-placa').textContent = iniciales(t[0]);
+      $('l-nombre').textContent = t[0]; ponerPlaca($('l-placa'), slug, t[0], '');
     } else {
       tema('#2E4A8A');
-      $('l-nombre').textContent = 'Portal de clientes'; $('l-placa').textContent = 'IP';
+      $('l-nombre').textContent = 'Portal de clientes'; ponerPlaca($('l-placa'), null, 'IP', '');
     }
     $('saludo-login').textContent = saludo();
     $('recordar').checked = lsGet('ip_recordar') !== 'no';
@@ -395,7 +405,7 @@ h1{margin:0}
       .forEach(function (x) {
         var rs = x.razones_sociales || [];
         var c = el('button', { 'class': 'emp', type: 'button', title: rs.join(' · '), 'aria-label': 'Entrar a ' + x.nombre });
-        c.appendChild(el('span', { 'class': 'placa', style: 'width:52px;height:52px;font-size:19px;border-radius:14px;background:' + x.color }, iniciales(x.nombre)));
+        var pl = el('span', { 'class': 'placa', style: 'width:52px;height:52px;font-size:19px;border-radius:14px' }); ponerPlaca(pl, x.slug, x.nombre, x.color); c.appendChild(pl);
         var tx = el('span', { 'class': 'emp-txt' });
         tx.appendChild(el('span', { 'class': 'emp-nom' }, x.nombre));
         tx.appendChild(el('span', { 'class': 'emp-sub' }, rs.length > 1 ? rs.length + ' razones sociales' : 'Empresa individual'));
@@ -412,7 +422,7 @@ h1{margin:0}
 
   function verPanel(emp, desdeAdmin) {
     tema(emp.color);
-    $('p-placa').textContent = iniciales(emp.nombre);
+    ponerPlaca($('p-placa'), emp.slug, emp.nombre, '');
     $('p-nombre').textContent = emp.nombre;
     var n = (emp.razones_sociales || []).length;
     $('p-rs').textContent = n > 1 ? n + ' razones sociales' : '';
@@ -487,10 +497,15 @@ h1{margin:0}
     x.fillStyle = emp.color || '#2E4A8A'; x.fillRect(0, 0, W, 120);
     x.fillStyle = '#fff'; x.textAlign = 'center'; x.font = '900 42px Nunito, Arial'; x.fillText(m.t, W / 2, 62);
     x.font = '700 26px Nunito, Arial'; x.fillText(emp.nombre, W / 2, 100);
+    var lg = logoDe(emp.slug), dibujar = function () {
     x.fillStyle = '#111'; var x0 = (W - lado) / 2;
     for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) if (q.isDark(r, c)) x.fillRect(x0 + (c + borde) * celda, 130 + (r + borde) * celda, celda, celda);
     x.fillStyle = '#1F2A44'; x.font = '800 28px Nunito, Arial'; x.fillText('Escanee con la cámara del celular', W / 2, H - 82);
     x.fillStyle = '#6B7690'; x.font = '700 20px Nunito, Arial'; x.fillText('Integra Prevención SpA · Asesoría en prevención de riesgos', W / 2, H - 40);
+    $('qr-dl').href = cv.toDataURL('image/png'); };
+    if (lg) { var li = new Image(); li.onload = function () { var bw = 150, bh = 96, s = Math.min((bw - 12) / li.width, (bh - 12) / li.height);
+      x.fillStyle = lg.bg; x.fillRect(12, 12, bw, bh); x.drawImage(li, 12 + (bw - li.width * s) / 2, 12 + (bh - li.height * s) / 2, li.width * s, li.height * s); dibujar(); }; li.onerror = dibujar; li.src = lg.src; }
+    dibujar();
     $('qr-tit').textContent = m.t + ' · ' + emp.nombre;
     $('qr-img').src = q.createDataURL(6, 2);
     $('qr-dl').href = cv.toDataURL('image/png'); $('qr-dl').setAttribute('download', 'QR ' + m.t + ' ' + emp.nombre + '.png');
