@@ -14,7 +14,7 @@
 <style>
 :root{--azul:#2E4A8A;--tinta:#1F2A44;--gris:#4A5672;--suave:#6B7690;--fondo:#F4F7FB;--borde:#D5DEEB;--verde:#2E7D32;--naranjo:#E8731A;--prim:#2E4A8A;--acc:#E8731A;--accInk:#FFFFFF;--accSh:#B9560F}
 *{box-sizing:border-box}
-body{margin:0;background:var(--fondo);font-family:'Nunito',system-ui,sans-serif;color:var(--tinta)}
+body{margin:0;background:var(--fondo) linear-gradient(180deg,color-mix(in srgb,var(--prim) 16%,#F4F7FB) 0,color-mix(in srgb,var(--prim) 6%,#F4F7FB) 360px,#F4F7FB 900px) no-repeat;min-height:100vh;font-family:'Nunito',system-ui,sans-serif;color:var(--tinta)}
 button,input{font-family:inherit}
 a{color:#1E5FA8}
 .oculto{display:none!important}
@@ -49,10 +49,46 @@ h1{margin:0}
 .top .esp{flex-grow:1}
 .btn-sec{height:44px;padding:0 18px;border:2px solid var(--borde);background:#fff;border-radius:12px;font-size:15px;font-weight:700;color:var(--tinta);cursor:pointer}
 .cont{max-width:1200px;margin:0 auto;padding:26px 20px 40px;display:flex;flex-direction:column;gap:22px}
-.hero{background:var(--prim);color:#fff;border-radius:22px;padding:26px 30px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:8px}
+.hero{background:linear-gradient(120deg,var(--prim),color-mix(in srgb,var(--prim) 62%,#000));box-shadow:0 10px 28px color-mix(in srgb,var(--prim) 30%,transparent);color:#fff;border-radius:22px;padding:26px 30px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:8px}
 .hero p{margin:0}
+.tarjeta:hover{transform:translateY(-4px);box-shadow:0 12px 28px color-mix(in srgb,var(--prim) 22%,transparent)}
+.hero-fila{display:flex;align-items:center;gap:22px;position:relative;flex-wrap:wrap}
+.hero-fila>div:first-child{flex:1 1 280px;display:flex;flex-direction:column;gap:8px}
+.hero-logo{flex-shrink:0;background:#fff;border-radius:18px;padding:10px;width:180px;height:110px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(0,0,0,.2)}
+.hero-logo .placa{width:100%!important;height:100%!important;box-shadow:none!important;padding:0!important;font-size:34px!important}
+.hero-est{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.16);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:900;align-self:flex-start}
+.hero-est i{width:11px;height:11px;border-radius:50%}
+/* CONSEJOS DE SEGURIDAD */
+.banner{position:relative;border-radius:22px;overflow:hidden;color:#fff;min-height:150px;display:flex;align-items:stretch;box-shadow:0 8px 24px rgba(20,30,60,.16)}
+.b-slide{position:absolute;inset:0;display:flex;align-items:center;gap:22px;padding:22px 64px 34px 26px;opacity:0;transform:translateX(30px);transition:opacity .6s,transform .6s;pointer-events:none}
+.b-slide.on{opacity:1;transform:none;pointer-events:auto;position:relative}
+.b-ico{font-size:58px;line-height:1;flex-shrink:0;width:92px;height:92px;border-radius:24px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center}
+.b-tx{display:flex;flex-direction:column;gap:4px;min-width:0}
+.b-tx small{font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.b-tx b{font-size:23px;font-weight:900;line-height:1.15}
+.b-tx span{font-size:15px;font-weight:700;opacity:.95;line-height:1.45}
+.b-dots{position:absolute;left:26px;bottom:12px;display:flex;gap:6px;z-index:2}
+.b-dots button{all:unset;cursor:pointer;width:9px;height:9px;border-radius:999px;background:rgba(255,255,255,.45);transition:width .3s,background .3s}
+.b-dots button.on{width:26px;background:#fff}
+.b-nav{all:unset;cursor:pointer;position:absolute;right:14px;z-index:2;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900}
+.b-nav:hover{background:rgba(255,255,255,.35)}
+.b-ant{top:calc(50% - 44px)}.b-sig{top:calc(50% + 4px)}
+@media (max-width:600px){.b-slide{padding:18px 54px 32px 16px;gap:14px}.b-ico{width:64px;height:64px;font-size:38px}.b-tx b{font-size:19px}.b-tx span{font-size:14px}}
+/* CONTACTO */
+.contacto{background:#fff;border-radius:20px;padding:20px 22px;display:flex;flex-wrap:wrap;align-items:center;gap:16px;box-shadow:0 2px 10px rgba(30,53,102,.06);border-left:6px solid var(--naranjo)}
+.contacto .ct-tx{flex:1 1 260px;display:flex;flex-direction:column;gap:3px}
+.contacto .ct-tx b{font-size:18px;font-weight:900;color:var(--tinta)}
+.contacto .ct-tx span{font-size:14px;color:var(--gris);font-weight:700}
+.ct-btns{display:flex;flex-wrap:wrap;gap:8px}
+.ct-btns a{display:inline-flex;align-items:center;gap:6px;height:44px;padding:0 16px;border-radius:12px;font-weight:900;font-size:14px;text-decoration:none;color:#fff;transition:transform .15s}
+.ct-btns a:hover{transform:translateY(-2px)}
+.ct-wa{background:#1E9E52}.ct-ml{background:#2E4A8A}.ct-tel{background:#E8731A}
+.l-contacto{position:relative;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:18px;padding:16px 18px;color:#fff;max-width:380px;width:100%;display:flex;flex-direction:column;gap:10px;text-align:center}
+.l-contacto b{font-size:17px;font-weight:900}
+.l-contacto span{font-size:14px;opacity:.92;font-weight:700}
+.l-contacto .ct-btns{justify-content:center}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
-.tarjeta{background:#fff;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 2px 10px rgba(30,53,102,.06)}
+.tarjeta{border-top:5px solid var(--prim);transition:transform .2s,box-shadow .2s;background:#fff;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 2px 10px rgba(30,53,102,.06)}
 .t-top{display:flex;align-items:center;justify-content:space-between}
 .icono{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center}
 .estado{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:var(--gris);background:#EEF2F7;border-radius:999px;padding:5px 10px}
@@ -77,6 +113,46 @@ h1{margin:0}
 .emp-sub{font-size:13px;color:var(--suave);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .emp-flecha{flex-shrink:0;width:38px;height:38px;border-radius:12px;background:#EEF2F7;color:var(--azul);display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s}
 .resumen{display:flex;flex-wrap:wrap;gap:10px}
+/* SEMÁFORO */
+.emp{position:relative;overflow:hidden}
+.emp-est{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:var(--suave);margin-top:4px;white-space:nowrap}
+.emp-est i{width:10px;height:10px;border-radius:50%;background:#C3CBD8;flex-shrink:0}
+.emp-est.verde{color:#1E6B2A}.emp-est.verde i{background:#2E7D32}
+.emp-est.amarillo{color:#8A5A00}.emp-est.amarillo i{background:#E8A21A}
+.emp-est.rojo{color:#A11B1B}.emp-est.rojo i{background:#D32F2F;animation:latido 1.6s infinite}
+@keyframes latido{0%{box-shadow:0 0 0 0 rgba(211,47,47,.55)}70%{box-shadow:0 0 0 7px rgba(211,47,47,0)}100%{box-shadow:0 0 0 0 rgba(211,47,47,0)}}
+.emp.con-anillo .emp-flecha{display:none}
+.lista-emp{grid-template-columns:repeat(auto-fill,minmax(340px,1fr))!important}
+.emp-barra{position:absolute;left:0;bottom:0;height:5px;background:#EEF2F7;width:100%}
+.emp-barra b{display:block;height:100%;width:0;transition:width .8s ease}
+.anillo{flex-shrink:0;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;font-size:13px;font-weight:900;color:var(--tinta)}
+.anillo::before{content:"";position:absolute;inset:5px;background:#fff;border-radius:50%}
+.anillo span{position:relative}
+.emp.cargando-est .emp-est{opacity:.6}
+/* CENTRO DE CONTROL */
+.centro{background:linear-gradient(135deg,#1F2A44,#2E4A8A);color:#fff;border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:16px;box-shadow:0 8px 26px rgba(30,53,102,.22)}
+.centro h2{font-size:22px;font-weight:900;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.centro h2 small{font-size:13px;font-weight:700;opacity:.75}
+.c-tot{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.c-tot button{all:unset;cursor:pointer;box-sizing:border-box;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:2px;background:rgba(255,255,255,.1);border:2px solid transparent;transition:background .2s,transform .2s}
+.c-tot button:hover,.c-tot button.on{background:rgba(255,255,255,.2);transform:translateY(-2px)}
+.c-tot button.on{border-color:#fff}
+.c-tot b{font-size:34px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
+.c-tot span{font-size:13px;font-weight:800;opacity:.9}
+.c-tot .k1 b{color:#FF8A80}.c-tot .k2 b{color:#FFCC80}.c-tot .k3 b{color:#FFF59D}.c-tot .k0 b{color:#A5D6A7}
+.c-lst{display:flex;flex-direction:column;gap:8px}
+.c-al{all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:12px;background:#fff;color:var(--tinta);border-radius:14px;padding:10px 12px;transition:transform .15s,box-shadow .15s}
+.c-al:hover{transform:translateX(4px);box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.c-al .placa{width:58px;height:40px;border-radius:10px;font-size:14px}
+.c-al .c-tx{flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.c-al .c-tx b{font-size:14px;font-weight:900}
+.c-al .c-tx span{font-size:13px;color:var(--gris);font-weight:700}
+.c-al .tag{font-size:11px;font-weight:900;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.c-al .t1{background:#FDECEC;color:#A11B1B}.c-al .t2{background:#FFF1E0;color:#8A4B00}.c-al .t3{background:#FFF9DB;color:#6B5B00}
+.c-al .ver{font-size:13px;font-weight:900;color:var(--azul);white-space:nowrap}
+.c-mas{all:unset;cursor:pointer;font-size:14px;font-weight:900;color:#fff;opacity:.85;text-decoration:underline}
+.c-ok{background:rgba(255,255,255,.1);border-radius:14px;padding:14px;font-weight:800}
+@media (max-width:600px){.c-al .ver{display:none}.c-tot b{font-size:28px}}
 .chip{background:#fff;border:1px solid #E6ECF4;border-radius:999px;padding:8px 14px;font-size:14px;font-weight:800;color:var(--gris)}
 .chip b{color:var(--azul);font-weight:900}
 .buscar{height:48px;border:2px solid var(--borde);border-radius:12px;padding:0 14px;font-size:16px;width:100%;max-width:360px}
@@ -180,6 +256,7 @@ h1{margin:0}
       <svg width="180" height="248" viewBox="0 0 160 220" role="img" aria-label="Trabajador con casco saludando"><ellipse cx="80" cy="212" rx="50" ry="6" fill="#000" opacity=".15"/><rect x="58" y="148" width="18" height="56" rx="7" fill="#1E3566"/><rect x="84" y="148" width="18" height="56" rx="7" fill="#1E3566"/><rect x="50" y="198" width="28" height="12" rx="5" fill="#3A2A1A"/><rect x="82" y="198" width="28" height="12" rx="5" fill="#3A2A1A"/><rect x="36" y="94" width="16" height="50" rx="8" fill="#1E5FA8"/><circle cx="44" cy="146" r="8" fill="#F2C29B"/><rect x="110" y="52" width="16" height="50" rx="8" fill="#1E5FA8" transform="rotate(28 118 100)"/><circle cx="134" cy="54" r="9" fill="#F2C29B"/><rect x="50" y="86" width="60" height="72" rx="16" fill="#1E5FA8"/><path d="M54 92 L72 88 L76 156 L54 152 Z" fill="#F08A1C"/><path d="M106 92 L88 88 L84 156 L106 152 Z" fill="#F08A1C"/><rect x="54" y="122" width="22" height="6" fill="#F4F4F4"/><rect x="84" y="122" width="22" height="6" fill="#F4F4F4"/><rect x="73" y="78" width="14" height="12" fill="#F2C29B"/><circle cx="80" cy="62" r="24" fill="#F2C29B"/><circle cx="71" cy="64" r="2.8" fill="#2B2B2B"/><circle cx="89" cy="64" r="2.8" fill="#2B2B2B"/><circle cx="66" cy="72" r="4" fill="#F49A8C" opacity=".6"/><circle cx="94" cy="72" r="4" fill="#F49A8C" opacity=".6"/><path d="M71 73 Q80 81 89 73" stroke="#2B2B2B" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M54 56 Q54 28 80 28 Q106 28 106 56 Z" fill="#1E73BE"/><rect x="49" y="52" width="62" height="8" rx="4" fill="#165C9C"/><rect x="77" y="29" width="6" height="24" rx="3" fill="#4A9BE0"/></svg>
       <svg width="160" height="226" viewBox="0 0 160 220" role="img" aria-label="Prevencionista con tablet"><ellipse cx="80" cy="212" rx="46" ry="6" fill="#000" opacity=".15"/><rect x="60" y="150" width="16" height="54" rx="7" fill="#24324F"/><rect x="84" y="150" width="16" height="54" rx="7" fill="#24324F"/><rect x="54" y="198" width="26" height="12" rx="5" fill="#3A2A1A"/><rect x="82" y="198" width="26" height="12" rx="5" fill="#3A2A1A"/><path d="M98 50 Q124 60 114 96 Q108 76 98 70 Z" fill="#5A3A22"/><rect x="52" y="88" width="56" height="70" rx="16" fill="#fff"/><path d="M54 94 L72 88 L76 158 L54 154 Z" fill="#7DBE3A"/><path d="M106 94 L88 88 L84 158 L106 154 Z" fill="#7DBE3A"/><rect x="54" y="124" width="22" height="6" fill="#F4F4F4"/><rect x="84" y="124" width="22" height="6" fill="#F4F4F4"/><rect x="58" y="104" width="44" height="32" rx="5" fill="#2E4A8A" transform="rotate(-8 80 120)"/><rect x="63" y="109" width="34" height="22" rx="3" fill="#BFE3FF" transform="rotate(-8 80 120)"/><path d="M70 121 L76 126 L88 114" stroke="#2E8B3A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="rotate(-8 80 120)"/><circle cx="56" cy="128" r="7" fill="#E9B48C"/><circle cx="104" cy="122" r="7" fill="#E9B48C"/><rect x="73" y="78" width="14" height="12" fill="#E9B48C"/><circle cx="80" cy="62" r="23" fill="#E9B48C"/><path d="M57 60 Q58 44 80 42 Q102 44 103 60 Q96 52 80 52 Q64 52 57 60 Z" fill="#5A3A22"/><circle cx="72" cy="65" r="2.6" fill="#2B2B2B"/><circle cx="88" cy="65" r="2.6" fill="#2B2B2B"/><circle cx="67" cy="72" r="4" fill="#F49A8C" opacity=".6"/><circle cx="93" cy="72" r="4" fill="#F49A8C" opacity=".6"/><path d="M72 73 Q80 80 88 73" stroke="#2B2B2B" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M55 52 Q55 26 80 26 Q105 26 105 52 Z" fill="#fff"/><rect x="50" y="48" width="60" height="8" rx="4" fill="#E3E8EF"/><rect x="77" y="27" width="6" height="22" rx="3" fill="#F08A1C"/></svg>
     </div>
+    <div class="l-contacto"><b>¿Quiere este portal para su empresa?</b><span>Daniel Zunino Urrutia · Asesor en Prevención de Riesgos · Reg. BB/P-226</span><div class="ct-btns" data-contacto></div></div>
   </div>
 </div>
 
@@ -199,6 +276,8 @@ h1{margin:0}
       </div>
       <input type="search" id="buscar" class="buscar" placeholder="Buscar empresa o razón social…" aria-label="Buscar empresa">
     </div>
+    <div class="centro" id="centro"><h2>📡 Centro de control <small id="c-act">Revisando todas tus empresas…</small></h2><div class="c-tot" id="c-tot"></div><div class="c-lst" id="c-lst"></div></div>
+    <div class="banner" data-banner></div>
     <div class="lista-emp" id="lista-empresas"></div>
     <div class="pie"><span>Daniel Zunino Urrutia · Asesor en Prevención de Riesgos · Reg. BB/P-226 · Integra Prevención SpA</span><span class="sello">✓ Respaldo automático diario</span></div>
   </div>
@@ -222,10 +301,14 @@ h1{margin:0}
   <div class="cont">
     <div class="hero">
       <div class="circ" style="width:260px;height:260px;right:-60px;top:-90px"></div>
-      <p id="saludo-panel" style="font-size:15px;font-weight:700;opacity:.85;position:relative">Buenos días</p>
-      <h1 id="hero-nombre" style="font-size:32px;font-weight:900;line-height:1.15;position:relative">Empresa</h1>
-      <p style="font-size:16px;opacity:.9;line-height:1.5;position:relative">Aquí está todo lo que estamos haciendo por la seguridad de su gente.</p>
+      <div class="hero-fila"><div>
+      <p id="saludo-panel" style="font-size:15px;font-weight:700;opacity:.85">Buenos días</p>
+      <h1 id="hero-nombre" style="font-size:34px;font-weight:900;line-height:1.15">Empresa</h1>
+      <p style="font-size:16px;opacity:.9;line-height:1.5">Aquí está todo lo que estamos haciendo por la seguridad de su gente.</p>
+      <span class="hero-est oculto" id="hero-est"></span>
+      </div><div class="hero-logo"><span class="placa" id="hero-placa"></span></div></div>
     </div>
+    <div class="banner" data-banner></div>
     <div class="tabs-p" role="tablist">
       <button class="tab-p on" id="tab-mod" type="button">Módulos</button>
       <button class="tab-p" id="tab-ges" type="button">📊 Gestión y avance</button>
@@ -242,6 +325,7 @@ h1{margin:0}
     </div>
     <div class="grid" id="tarjetas"></div>
     </div>
+    <div class="contacto"><div class="ct-tx"><b>¿Necesita asesoría o tiene una consulta?</b><span>Daniel Zunino Urrutia · Asesor en Prevención de Riesgos · Integra Prevención SpA</span></div><div class="ct-btns" data-contacto></div></div>
     <div class="pie"><span>Daniel Zunino Urrutia · Asesor en Prevención de Riesgos · Reg. BB/P-226 · Integra Prevención SpA</span><span class="sello">✓ Respaldo automático diario</span></div>
   </div>
 </div>
@@ -400,6 +484,7 @@ h1{margin:0}
     $('n-rs').textContent = empresasCache.reduce(function (s, x) { return s + (x.razones_sociales || []).length; }, 0);
     pintarEmpresas('');
     mostrar('admin');
+    if (!verAdmin._cargado) { verAdmin._cargado = true; cargarSemaforo(false); }
   }
 
   function pintarEmpresas(q) {
@@ -413,13 +498,165 @@ h1{margin:0}
         var tx = el('span', { 'class': 'emp-txt' });
         tx.appendChild(el('span', { 'class': 'emp-nom' }, x.nombre));
         tx.appendChild(el('span', { 'class': 'emp-sub' }, rs.length > 1 ? rs.length + ' razones sociales' : 'Empresa individual'));
+        var es = el('span', { 'class': 'emp-est', 'data-est': x.slug }); pintarEstado(es, x.slug); tx.appendChild(es);
         c.appendChild(tx);
+        var an = el('span', { 'class': 'anillo', 'data-anillo': x.slug }); c.appendChild(an);
+        var ba = el('span', { 'class': 'emp-barra' }); ba.appendChild(el('b', { 'data-barra': x.slug })); c.appendChild(ba);
         var fl = el('span', { 'class': 'emp-flecha', 'aria-hidden': 'true' });
         fl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
         c.appendChild(fl);
         c.addEventListener('click', function () { verPanel(x, true); });
         cont.appendChild(c);
+        pintarAnillo(x.slug);
       });
+  }
+
+  /* ---------- CONTACTO ---------- */
+  var CONTACTO = { tel: '+56973342579', telTxt: '+56 9 7334 2579', mail: 'zunino.prevencion@gmail.com' };
+  Array.prototype.forEach.call(document.querySelectorAll('[data-contacto]'), function (n) {
+    n.innerHTML = '<a class="ct-wa" target="_blank" rel="noopener" href="https://wa.me/' + CONTACTO.tel.replace('+', '') + '?text=' + encodeURIComponent('Hola Daniel, vi el Portal Integra y quiero más información.') + '">💬 WhatsApp</a>' +
+      '<a class="ct-tel" href="tel:' + CONTACTO.tel + '">📞 ' + CONTACTO.telTxt + '</a>' +
+      '<a class="ct-ml" href="mailto:' + CONTACTO.mail + '?subject=' + encodeURIComponent('Consulta Portal Integra') + '">✉️ Correo</a>';
+  });
+
+  /* ---------- BANNERS: CONSEJOS DE SEGURIDAD ---------- */
+  var CONSEJOS = [
+    ['🦺', 'Su EPP lo protege solo si lo usa', 'Casco, lentes, guantes y zapatos de seguridad durante toda la jornada, no solo cuando lo están mirando.'],
+    ['🏋️', 'Levante con las piernas, no con la espalda', 'Doble las rodillas, mantenga la carga pegada al cuerpo y pida ayuda o use carro si es pesada. Máximo 25 kg por persona.'],
+    ['🪜', 'Trabajo en altura: siempre amarrado', 'Desde 1,8 metros use arnés con dos colas enganchado a un punto firme. Revise la escalera antes de subir.'],
+    ['🚨', '¿Tuvo un accidente? Avise de inmediato', 'Informe a su jefatura aunque parezca menor. Así queda cubierto por la Ley 16.744 y recibe atención en su mutualidad.'],
+    ['⚠️', 'Un incidente hoy es un accidente mañana', 'Reporte las casi caídas, los golpes que no pasaron y las condiciones inseguras. Reportar previene.'],
+    ['🧹', 'Orden y aseo es seguridad', 'Pasillos despejados, cables recogidos y derrames limpios evitan la mayoría de las caídas.'],
+    ['🔥', 'Conozca su extintor', 'Sepa dónde está, revise que esté vigente y recuerde: tire el seguro, apunte a la base del fuego y presione.'],
+    ['🔌', 'Bloquee antes de intervenir', 'Antes de mantener una máquina, desconecte la energía, bloquee y etiquete. Nunca meta la mano con el equipo en marcha.'],
+    ['🧪', 'Productos químicos: lea la hoja de seguridad', 'Use el EPP que indica, nunca trasvasije a botellas de bebida y mantenga todo rotulado.'],
+    ['☀️', 'Protéjase del sol', 'Entre 10 y 17 horas use bloqueador, gorro con legionario y lentes con filtro UV. Hidrátese seguido.'],
+    ['🚚', 'Al volante, solo manejar', 'Cinturón siempre, celular guardado y respete las velocidades. Haga el chequeo del vehículo antes de salir.'],
+    ['🍺', 'Alcohol y drogas: tolerancia cero', 'Nadie trabaja bajo sus efectos. Si ve a un compañero en esa condición, avise a su jefatura.'],
+    ['🧘', 'Pausas activas', 'Cada dos horas estire cuello, hombros, manos y espalda por cinco minutos. Su cuerpo se lo agradecerá.'],
+    ['💬', 'Su bienestar también es seguridad', 'Si siente estrés o tiene un problema en el trabajo, convérselo. El buen trato y el respeto son parte de la prevención.'],
+    ['🤝', 'Ley Karin: respeto en el trabajo', 'El acoso laboral, el acoso sexual y la violencia en el trabajo se pueden denunciar. Su empresa tiene un protocolo para recibirlo.']
+  ];
+  function crearBanner(nodo) {
+    var orden = CONSEJOS.map(function (c, i) { return i; }).sort(function () { return Math.random() - 0.5; });
+    var i = 0, t = null;
+    nodo.innerHTML = '';
+    nodo.style.background = 'linear-gradient(120deg,color-mix(in srgb,var(--acc) 92%,#000),color-mix(in srgb,var(--prim) 85%,#000))';
+    var sl = orden.map(function (k, j) { var c = CONSEJOS[k];
+      var d = el('div', { 'class': 'b-slide' + (j === 0 ? ' on' : '') });
+      d.innerHTML = '<div class="b-ico" aria-hidden="true">' + c[0] + '</div><div class="b-tx"><small>Consejo de seguridad</small><b>' + esc(c[1]) + '</b><span>' + esc(c[2]) + '</span></div>';
+      nodo.appendChild(d); return d; });
+    var dots = el('div', { 'class': 'b-dots' });
+    var db = sl.map(function (x, j) { var b = el('button', { type: 'button', 'aria-label': 'Consejo ' + (j + 1), 'class': j === 0 ? 'on' : '' }); b.addEventListener('click', function () { ir(j); }); dots.appendChild(b); return b; });
+    nodo.appendChild(dots);
+    var a = el('button', { 'class': 'b-nav b-ant', type: 'button', 'aria-label': 'Consejo anterior' }, '‹'), s2 = el('button', { 'class': 'b-nav b-sig', type: 'button', 'aria-label': 'Consejo siguiente' }, '›');
+    a.addEventListener('click', function () { ir(i - 1); }); s2.addEventListener('click', function () { ir(i + 1); });
+    nodo.appendChild(a); nodo.appendChild(s2);
+    function ir(j) { j = (j + sl.length) % sl.length; sl[i].classList.remove('on'); db[i].classList.remove('on'); i = j; sl[i].classList.add('on'); db[i].classList.add('on'); reloj(); }
+    function reloj() { clearTimeout(t); t = setTimeout(function () { ir(i + 1); }, 8000); }
+    nodo.addEventListener('mouseenter', function () { clearTimeout(t); }); nodo.addEventListener('mouseleave', reloj);
+    reloj();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-banner]'), crearBanner);
+
+  /* ---------- SEMÁFORO Y CENTRO DE CONTROL ---------- */
+  var ESTADOS = {}; /* slug -> {r, p, nivel} */
+  var NIVEL_COLOR = { verde: '#2E7D32', amarillo: '#E8A21A', rojo: '#D32F2F', gris: '#C3CBD8' };
+  function lim(v) { return Math.max(0, Math.min(100, v)); }
+  /* Puntaje 0-100: promedio de los módulos conectados */
+  function puntaje(r) {
+    var v = [];
+    if (r.cap && !r.cap.error) v.push(r.cap.cumplimiento != null ? r.cap.cumplimiento : (r.cap.avance || 0));
+    if (r.epp && !r.epp.error && r.epp.alDia != null) v.push(r.epp.alDia);
+    if (r.cheq && !r.cheq.error && r.cheq.equipos) v.push(r.cheq.criticas ? 30 : lim(100 - (r.cheq.nAbiertas || 0) / r.cheq.equipos * 100));
+    if (r.acc && !r.acc.error) v.push(r.acc.graves ? 20 : lim(100 - (r.acc.nVencidas || 0) * 20 - (r.acc.abiertos || 0) * 10 - (r.acc.declPendientes || 0) * 10));
+    return v.length ? Math.round(v.reduce(function (a, b) { return a + b; }, 0) / v.length) : null;
+  }
+  function nivelDe(r, p) {
+    if (p == null) return 'gris';
+    var crit = (r.alertas || []).some(function (a) { return a.n === 1; });
+    if (crit || p < 50) return 'rojo';
+    return p >= 80 ? 'verde' : 'amarillo';
+  }
+  function pintarEstado(nodo, slug) {
+    var e = ESTADOS[slug];
+    nodo.className = 'emp-est';
+    if (!e) { nodo.innerHTML = '<i></i>Revisando…'; return; }
+    if (e.err) { nodo.innerHTML = '<i></i>Sin conexión'; return; }
+    if (e.nivel === 'gris') { nodo.innerHTML = '<i></i>Sin módulos conectados'; return; }
+    nodo.classList.add(e.nivel);
+    var n = (e.r.alertas || []).length;
+    nodo.innerHTML = '<i></i>' + (n ? n + (n === 1 ? ' alerta' : ' alertas') : 'Todo al día');
+  }
+  function pintarAnillo(slug) {
+    var e = ESTADOS[slug], a = document.querySelector('[data-anillo="' + slug + '"]'), b = document.querySelector('[data-barra="' + slug + '"]');
+    if (!a) return;
+    var card = a.closest('.emp');
+    if (!e || e.p == null) { a.style.display = 'none'; if (card) card.classList.remove('con-anillo'); if (b) b.style.width = '0'; return; }
+    if (card) card.classList.add('con-anillo');
+    var c = NIVEL_COLOR[e.nivel];
+    a.style.display = ''; a.style.background = 'conic-gradient(' + c + ' ' + e.p * 3.6 + 'deg,#EEF2F7 0)';
+    a.innerHTML = '<span>' + e.p + '%</span>'; a.title = 'Cumplimiento general ' + e.p + '%';
+    if (b) { b.style.background = c; b.style.width = e.p + '%'; }
+  }
+  function refrescarTarjeta(slug) {
+    var es = document.querySelector('[data-est="' + slug + '"]'); if (es) pintarEstado(es, slug);
+    pintarAnillo(slug);
+  }
+  function ordenarEmpresas() {
+    var orden = { rojo: 0, amarillo: 1, verde: 2, gris: 3 };
+    empresasCache.sort(function (a, b) {
+      var ea = ESTADOS[a.slug], eb = ESTADOS[b.slug];
+      var oa = ea ? orden[ea.nivel] : 4, ob = eb ? orden[eb.nivel] : 4;
+      if (oa !== ob) return oa - ob;
+      if (ea && eb && ea.p != null && eb.p != null && ea.p !== eb.p) return ea.p - eb.p;
+      return a.nombre.localeCompare(b.nombre);
+    });
+  }
+  var filtroCentro = 0;
+  function pintarCentro(terminado) {
+    var tot = { 1: 0, 2: 0, 3: 0 }, lst = [], verdes = 0, conectadas = 0;
+    empresasCache.forEach(function (x) {
+      var e = ESTADOS[x.slug]; if (!e || !e.r || e.nivel === 'gris') return;
+      conectadas++; if (e.nivel === 'verde') verdes++;
+      (e.r.alertas || []).forEach(function (a) { tot[a.n] = (tot[a.n] || 0) + 1; lst.push({ emp: x, a: a }); });
+    });
+    lst.sort(function (u, v) { return u.a.n - v.a.n; });
+    var T = [[1, 'k1', 'Críticas: actuar hoy'], [2, 'k2', 'Importantes'], [3, 'k3', 'Avisos'], [0, 'k0', 'Empresas al día']];
+    $('c-tot').innerHTML = T.map(function (t) { var n = t[0] ? tot[t[0]] : verdes + ' / ' + conectadas;
+      return '<button type="button" class="' + t[1] + (filtroCentro === t[0] && t[0] ? ' on' : '') + '" data-f="' + t[0] + '"><b>' + n + '</b><span>' + t[2] + '</span></button>'; }).join('');
+    Array.prototype.forEach.call($('c-tot').querySelectorAll('button'), function (b) { b.addEventListener('click', function () { var f = +b.dataset.f; filtroCentro = (filtroCentro === f || !f) ? 0 : f; pintarCentro(true); }); });
+    var ver = filtroCentro ? lst.filter(function (o) { return o.a.n === filtroCentro; }) : lst;
+    var cont = $('c-lst'); cont.textContent = '';
+    if (!ver.length) { cont.appendChild(el('div', { 'class': 'c-ok' }, terminado ? (conectadas ? '✅ Sin alertas pendientes. ¡Buen trabajo!' : 'Aún no hay empresas con módulos conectados.') : 'Revisando…')); }
+    var max = pintarCentro._todo ? ver.length : 6;
+    ver.slice(0, max).forEach(function (o) {
+      var b = el('button', { 'class': 'c-al', type: 'button' });
+      var pl = el('span', { 'class': 'placa' }); ponerPlaca(pl, o.emp.slug, o.emp.nombre, o.emp.color); b.appendChild(pl);
+      var tx = el('span', { 'class': 'c-tx' }); tx.appendChild(el('b', null, o.emp.nombre)); tx.appendChild(el('span', null, o.a.m + ': ' + o.a.t)); b.appendChild(tx);
+      b.appendChild(el('span', { 'class': 'tag t' + o.a.n }, ['', 'CRÍTICA', 'IMPORTANTE', 'AVISO'][o.a.n]));
+      b.appendChild(el('span', { 'class': 'ver' }, 'Ver →'));
+      b.addEventListener('click', function () { verPanel(o.emp, true); pestana('ges'); });
+      cont.appendChild(b);
+    });
+    if (ver.length > 6) { var m = el('button', { 'class': 'c-mas', type: 'button' }, pintarCentro._todo ? 'Ver menos' : 'Ver las ' + ver.length + ' alertas');
+      m.addEventListener('click', function () { pintarCentro._todo = !pintarCentro._todo; pintarCentro(true); }); cont.appendChild(m); }
+    $('c-act').textContent = terminado ? 'Actualizado ' + new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) + ' · ' + conectadas + ' de ' + empresasCache.length + ' empresas con datos' : 'Revisando todas tus empresas…';
+  }
+  function cargarSemaforo(fresco) {
+    if (GESTION_API.indexOf('http') !== 0) return;
+    var pend = empresasCache.length; if (!pend) return;
+    pintarCentro(false);
+    empresasCache.forEach(function (x) {
+      fetch(GESTION_API, { method: 'POST', credentials: 'omit', redirect: 'follow',
+        body: JSON.stringify({ fn: 'gestionResumen', args: [sesionActual && sesionActual.access_token, x.slug, !!fresco] }) })
+        .then(function (r) { return r.json(); })
+        .then(function (j) { if (!j.ok) throw new Error(j.e); var r = j.r || {}; var p = r.sinConfig ? null : puntaje(r);
+          ESTADOS[x.slug] = { r: r, p: p, nivel: r.sinConfig ? 'gris' : nivelDe(r, p) }; })
+        .catch(function () { ESTADOS[x.slug] = { err: true, nivel: 'gris', p: null }; })
+        .then(function () { refrescarTarjeta(x.slug); pintarCentro(false);
+          if (--pend === 0) { ordenarEmpresas(); pintarEmpresas($('buscar').value); pintarCentro(true); } });
+    });
   }
   $('buscar').addEventListener('input', function () { pintarEmpresas(this.value); });
   $('volver').addEventListener('click', verAdmin);
@@ -431,6 +668,10 @@ h1{margin:0}
     var n = (emp.razones_sociales || []).length;
     $('p-rs').textContent = n > 1 ? n + ' razones sociales' : '';
     $('hero-nombre').textContent = emp.nombre;
+    ponerPlaca($('hero-placa'), emp.slug, emp.nombre, emp.color);
+    var eh = ESTADOS[emp.slug], he = $('hero-est');
+    if (eh && eh.p != null) { he.classList.remove('oculto'); he.innerHTML = '<i style="background:' + NIVEL_COLOR[eh.nivel] + '"></i>Cumplimiento general ' + eh.p + '% · ' + ((eh.r.alertas || []).length ? eh.r.alertas.length + ' alerta(s)' : 'todo al día'); }
+    else he.classList.add('oculto');
     $('saludo-panel').textContent = saludo();
     $('volver').classList.toggle('oculto', !desdeAdmin);
     var cont = $('tarjetas'); cont.textContent = '';
@@ -544,6 +785,8 @@ h1{margin:0}
     if (!empActual) return;
     if (GESTION_API.indexOf('http') !== 0) { $('g-cont').innerHTML = '<div class="vacio">La gestión se está configurando.</div>'; return; }
     gestion._cargado = true;
+    var pre = !fresco && ESTADOS[empActual.slug] && ESTADOS[empActual.slug].r;
+    if (pre && !pre.sinConfig) { pintarGestion(pre); return; }
     $('g-cont').innerHTML = '<div class="vacio">Cargando indicadores de todos los módulos…</div>';
     var slug = empActual.slug;
     fetch(GESTION_API, { method: 'POST', credentials: 'omit', redirect: 'follow',
