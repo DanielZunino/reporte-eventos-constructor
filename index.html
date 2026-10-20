@@ -455,6 +455,14 @@ function salir(){ls('tk_eventos',null);TOKEN='';$('app').classList.add('hide');$
 function rellenar(){var c=credGuardada();if(c){$('usuario').value=c.u;$('clave').value=c.c;$('recordar').checked=true}}
 window.onload=function(){
   rellenar();
+  /* Ingreso único: viene desde el Portal Integra con su sesión */
+  var sso=location.hash.match(/sso=([^&]+)/);
+  if(sso){
+    try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+    $('loginMsg').textContent='Entrando con tu sesión del portal...';
+    google.script.run.withSuccessHandler(arrancar).withFailureHandler(function(e){$('loginMsg').textContent=e.message}).ssoLogin(decodeURIComponent(sso[1]));
+    return;
+  }
   var tk=ls('tk_eventos'),c=credGuardada();
   if(tk)google.script.run.withSuccessHandler(arrancar).withFailureHandler(function(){ls('tk_eventos',null);if(c)entrar()}).sesion(tk);
   else if(c)entrar();
