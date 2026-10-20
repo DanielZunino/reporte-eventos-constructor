@@ -28,8 +28,8 @@ button:focus-visible,a:focus-visible,input:focus{outline:3px solid #F7B267;outli
 .globo{position:relative;background:#fff;color:var(--tinta);border-radius:20px;padding:14px 22px;font-size:19px;font-weight:800;box-shadow:0 8px 24px rgba(0,0,0,.18);max-width:320px;text-align:center}
 .marca{display:flex;align-items:center;gap:16px}
 .placa img{width:100%;height:100%;object-fit:contain;display:block}
-.placa.con-logo{padding:4px;box-shadow:inset 0 0 0 1px #E3E8F0}
-.placa{overflow:hidden;border-radius:16px;background:var(--prim);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0}
+.placa.con-logo{padding:6px;box-shadow:inset 0 0 0 1px #E3E8F0}
+.placa{overflow:hidden;border-radius:16px;transition:transform .2s ease,box-shadow .2s ease;background:var(--prim);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0}
 .form{flex-grow:1;display:flex;flex-direction:column;justify-content:center;gap:22px;max-width:420px;width:100%;align-self:center}
 .kicker{margin:0;font-size:14px;font-weight:800;color:var(--prim);letter-spacing:.08em;text-transform:uppercase}
 h1{margin:0}
@@ -66,12 +66,16 @@ h1{margin:0}
 .pie{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding-top:10px;border-top:1px solid #E1E7F0;font-size:13px;color:var(--gris)}
 .sello{display:flex;align-items:center;gap:6px;font-weight:800;color:var(--verde);background:#E8F5E9;border-radius:999px;padding:6px 12px}
 .lista-emp{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
-.emp{all:unset;box-sizing:border-box;cursor:pointer;background:#fff;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:14px;height:84px;border:1px solid #E6ECF4;transition:border-color .15s,box-shadow .15s}
-.emp:hover,.emp:focus-visible{border-color:var(--azul);box-shadow:0 4px 14px rgba(30,53,102,.10)}
+.emp{all:unset;box-sizing:border-box;cursor:pointer;background:#fff;border-radius:18px;padding:16px 18px;display:flex;align-items:center;gap:18px;height:112px;border:1px solid #E6ECF4;box-shadow:0 2px 8px rgba(30,53,102,.05);transition:border-color .2s,box-shadow .2s,transform .2s}
+.emp:hover,.emp:focus-visible{border-color:var(--azul);box-shadow:0 10px 26px rgba(30,53,102,.16);transform:translateY(-3px)}
+.emp .placa{width:106px!important;height:74px!important;border-radius:14px!important;font-size:26px!important}
+.emp:hover .placa,.emp:focus-visible .placa{transform:scale(1.12);box-shadow:0 6px 16px rgba(30,53,102,.18)}
+.emp:hover .emp-flecha{background:var(--azul);color:#fff}
+@media (max-width:480px){.emp{height:96px;gap:12px;padding:12px}.emp .placa{width:92px!important;height:62px!important}}
 .emp-txt{flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.emp-nom{font-size:17px;font-weight:900;color:var(--tinta);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.emp-nom{font-size:18px;font-weight:900;color:var(--tinta);line-height:1.2;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .emp-sub{font-size:13px;color:var(--suave);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.emp-flecha{flex-shrink:0;width:36px;height:36px;border-radius:10px;background:#EEF2F7;color:var(--azul);display:flex;align-items:center;justify-content:center}
+.emp-flecha{flex-shrink:0;width:38px;height:38px;border-radius:12px;background:#EEF2F7;color:var(--azul);display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s}
 .resumen{display:flex;flex-wrap:wrap;gap:10px}
 .chip{background:#fff;border:1px solid #E6ECF4;border-radius:999px;padding:8px 14px;font-size:14px;font-weight:800;color:var(--gris)}
 .chip b{color:var(--azul);font-weight:900}
@@ -137,7 +141,7 @@ h1{margin:0}
 <div id="login" class="oculto">
   <div class="l-izq">
     <div class="marca" id="marca-empresa">
-      <span class="placa" id="l-placa" style="width:72px;height:72px;font-size:26px">IP</span>
+      <span class="placa" id="l-placa" style="width:120px;height:80px;font-size:28px">IP</span>
       <div style="display:flex;flex-direction:column;gap:2px">
         <span id="l-nombre" style="font-size:24px;font-weight:900;color:var(--prim)">Portal de clientes</span>
         <span style="font-size:13px;font-weight:700;color:var(--suave)">Seguridad y salud en el trabajo</span>
@@ -204,7 +208,7 @@ h1{margin:0}
 <div id="panel" class="oculto">
   <div class="top">
     <div class="marca">
-      <span class="placa" id="p-placa" style="width:48px;height:48px;font-size:18px;border-radius:12px">--</span>
+      <span class="placa" id="p-placa" style="width:84px;height:56px;font-size:20px;border-radius:12px">--</span>
       <div style="display:flex;flex-direction:column">
         <span id="p-nombre" style="font-size:18px;font-weight:900;color:var(--prim)">Empresa</span>
         <span id="p-rs" style="font-size:13px;color:var(--gris)"></span>
