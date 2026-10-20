@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portal Integra Prevención</title>
+<meta name="description" content="Portal de seguridad y salud en el trabajo de Integra Prevención SpA">
+<link rel="icon" type="image/png" sizes="32x32" href="icono-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icono-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#2E4A8A">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--azul:#2E4A8A;--tinta:#1F2A44;--gris:#4A5672;--suave:#6B7690;--fondo:#F4F7FB;--borde:#D5DEEB;--verde:#2E7D32;--naranjo:#E8731A;--prim:#2E4A8A;--acc:#E8731A;--accInk:#FFFFFF;--accSh:#B9560F}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);font-family:'Nunito',system-ui,sans-serif;color:var(--tinta)}
+button,input{font-family:inherit}
+a{color:#1E5FA8}
+.oculto{display:none!important}
+button:focus-visible,a:focus-visible,input:focus{outline:3px solid #F7B267;outline-offset:2px}
+
+/* LOGIN */
+#login{display:flex;flex-wrap:wrap;min-height:100vh}
+.l-izq{flex:1 1 520px;min-width:0;background:#fff;display:flex;flex-direction:column;padding:36px 44px;gap:24px}
+.l-der{flex:1 1 440px;min-width:0;background:var(--prim);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:48px 24px;gap:24px;min-height:480px}
+.circ{position:absolute;border-radius:50%;background:rgba(255,255,255,.08)}
+.globo{position:relative;background:#fff;color:var(--tinta);border-radius:20px;padding:14px 22px;font-size:19px;font-weight:800;box-shadow:0 8px 24px rgba(0,0,0,.18);max-width:320px;text-align:center}
+.marca{display:flex;align-items:center;gap:16px}
+.placa{border-radius:16px;background:var(--prim);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0}
+.form{flex-grow:1;display:flex;flex-direction:column;justify-content:center;gap:22px;max-width:420px;width:100%;align-self:center}
+.kicker{margin:0;font-size:14px;font-weight:800;color:var(--prim);letter-spacing:.08em;text-transform:uppercase}
+h1{margin:0}
+.campo{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700}
+.campo input{height:52px;border:2px solid var(--borde);border-radius:12px;padding:0 16px;font-size:16px;color:var(--tinta);background:#FAFCFF}
+.fila{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.check{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;cursor:pointer;min-height:44px}
+.check input{width:22px;height:22px;accent-color:#2E8B3A;margin:0}
+.btn-grande{height:60px;border:none;border-radius:14px;background:var(--acc);color:var(--accInk);font-size:20px;font-weight:900;letter-spacing:.04em;cursor:pointer;box-shadow:0 6px 0 var(--accSh)}
+.btn-grande:disabled{opacity:.6;cursor:wait}
+.error{background:#FDECEC;color:#9B1C1C;border-radius:12px;padding:12px 14px;font-weight:700;font-size:15px}
+.seguro{display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;color:var(--verde);font-weight:700}
+.asesoria{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px;font-size:13px;color:var(--suave);font-weight:700}
+
+/* PANEL */
+.top{background:#fff;border-bottom:4px solid var(--prim);padding:12px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.top .esp{flex-grow:1}
+.btn-sec{height:44px;padding:0 18px;border:2px solid var(--borde);background:#fff;border-radius:12px;font-size:15px;font-weight:700;color:var(--tinta);cursor:pointer}
+.cont{max-width:1200px;margin:0 auto;padding:26px 20px 40px;display:flex;flex-direction:column;gap:22px}
+.hero{background:var(--prim);color:#fff;border-radius:22px;padding:26px 30px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:8px}
+.hero p{margin:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.tarjeta{background:#fff;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 2px 10px rgba(30,53,102,.06)}
+.t-top{display:flex;align-items:center;justify-content:space-between}
+.icono{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center}
+.estado{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:var(--gris);background:#EEF2F7;border-radius:999px;padding:5px 10px}
+.punto{width:9px;height:9px;border-radius:50%;background:#9AA6B8}
+.t-tit{font-size:19px;font-weight:900}
+.t-det{font-size:14px;color:var(--gris);line-height:1.4}
+.acciones{display:flex;gap:8px}
+.abrir{white-space:nowrap;flex-grow:1;height:44px;border:none;border-radius:12px;background:var(--prim);color:#fff;font-size:15px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.cuad{width:48px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.wa{background:#E3F6EA;color:#1E7F45}.ml{background:#E3EEFB;color:#1E5FA8}
+.pie{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding-top:10px;border-top:1px solid #E1E7F0;font-size:13px;color:var(--gris)}
+.sello{display:flex;align-items:center;gap:6px;font-weight:800;color:var(--verde);background:#E8F5E9;border-radius:999px;padding:6px 12px}
+.lista-emp{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.emp{all:unset;box-sizing:border-box;cursor:pointer;background:#fff;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:14px;height:84px;border:1px solid #E6ECF4;transition:border-color .15s,box-shadow .15s}
+.emp:hover,.emp:focus-visible{border-color:var(--azul);box-shadow:0 4px 14px rgba(30,53,102,.10)}
+.emp-txt{flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.emp-nom{font-size:17px;font-weight:900;color:var(--tinta);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.emp-sub{font-size:13px;color:var(--suave);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.emp-flecha{flex-shrink:0;width:36px;height:36px;border-radius:10px;background:#EEF2F7;color:var(--azul);display:flex;align-items:center;justify-content:center}
+.resumen{display:flex;flex-wrap:wrap;gap:10px}
+.chip{background:#fff;border:1px solid #E6ECF4;border-radius:999px;padding:8px 14px;font-size:14px;font-weight:800;color:var(--gris)}
+.chip b{color:var(--azul);font-weight:900}
+.buscar{height:48px;border:2px solid var(--borde);border-radius:12px;padding:0 14px;font-size:16px;width:100%;max-width:360px}
+.admin-tag{display:flex;align-items:center;gap:8px;background:var(--azul);color:#fff;border-radius:999px;padding:8px 14px;font-size:14px;font-weight:800}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--tinta);color:#fff;padding:14px 20px;border-radius:14px;font-weight:700;max-width:90vw;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:9}
+.cargando{min-height:100vh;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--gris)}
+/* GESTIÓN */
+.tabs-p{display:flex;gap:8px;flex-wrap:wrap}
+.tab-p{height:46px;padding:0 20px;border-radius:999px;border:2px solid var(--borde);background:#fff;font-size:16px;font-weight:900;color:var(--gris);cursor:pointer}
+.tab-p.on{background:var(--prim);border-color:var(--prim);color:#fff}
+.g-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.g-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:16px}
+.g-card{background:#fff;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 2px 10px rgba(30,53,102,.06);min-width:0}
+.g-head{display:flex;align-items:center;gap:12px}
+.g-head .t-tit{flex-grow:1}
+.g-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0}
+.g-mini{height:36px;padding:0 14px;border-radius:10px;border:none;background:var(--prim);color:#fff;font-weight:800;cursor:pointer;font-size:14px}
+.kp{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px}
+.kp div{background:#F4F7FB;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:2px}
+.kp b{font-size:26px;font-weight:900;color:var(--tinta);font-variant-numeric:tabular-nums}
+.kp span{font-size:12px;font-weight:700;color:var(--gris);line-height:1.3}
+.kp .ro b{color:#C62828}.kp .na b{color:#C25E0C}.kp .ve b{color:#2E7D32}
+.g-sub{font-size:13px;font-weight:900;color:var(--gris);text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
+.hb{display:flex;flex-direction:column;gap:6px}
+.hb div{display:grid;grid-template-columns:minmax(90px,150px) 1fr 52px;gap:8px;align-items:center;font-size:13px;font-weight:700}
+.hb span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hb .barra{height:14px;background:#EEF2F7;border-radius:7px;overflow:hidden}
+.hb .barra i{display:block;height:100%;border-radius:7px}
+.hb b{text-align:right;font-variant-numeric:tabular-nums}
+.vb{display:flex;align-items:flex-end;gap:8px;height:130px;padding-top:6px}
+.vb div{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;min-width:0}
+.vb .col{width:100%;max-width:38px;display:flex;flex-direction:column-reverse;border-radius:6px 6px 0 0;overflow:hidden;background:#EEF2F7;min-height:2px}
+.vb small{font-size:11px;font-weight:800;color:var(--gris)}
+.vb em{font-style:normal;font-size:11px;font-weight:900;color:var(--tinta)}
+.ley{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;font-weight:700;color:var(--gris)}
+.ley i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.dona{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.dona .an{width:120px;height:120px;border-radius:50%;position:relative;flex-shrink:0}
+.dona .an::after{content:"";position:absolute;inset:22px;background:#fff;border-radius:50%}
+.dona .an b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:1;font-size:20px;font-weight:900}
+.lst{display:flex;flex-direction:column;gap:6px;font-size:13px}
+.lst div{background:#F8FAFD;border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:2px}
+.lst b{font-weight:800}.lst small{color:var(--gris)}
+.alert-i{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;font-size:14px;font-weight:700}
+.alert-i .tag{font-size:11px;font-weight:900;padding:2px 8px;border-radius:999px;background:#fff;white-space:nowrap}
+.n1{background:#FDECEC;color:#8E1B1B}.n2{background:#FFF1E0;color:#8A4B00}.n3{background:#FFF9DB;color:#6B5B00}
+.vacio{color:var(--gris);font-size:14px;font-weight:700}
+.qr{background:#FFF4E5;color:#B45309;border:none;cursor:pointer}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
+.modal-box{background:#fff;border-radius:20px;padding:22px;max-width:380px;width:100%;display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center}
+.modal-box img{width:240px;height:240px;image-rendering:pixelated}
+.modal-box .acciones{width:100%;flex-wrap:wrap}
+.modal-box .acciones>*{flex:1 1 100px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;text-decoration:none;cursor:pointer;font-size:14px;width:auto}
+@media (max-width:600px){.l-izq{padding:24px 18px}.l-der{min-height:380px}.cont{padding:18px 14px 30px}h1{font-size:30px!important}}
+</style>
+</head>
+<body>
+
+<div id="cargando" class="cargando">Cargando…</div>
+
+<!-- ============ INGRESO ============ -->
+<div id="login" class="oculto">
+  <div class="l-izq">
+    <div class="marca" id="marca-empresa">
+      <span class="placa" id="l-placa" style="width:72px;height:72px;font-size:26px">IP</span>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <span id="l-nombre" style="font-size:24px;font-weight:900;color:var(--prim)">Portal de clientes</span>
+        <span style="font-size:13px;font-weight:700;color:var(--suave)">Seguridad y salud en el trabajo</span>
+      </div>
+    </div>
+    <form class="form" id="form-login" autocomplete="on">
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <p class="kicker">Portal de seguridad</p>
+        <h1 id="saludo-login" style="font-size:40px;line-height:1.1;font-weight:900">Bienvenido</h1>
+        <p style="margin:0;font-size:17px;line-height:1.5;color:var(--gris)">Todo el sistema de gestión de su empresa en un solo lugar: capacitaciones, chequeos, accidentes y documentos.</p>
+      </div>
+      <div id="error" class="error oculto" role="alert"></div>
+      <label class="campo">Correo
+        <input id="email" type="email" name="email" autocomplete="username" placeholder="usuario@empresa.cl" required>
+      </label>
+      <label class="campo">Clave
+        <input id="clave" type="password" name="password" autocomplete="current-password" placeholder="••••••••" required>
+      </label>
+      <div class="fila">
+        <label class="check"><input type="checkbox" id="recordar" checked> Recordar mi clave en este equipo</label>
+        <a href="#" id="olvide" style="font-size:14px;font-weight:700">¿Olvidó su clave?</a>
+      </div>
+      <button class="btn-grande" type="submit" id="btn-entrar">INGRESE AQUÍ</button>
+      <div class="seguro">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>
+        Conexión segura · Respaldo automático diario
+      </div>
+    </form>
+    <div class="asesoria">Asesoría en prevención: <img src="logo.png" alt="Integra Prevención" style="height:44px;width:auto"></div>
+  </div>
+  <div class="l-der">
+    <div class="circ" style="width:520px;height:520px;top:-160px;right:-180px"></div>
+    <div class="circ" style="width:380px;height:380px;bottom:-220px;left:-120px"></div>
+    <div class="globo">¡Hola! Aquí ve todo lo que hacemos por su seguridad</div>
+    <div style="position:relative;display:flex;align-items:flex-end;gap:8px">
+      <svg width="180" height="248" viewBox="0 0 160 220" role="img" aria-label="Trabajador con casco saludando"><ellipse cx="80" cy="212" rx="50" ry="6" fill="#000" opacity=".15"/><rect x="58" y="148" width="18" height="56" rx="7" fill="#1E3566"/><rect x="84" y="148" width="18" height="56" rx="7" fill="#1E3566"/><rect x="50" y="198" width="28" height="12" rx="5" fill="#3A2A1A"/><rect x="82" y="198" width="28" height="12" rx="5" fill="#3A2A1A"/><rect x="36" y="94" width="16" height="50" rx="8" fill="#1E5FA8"/><circle cx="44" cy="146" r="8" fill="#F2C29B"/><rect x="110" y="52" width="16" height="50" rx="8" fill="#1E5FA8" transform="rotate(28 118 100)"/><circle cx="134" cy="54" r="9" fill="#F2C29B"/><rect x="50" y="86" width="60" height="72" rx="16" fill="#1E5FA8"/><path d="M54 92 L72 88 L76 156 L54 152 Z" fill="#F08A1C"/><path d="M106 92 L88 88 L84 156 L106 152 Z" fill="#F08A1C"/><rect x="54" y="122" width="22" height="6" fill="#F4F4F4"/><rect x="84" y="122" width="22" height="6" fill="#F4F4F4"/><rect x="73" y="78" width="14" height="12" fill="#F2C29B"/><circle cx="80" cy="62" r="24" fill="#F2C29B"/><circle cx="71" cy="64" r="2.8" fill="#2B2B2B"/><circle cx="89" cy="64" r="2.8" fill="#2B2B2B"/><circle cx="66" cy="72" r="4" fill="#F49A8C" opacity=".6"/><circle cx="94" cy="72" r="4" fill="#F49A8C" opacity=".6"/><path d="M71 73 Q80 81 89 73" stroke="#2B2B2B" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M54 56 Q54 28 80 28 Q106 28 106 56 Z" fill="#1E73BE"/><rect x="49" y="52" width="62" height="8" rx="4" fill="#165C9C"/><rect x="77" y="29" width="6" height="24" rx="3" fill="#4A9BE0"/></svg>
+      <svg width="160" height="226" viewBox="0 0 160 220" role="img" aria-label="Prevencionista con tablet"><ellipse cx="80" cy="212" rx="46" ry="6" fill="#000" opacity=".15"/><rect x="60" y="150" width="16" height="54" rx="7" fill="#24324F"/><rect x="84" y="150" width="16" height="54" rx="7" fill="#24324F"/><rect x="54" y="198" width="26" height="12" rx="5" fill="#3A2A1A"/><rect x="82" y="198" width="26" height="12" rx="5" fill="#3A2A1A"/><path d="M98 50 Q124 60 114 96 Q108 76 98 70 Z" fill="#5A3A22"/><rect x="52" y="88" width="56" height="70" rx="16" fill="#fff"/><path d="M54 94 L72 88 L76 158 L54 154 Z" fill="#7DBE3A"/><path d="M106 94 L88 88 L84 158 L106 154 Z" fill="#7DBE3A"/><rect x="54" y="124" width="22" height="6" fill="#F4F4F4"/><rect x="84" y="124" width="22" height="6" fill="#F4F4F4"/><rect x="58" y="104" width="44" height="32" rx="5" fill="#2E4A8A" transform="rotate(-8 80 120)"/><rect x="63" y="109" width="34" height="22" rx="3" fill="#BFE3FF" transform="rotate(-8 80 120)"/><path d="M70 121 L76 126 L88 114" stroke="#2E8B3A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="rotate(-8 80 120)"/><circle cx="56" cy="128" r="7" fill="#E9B48C"/><circle cx="104" cy="122" r="7" fill="#E9B48C"/><rect x="73" y="78" width="14" height="12" fill="#E9B48C"/><circle cx="80" cy="62" r="23" fill="#E9B48C"/><path d="M57 60 Q58 44 80 42 Q102 44 103 60 Q96 52 80 52 Q64 52 57 60 Z" fill="#5A3A22"/><circle cx="72" cy="65" r="2.6" fill="#2B2B2B"/><circle cx="88" cy="65" r="2.6" fill="#2B2B2B"/><circle cx="67" cy="72" r="4" fill="#F49A8C" opacity=".6"/><circle cx="93" cy="72" r="4" fill="#F49A8C" opacity=".6"/><path d="M72 73 Q80 80 88 73" stroke="#2B2B2B" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M55 52 Q55 26 80 26 Q105 26 105 52 Z" fill="#fff"/><rect x="50" y="48" width="60" height="8" rx="4" fill="#E3E8EF"/><rect x="77" y="27" width="6" height="22" rx="3" fill="#F08A1C"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- ============ VISTA ADMINISTRADOR ============ -->
+<div id="admin" class="oculto">
+  <div class="top" style="--prim:#2E4A8A">
+    <img src="logo.png" alt="Integra Prevención" style="height:50px;width:auto">
+    <span class="esp"></span>
+    <span class="admin-tag">Administrador · <span id="admin-nombre">Daniel</span></span>
+    <button class="btn-sec" data-salir>Salir</button>
+  </div>
+  <div class="cont">
+    <div class="fila" style="align-items:flex-end">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <h1 style="font-size:30px;font-weight:900;color:var(--azul)">Mis empresas</h1>
+        <div class="resumen"><span class="chip"><b id="n-emp">0</b> empresas</span><span class="chip"><b id="n-rs">0</b> razones sociales</span></div>
+      </div>
+      <input type="search" id="buscar" class="buscar" placeholder="Buscar empresa o razón social…" aria-label="Buscar empresa">
+    </div>
+    <div class="lista-emp" id="lista-empresas"></div>
+    <div class="pie"><span>Daniel Zunino Urrutia · Asesor en Prevención de Riesgos · Reg. BB/P-226 · Integra Prevención SpA</span><span class="sello">✓ Respaldo automático diario</span></div>
+  </div>
+</div>
+
+<!-- ============ PANEL EMPRESA ============ -->
+<div id="panel" class="oculto">
+  <div class="top">
+    <div class="marca">
+      <span class="placa" id="p-placa" style="width:48px;height:48px;font-size:18px;border-radius:12px">--</span>
+      <div style="display:flex;flex-direction:column">
+        <span id="p-nombre" style="font-size:18px;font-weight:900;color:var(--prim)">Empresa</span>
+        <span id="p-rs" style="font-size:13px;color:var(--gris)"></span>
+      </div>
+    </div>
+    <span class="esp"></span>
+    <span class="asesoria" style="gap:8px">Asesoría: <img src="logo.png" alt="Integra Prevención" style="height:38px;width:auto"></span>
+    <button class="btn-sec oculto" id="volver">← Mis empresas</button>
+    <button class="btn-sec" data-salir>Salir</button>
+  </div>
+  <div class="cont">
+    <div class="hero">
+      <div class="circ" style="width:260px;height:260px;right:-60px;top:-90px"></div>
+      <p id="saludo-panel" style="font-size:15px;font-weight:700;opacity:.85;position:relative">Buenos días</p>
+      <h1 id="hero-nombre" style="font-size:32px;font-weight:900;line-height:1.15;position:relative">Empresa</h1>
+      <p style="font-size:16px;opacity:.9;line-height:1.5;position:relative">Aquí está todo lo que estamos haciendo por la seguridad de su gente.</p>
+    </div>
+    <div class="tabs-p" role="tablist">
+      <button class="tab-p on" id="tab-mod" type="button">Módulos</button>
+      <button class="tab-p" id="tab-ges" type="button">📊 Gestión y avance</button>
+    </div>
+    <div id="sec-gestion" class="oculto" style="display:flex;flex-direction:column;gap:16px">
+      <div class="g-top"><div><h2 style="margin:0;font-size:22px;font-weight:900">Gestión de seguridad</h2><p id="g-act" style="margin:2px 0 0;font-size:13px;color:var(--gris)"></p></div>
+        <button class="btn-sec" id="g-recargar" type="button">↻ Actualizar</button></div>
+      <div id="g-cont" style="display:flex;flex-direction:column;gap:16px"><div class="vacio">Cargando indicadores…</div></div>
+    </div>
+    <div id="sec-modulos" style="display:flex;flex-direction:column;gap:22px">
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <h2 style="margin:0;font-size:22px;font-weight:900">¿Qué quiere revisar?</h2>
+      <p style="margin:0;font-size:15px;color:var(--gris)">En cada tarjeta: <strong style="color:var(--prim)">Abrir</strong> para ejecutar, o envíela por <strong style="color:#1E7F45">WhatsApp</strong> o <strong style="color:#1E5FA8">correo</strong> a quien deba gestionarla.</p>
+    </div>
+    <div class="grid" id="tarjetas"></div>
+    </div>
+    <div class="pie"><span>Daniel Zunino Urrutia · Asesor en Prevención de Riesgos · Reg. BB/P-226 · Integra Prevención SpA</span><span class="sello">✓ Respaldo automático diario</span></div>
+  </div>
+</div>
+
+<div id="toast" class="toast oculto" role="status"></div>
+<div id="qr-modal" class="modal oculto" role="dialog" aria-modal="true" aria-labelledby="qr-tit">
+  <div class="modal-box">
+    <h3 id="qr-tit" style="margin:0;font-size:20px;font-weight:900"></h3>
+    <p style="margin:0;font-size:14px;color:var(--gris)">Imprímalo o compártalo: el trabajador escanea y entra directo.</p>
+    <img id="qr-img" alt="Código QR">
+    <div class="acciones">
+      <a id="qr-dl" class="cuad" style="background:var(--prim);color:#fff" download>⬇ Descargar cartel</a>
+      <a id="qr-wa" class="cuad wa" target="_blank" rel="noopener">WhatsApp</a>
+      <button id="qr-cerrar" class="btn-sec" type="button">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<script src="supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+(function () {
+  'use strict';
+  var SUPABASE_URL = 'https://tutgzfmysbyhhttclgce.supabase.co';
+  var SUPABASE_KEY = 'sb_publishable_UaugyU8lOm1CVTRSmAXKsQ_Ucb7YuNW';
+
+  /* Colores del ingreso por empresa: integraprevencion.cl/?e=prosip */
+  var TEMAS = {
+    'constructor-center': ['Constructor Center', '#B3261E'], 'perello': ['Perelló', '#1B6B3A'], 'zg': ['ZG', '#2E4A8A'],
+    'oym': ['OYM', '#8A4B00'], 'claudio-lagos': ['Claudio Lagos', '#4B3FB0'], 'maestranza-ali': ['Maestranza ALI', '#0E6E7A'],
+    'maestranza-gala': ['Maestranza Gala', '#A3245F'], 'prosip': ['PROSIP', '#1B6B3A'], 'comfrut': ['COMFRUT Nursery', '#2E7D32'],
+    'hotel-salto-del-laja': ['Hotel Salto del Laja', '#1E5FA8'], 'notaria-ali': ['Notaría ALI', '#5B4636'], 'flete-norte': ['Flete Norte', '#C25E0C'],
+    'plaza-propiedades': ['Plaza Propiedades', '#2E4A8A'], 'agro-troncos-viejos': ['Agro Troncos Viejos', '#6B5B1F'], 'montasip': ['Montasip', '#0E6E7A']
+  };
+
+  var MODULOS = [
+    { k: 'capacitaciones', t: 'Capacitaciones', d: 'Inducción, DS 44 y charlas por trabajador', bg: '#E3EEFB', c: '#1E5FA8', i: '<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>' },
+    { k: 'camiones', t: 'Chequeo de camiones', d: 'Checklists pre-uso y alertas de fallas', bg: '#FFEFD9', c: '#C25E0C', i: '<path d="M2 6h12v10H2zM14 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>' },
+    { k: 'accidentes', t: 'Accidentes', d: 'Reportes, investigaciones y medidas', bg: '#FDE6E6', c: '#B42828', i: '<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/>' },
+    { k: 'documentos', t: 'Documentos legales', d: 'RIOHS, programas y protocolos firmados', bg: '#E6F4E2', c: '#2E7D32', i: '<path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h8M9 17h6"/>' },
+    { k: 'epp', t: 'EPP', d: 'Entregas y registros por sucursal', bg: '#EAE8FA', c: '#4B3FB0', i: '<path d="M4 15a8 8 0 0 1 16 0z"/><path d="M2 15h20M12 7v4"/>' },
+    { k: 'psicosocial', t: 'Riesgo psicosocial', d: 'CEAL-SM y medidas DS 44', bg: '#FCE7F1', c: '#A3245F', i: '<path d="M12 21s-8-5-8-11a4.5 4.5 0 0 1 8-3 4.5 4.5 0 0 1 8 3c0 6-8 11-8 11z"/>' }
+  ];
+
+  /* "Recordar mi clave": guarda la sesion en este equipo o solo mientras la pestana este abierta */
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  var almacen = {
+    getItem: function (k) { try { return localStorage.getItem(k) || sessionStorage.getItem(k); } catch (e) { return null; } },
+    setItem: function (k, v) { try { if (lsGet('ip_recordar') === 'no') { sessionStorage.setItem(k, v); localStorage.removeItem(k); } else { localStorage.setItem(k, v); } } catch (e) {} },
+    removeItem: function (k) { try { localStorage.removeItem(k); sessionStorage.removeItem(k); } catch (e) {} }
+  };
+  var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { storage: almacen, persistSession: true, autoRefreshToken: true } });
+
+  var $ = function (id) { return document.getElementById(id); };
+  var empresasCache = [];
+  var perfil = null;
+  var sesionActual = null;
+  /* Módulos que reciben la sesión del portal para no pedir clave otra vez */
+  var SSO_OK = ['https://danielzunino.github.io/reporte-eventos-constructor/'];
+  /* Servidor que junta los indicadores de todos los módulos (una fila por empresa en su planilla de configuración) */
+  var GESTION_API = 'https://script.google.com/macros/s/AKfycbyFetoPIT053n1kiihmhFB5XhUF9sti1t96umwnhKn2rIe2oseukyDzn1EZCLtHV7Qx/exec';
+  var empActual = null;
+
+  function saludo() { var h = new Date().getHours(); return h < 12 ? 'Buenos días' : (h < 20 ? 'Buenas tardes' : 'Buenas noches'); }
+  function iniciales(n) { var p = (n || '').replace(/[^A-Za-zÁÉÍÓÚÑáéíóúñ ]/g, '').split(' ').filter(Boolean); return (p.length > 1 ? p[0][0] + p[1][0] : (p[0] || '--').slice(0, 2)).toUpperCase(); }
+  function oscurecer(hex) { var n = parseInt(hex.slice(1), 16); var f = function (x) { return Math.max(0, Math.round(x * 0.75)); }; return '#' + ((1 << 24) + (f(n >> 16 & 255) << 16) + (f(n >> 8 & 255) << 8) + f(n & 255)).toString(16).slice(1); }
+  function tema(color) { document.documentElement.style.setProperty('--prim', color || '#2E4A8A'); }
+  function mostrar(id) { ['cargando', 'login', 'admin', 'panel'].forEach(function (x) { $(x).classList.toggle('oculto', x !== id); }); window.scrollTo(0, 0); }
+  function toast(msg) { var t = $('toast'); t.textContent = msg; t.classList.remove('oculto'); clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.add('oculto'); }, 3500); }
+  function error(msg) { var e = $('error'); e.textContent = msg; e.classList.toggle('oculto', !msg); }
+  function el(tag, attrs, text) { var x = document.createElement(tag); if (attrs) Object.keys(attrs).forEach(function (k) { if (k === 'style') x.style.cssText = attrs[k]; else x.setAttribute(k, attrs[k]); }); if (text != null) x.textContent = text; return x; }
+
+  /* ---------- INGRESO ---------- */
+  function prepararLogin() {
+    var slug = new URLSearchParams(location.search).get('e');
+    var t = slug && TEMAS[slug];
+    if (t) {
+      tema(t[1]);
+      document.documentElement.style.setProperty('--acc', '#E8731A');
+      $('l-nombre').textContent = t[0]; $('l-placa').textContent = iniciales(t[0]);
+    } else {
+      tema('#2E4A8A');
+      $('l-nombre').textContent = 'Portal de clientes'; $('l-placa').textContent = 'IP';
+    }
+    $('saludo-login').textContent = saludo();
+    $('recordar').checked = lsGet('ip_recordar') !== 'no';
+    error('');
+    mostrar('login');
+  }
+
+  $('form-login').addEventListener('submit', async function (ev) {
+    ev.preventDefault();
+    error('');
+    lsSet('ip_recordar', $('recordar').checked ? 'si' : 'no');
+    var b = $('btn-entrar'); b.disabled = true; b.textContent = 'INGRESANDO…';
+    try {
+      var r = await sb.auth.signInWithPassword({ email: $('email').value.trim(), password: $('clave').value });
+      if (r.error) { error('Correo o clave incorrectos. Revise e intente de nuevo.'); return; }
+      $('clave').value = '';
+      await entrar();
+    } catch (e) {
+      error('No hay conexión. Revise su internet e intente de nuevo.');
+    } finally { b.disabled = false; b.textContent = 'INGRESE AQUÍ'; }
+  });
+
+  $('olvide').addEventListener('click', async function (ev) {
+    ev.preventDefault();
+    var correo = $('email').value.trim();
+    if (!correo) { error('Escriba su correo arriba y vuelva a apretar "¿Olvidó su clave?".'); return; }
+    await sb.auth.resetPasswordForEmail(correo, { redirectTo: location.origin + location.pathname });
+    error('');
+    toast('Si el correo está registrado, le llegará un mensaje para crear una clave nueva.');
+  });
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-salir]'), function (b) {
+    b.addEventListener('click', async function () { await sb.auth.signOut(); perfil = null; prepararLogin(); });
+  });
+
+  /* ---------- DESPUES DE ENTRAR ---------- */
+  async function entrar() {
+    mostrar('cargando');
+    var u = (await sb.auth.getUser()).data.user;
+    if (!u) { prepararLogin(); return; }
+    var p = await sb.from('perfiles').select('rol,nombre,empresa_id,activo').eq('id', u.id).maybeSingle();
+    if (p.error || !p.data || !p.data.activo) {
+      await sb.auth.signOut();
+      prepararLogin();
+      error('Su usuario aún no está habilitado. Contacte a Integra Prevención.');
+      return;
+    }
+    perfil = p.data;
+    var e = await sb.from('empresas').select('id,slug,nombre,razones_sociales,color,activa,enlaces').order('nombre');
+    empresasCache = e.data || [];
+    try { await sb.from('accesos').insert({ empresa_id: perfil.empresa_id }); } catch (x) {}
+    if (perfil.rol === 'admin') { verAdmin(); }
+    else {
+      var mia = empresasCache.find(function (x) { return x.id === perfil.empresa_id; });
+      if (!mia) { await sb.auth.signOut(); prepararLogin(); error('Su usuario no tiene empresa asignada. Contacte a Integra Prevención.'); return; }
+      verPanel(mia, false);
+    }
+  }
+
+  function verAdmin() {
+    tema('#2E4A8A');
+    $('admin-nombre').textContent = perfil.nombre || 'Administrador';
+    $('n-emp').textContent = empresasCache.length;
+    $('n-rs').textContent = empresasCache.reduce(function (s, x) { return s + (x.razones_sociales || []).length; }, 0);
+    pintarEmpresas('');
+    mostrar('admin');
+  }
+
+  function pintarEmpresas(q) {
+    var cont = $('lista-empresas'); cont.textContent = '';
+    q = (q || '').toLowerCase();
+    empresasCache.filter(function (x) { return !q || (x.nombre + ' ' + (x.razones_sociales || []).join(' ')).toLowerCase().indexOf(q) >= 0; })
+      .forEach(function (x) {
+        var rs = x.razones_sociales || [];
+        var c = el('button', { 'class': 'emp', type: 'button', title: rs.join(' · '), 'aria-label': 'Entrar a ' + x.nombre });
+        c.appendChild(el('span', { 'class': 'placa', style: 'width:52px;height:52px;font-size:19px;border-radius:14px;background:' + x.color }, iniciales(x.nombre)));
+        var tx = el('span', { 'class': 'emp-txt' });
+        tx.appendChild(el('span', { 'class': 'emp-nom' }, x.nombre));
+        tx.appendChild(el('span', { 'class': 'emp-sub' }, rs.length > 1 ? rs.length + ' razones sociales' : 'Empresa individual'));
+        c.appendChild(tx);
+        var fl = el('span', { 'class': 'emp-flecha', 'aria-hidden': 'true' });
+        fl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+        c.appendChild(fl);
+        c.addEventListener('click', function () { verPanel(x, true); });
+        cont.appendChild(c);
+      });
+  }
+  $('buscar').addEventListener('input', function () { pintarEmpresas(this.value); });
+  $('volver').addEventListener('click', verAdmin);
+
+  function verPanel(emp, desdeAdmin) {
+    tema(emp.color);
+    $('p-placa').textContent = iniciales(emp.nombre);
+    $('p-nombre').textContent = emp.nombre;
+    var n = (emp.razones_sociales || []).length;
+    $('p-rs').textContent = n > 1 ? n + ' razones sociales' : '';
+    $('hero-nombre').textContent = emp.nombre;
+    $('saludo-panel').textContent = saludo();
+    $('volver').classList.toggle('oculto', !desdeAdmin);
+    var cont = $('tarjetas'); cont.textContent = '';
+    MODULOS.forEach(function (m) {
+      var c = el('div', { 'class': 'tarjeta' });
+      var top = el('div', { 'class': 't-top' });
+      var ic = el('div', { 'class': 'icono', style: 'background:' + m.bg + ';color:' + m.c });
+      ic.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + m.i + '</svg>';
+      top.appendChild(ic);
+      var url = (emp.enlaces || {})[m.k];
+      var es = el('span', { 'class': 'estado', style: url ? 'background:#E8F5E9;color:#1B5E20' : '' }); es.appendChild(el('span', { 'class': 'punto', style: url ? 'background:#2E8B3A' : '' })); es.appendChild(document.createTextNode(url ? 'Disponible' : 'Próximamente'));
+      top.appendChild(es); c.appendChild(top);
+      var tx = el('div', { style: 'display:flex;flex-direction:column;gap:4px;flex-grow:1' });
+      tx.appendChild(el('span', { 'class': 't-tit' }, m.t)); tx.appendChild(el('span', { 'class': 't-det' }, m.d));
+      c.appendChild(tx);
+      var ac = el('div', { 'class': 'acciones' });
+      var ab = el('button', { 'class': 'abrir', style: url ? '' : 'background:#C9D2DF;color:#4A5672' }, url ? '▶ Abrir' : 'Próximamente');
+      ab.addEventListener('click', function () {
+        if (!url) { toast(m.t + ': esta sección se está preparando. Muy pronto disponible.'); return; }
+        abrirUrl(url);
+      });
+      var msg = 'Integra Prevención · ' + emp.nombre + '\n' + m.t + '\n' + (url ? 'Ingrese aquí: ' + url : 'Revisar en el portal: ' + location.origin + '/?e=' + emp.slug);
+      var wa = el('a', { 'class': 'cuad wa', href: 'https://wa.me/?text=' + encodeURIComponent(msg), target: '_blank', rel: 'noopener', 'aria-label': 'Enviar por WhatsApp', title: 'Enviar por WhatsApp' });
+      wa.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-1.8-1.8l.8-1-1-2z"/></svg>';
+      var ml = el('a', { 'class': 'cuad ml', href: 'mailto:?subject=' + encodeURIComponent(emp.nombre + ' · ' + m.t) + '&body=' + encodeURIComponent(msg), 'aria-label': 'Enviar por correo', title: 'Enviar por correo' });
+      ml.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>';
+      ac.appendChild(ab);
+      if (url) { var qb = el('button', { 'class': 'cuad qr', type: 'button', 'aria-label': 'Ver código QR', title: 'Código QR para compartir' });
+        qb.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg>';
+        qb.addEventListener('click', function () { verQR(emp, m, url); }); ac.appendChild(qb); }
+      ac.appendChild(wa); ac.appendChild(ml); c.appendChild(ac);
+      cont.appendChild(c);
+    });
+    empActual = emp;
+    pestana('mod');
+    $('g-cont').innerHTML = '<div class="vacio">Cargando indicadores…</div>'; $('g-act').textContent = '';
+    gestion._cargado = false;
+    mostrar('panel');
+  }
+
+  /* ---------- ABRIR MÓDULO (con ingreso único a los módulos propios) ---------- */
+  function abrirUrl(url) {
+    var destino = url;
+    if (sesionActual && SSO_OK.some(function (p) { return url.indexOf(p) === 0; })) {
+      destino = url.split('#')[0] + '#sso=' + encodeURIComponent(sesionActual.access_token);
+    }
+    window.open(destino, '_blank', 'noopener');
+  }
+  function urlModulo(k) { return empActual && (empActual.enlaces || {})[k]; }
+
+  /* ---------- PESTAÑAS ---------- */
+  function pestana(x) {
+    $('tab-mod').classList.toggle('on', x === 'mod'); $('tab-ges').classList.toggle('on', x === 'ges');
+    $('sec-modulos').classList.toggle('oculto', x !== 'mod'); $('sec-gestion').classList.toggle('oculto', x !== 'ges');
+    if (x === 'ges' && !gestion._cargado) gestion(false);
+  }
+  $('tab-mod').addEventListener('click', function () { pestana('mod'); });
+  $('tab-ges').addEventListener('click', function () { pestana('ges'); });
+  $('g-recargar').addEventListener('click', function () { gestion(true); });
+
+  /* ---------- QR para compartir cada módulo ---------- */
+  function verQR(emp, m, url) {
+    if (!window.qrcode) { toast('No se pudo cargar el generador de QR. Revise su internet.'); return; }
+    var q = qrcode(0, 'M'); q.addData(url); q.make();
+    var n = q.getModuleCount(), celda = 10, borde = 4, lado = (n + borde * 2) * celda;
+    var cv = document.createElement('canvas'), W = Math.max(lado + 120, 760), H = lado + 270; cv.width = W; cv.height = H;
+    var x = cv.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, W, H);
+    x.fillStyle = emp.color || '#2E4A8A'; x.fillRect(0, 0, W, 120);
+    x.fillStyle = '#fff'; x.textAlign = 'center'; x.font = '900 42px Nunito, Arial'; x.fillText(m.t, W / 2, 62);
+    x.font = '700 26px Nunito, Arial'; x.fillText(emp.nombre, W / 2, 100);
+    x.fillStyle = '#111'; var x0 = (W - lado) / 2;
+    for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) if (q.isDark(r, c)) x.fillRect(x0 + (c + borde) * celda, 130 + (r + borde) * celda, celda, celda);
+    x.fillStyle = '#1F2A44'; x.font = '800 28px Nunito, Arial'; x.fillText('Escanee con la cámara del celular', W / 2, H - 82);
+    x.fillStyle = '#6B7690'; x.font = '700 20px Nunito, Arial'; x.fillText('Integra Prevención SpA · Asesoría en prevención de riesgos', W / 2, H - 40);
+    $('qr-tit').textContent = m.t + ' · ' + emp.nombre;
+    $('qr-img').src = q.createDataURL(6, 2);
+    $('qr-dl').href = cv.toDataURL('image/png'); $('qr-dl').setAttribute('download', 'QR ' + m.t + ' ' + emp.nombre + '.png');
+    $('qr-wa').href = 'https://wa.me/?text=' + encodeURIComponent('Integra Prevención · ' + emp.nombre + '\n' + m.t + '\nIngrese aquí: ' + url);
+    $('qr-modal').classList.remove('oculto');
+  }
+  $('qr-cerrar').addEventListener('click', function () { $('qr-modal').classList.add('oculto'); });
+  $('qr-modal').addEventListener('click', function (e) { if (e.target === this) this.classList.add('oculto'); });
+
+  /* ---------- GESTIÓN: indicadores de todos los módulos ---------- */
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function pctTxt(v) { return v == null ? '—' : (Math.round(v) + '%'); }
+  function colorPct(v) { return v == null ? '#9AA6B8' : v >= 80 ? '#2E7D32' : v >= 50 ? '#E8731A' : '#C62828'; }
+  function kpis(arr) { return '<div class="kp">' + arr.map(function (k) { return '<div class="' + (k[2] || '') + '"><b>' + esc(k[0]) + '</b><span>' + esc(k[1]) + '</span></div>'; }).join('') + '</div>'; }
+  function hbars(list, lab, val) {
+    if (!list || !list.length) return '<div class="vacio">Sin datos todavía</div>';
+    return '<div class="hb">' + list.map(function (o) { var v = val(o); return '<div><span title="' + esc(lab(o)) + '">' + esc(lab(o)) + '</span><span class="barra"><i style="width:' + Math.max(0, Math.min(100, v || 0)) + '%;background:' + colorPct(v) + '"></i></span><b>' + pctTxt(v) + '</b></div>'; }).join('') + '</div>';
+  }
+  function vbars(list, series) { /* series: [[campo,color,nombre]] */
+    var max = Math.max.apply(null, list.map(function (o) { return series.reduce(function (s, x) { return s + (o[x[0]] || 0); }, 0); }).concat([1]));
+    return '<div class="vb">' + list.map(function (o) { var tot = series.reduce(function (s, x) { return s + (o[x[0]] || 0); }, 0);
+      return '<div><em>' + (tot || '') + '</em><span class="col" style="height:' + (tot / max * 100) + '%">' + series.map(function (x) { return '<i style="display:block;height:' + (tot ? (o[x[0]] || 0) / tot * 100 : 0) + '%;background:' + x[1] + '"></i>'; }).join('') + '</span><small>' + esc(o.t) + '</small></div>'; }).join('') + '</div>' +
+      (series.length > 1 ? '<div class="ley">' + series.map(function (x) { return '<span><i style="background:' + x[1] + '"></i>' + esc(x[2]) + '</span>'; }).join('') + '</div>' : '');
+  }
+  function lista(items, f) { return items && items.length ? '<div class="lst">' + items.map(f).join('') + '</div>' : '<div class="vacio" style="color:#2E7D32">✓ Nada pendiente</div>'; }
+  function tarjetaG(titulo, k, color, cuerpo) {
+    var url = urlModulo(k);
+    return '<div class="g-card"><div class="g-head"><span class="g-dot" style="background:' + color + '"></span><span class="t-tit">' + esc(titulo) + '</span>' +
+      (url ? '<button class="g-mini" type="button" data-abrir="' + k + '">Abrir</button>' : '') + '</div>' + cuerpo + '</div>';
+  }
+  function gestion(fresco) {
+    if (!empActual) return;
+    if (GESTION_API.indexOf('http') !== 0) { $('g-cont').innerHTML = '<div class="vacio">La gestión se está configurando.</div>'; return; }
+    gestion._cargado = true;
+    $('g-cont').innerHTML = '<div class="vacio">Cargando indicadores de todos los módulos…</div>';
+    var slug = empActual.slug;
+    fetch(GESTION_API, { method: 'POST', credentials: 'omit', redirect: 'follow',
+      body: JSON.stringify({ fn: 'gestionResumen', args: [sesionActual && sesionActual.access_token, slug, !!fresco] }) })
+      .then(function (r) { return r.json(); })
+      .then(function (j) { if (!empActual || empActual.slug !== slug) return; if (!j.ok) throw new Error(j.e); pintarGestion(j.r); })
+      .catch(function (e) { gestion._cargado = false; $('g-cont').innerHTML = '<div class="error">No se pudieron cargar los indicadores: ' + esc(e.message) + '</div>'; });
+  }
+  function pintarGestion(R) {
+    if (R.sinConfig) { $('g-cont').innerHTML = '<div class="vacio">La gestión de esta empresa aún no está configurada. Integra Prevención la activará pronto.</div>'; return; }
+    $('g-act').textContent = 'Actualizado ' + R.act;
+    var h = '';
+    h += '<div class="g-card"><div class="g-head"><span class="t-tit">⚠ Lo que requiere atención</span></div>' +
+      (R.alertas.length ? R.alertas.map(function (a) { return '<div class="alert-i n' + a.n + '"><span class="tag">' + esc(a.m) + '</span><span>' + esc(a.t) + '</span></div>'; }).join('') : '<div class="vacio" style="color:#2E7D32">✓ Todo al día</div>') + '</div>';
+    h += '<div class="g-grid">';
+    var C = R.cap;
+    if (C) h += tarjetaG('Capacitaciones', 'capacitaciones', '#1E5FA8', C.error ? '<div class="error">' + esc(C.error) + '</div>' :
+      kpis([[pctTxt(C.cumplimiento), 'Cumplimiento a la fecha', C.cumplimiento >= 80 ? 've' : 'na'], [pctTxt(C.avance), 'Avance programa anual'], [C.induccion.ok + '/' + C.trabajadores, 'Con inducción vigente', C.induccion.falta ? 'ro' : 've'], [C.ds44, 'Curso DS 44 vigente']]) +
+      '<div class="g-sub">Avance por sucursal</div>' + hbars(C.porSucursal, function (o) { return o.s; }, function (o) { return o.pct; }) +
+      '<div class="g-sub">Trabajadores con charlas atrasadas</div>' + lista(C.atrasados.slice(0, 6), function (p) { return '<div><b>' + esc(p.n) + '</b><small>' + esc(p.s) + ' · ' + p.k + ' atrasada(s): ' + esc(p.t.join(', ')) + '</small></div>'; }));
+    var Q = R.cheq;
+    if (Q) h += tarjetaG('Chequeo de equipos', 'camiones', '#C25E0C', Q.error ? '<div class="error">' + esc(Q.error) + '</div>' :
+      kpis([[Q.mes.n, 'Chequeos este mes'], [Q.mes.apto, 'Aptos', 've'], [Q.mes.obs, 'Con observaciones', 'na'], [Q.mes.no, 'No aptos', Q.mes.no ? 'ro' : ''], [Q.nAbiertas, 'Fallas abiertas', Q.criticas ? 'ro' : '']]) +
+      '<div class="g-sub">Chequeos por mes</div>' + vbars(Q.porMes, [['apto', '#2E7D32', 'Apto'], ['obs', '#E8731A', 'Con observaciones'], ['no', '#C62828', 'No apto']]) +
+      '<div class="g-sub">Fallas abiertas</div>' + lista(Q.abiertas.slice(0, 5), function (a) { return '<div><b>' + esc(a.pat) + ' · ' + esc(a.item) + '</b><small>' + esc(a.niv) + ' · ' + esc(a.suc) + ' · ' + esc(a.f) + '</small></div>'; }) +
+      (Q.documentos.length ? '<div class="g-sub">Documentos de vehículos</div>' + lista(Q.documentos.slice(0, 5), function (d) { return '<div><b>' + esc(d.pat) + ' · ' + esc(d.doc) + '</b><small style="color:' + (d.est === 'vencido' ? '#C62828' : '#C25E0C') + '">' + esc(d.est) + ' · ' + esc(d.f) + '</small></div>'; }) : ''));
+    var E = R.epp;
+    if (E) {
+      if (E.error) h += tarjetaG('EPP', 'epp', '#4B3FB0', '<div class="error">' + esc(E.error) + '</div>');
+      else {
+        var est = E.estados || {}, tot = E.trabajadores || 0, cols = { 'SIN ENTREGA': '#C62828', 'VENCIDO': '#8E1B1B', 'CON VENCIDOS': '#8E1B1B', 'POR VENCER': '#E8731A', 'INCOMPLETO': '#E8731A', 'AL DIA': '#2E7D32', 'COMPLETO': '#2E7D32', 'VIGENTE': '#2E7D32' }, pal = ['#2E7D32', '#1E5FA8', '#4B3FB0', '#0E6E7A'], acc = 0, seg = [];
+        var colEst = function (k, i) { return cols[k] || pal[i % 4]; };
+        Object.keys(est).forEach(function (k, i) { var a = acc / tot * 360, b = (acc + est[k]) / tot * 360; seg.push(colEst(k, i) + ' ' + a + 'deg ' + b + 'deg'); acc += est[k]; });
+        h += tarjetaG('EPP', 'epp', '#4B3FB0',
+          kpis([[tot, 'Trabajadores'], [E.sinEntrega, 'Sin entrega', E.sinEntrega ? 'ro' : 've'], [E.vencidos, 'Elementos vencidos', E.vencidos ? 'ro' : ''], [E.porVencer, 'Por vencer', E.porVencer ? 'na' : '']]) +
+          '<div class="g-sub">Estado de los trabajadores</div><div class="dona"><span class="an" style="background:conic-gradient(' + (seg.join(',') || '#EEF2F7 0deg 360deg') + ')"><b>' + tot + '</b></span><div class="ley" style="flex-direction:column">' +
+          Object.keys(est).map(function (k, i) { return '<span><i style="background:' + colEst(k, i) + '"></i>' + esc(k) + ': <b>' + est[k] + '</b></span>'; }).join('') + '</div></div>' +
+          '<div class="g-sub">Entregas por mes</div>' + vbars(E.entregasMes, [['n', '#4B3FB0', 'Entregas']]));
+      }
+    }
+    var A = R.acc;
+    if (A) h += tarjetaG('Accidentes e incidentes', 'accidentes', '#B42828', A.error ? '<div class="error">' + esc(A.error) + '</div>' :
+      kpis([[A.casosAnio, 'Casos este año'], [A.abiertos, 'En investigación', A.abiertos ? 'na' : ''], [A.diasPerdidos, 'Días perdidos', A.diasPerdidos ? 'ro' : ''], [A.nVencidas, 'Medidas vencidas', A.nVencidas ? 'ro' : 've'], [A.declPendientes, 'Declaraciones pendientes', A.declPendientes ? 'na' : '']]) +
+      '<div class="g-sub">Casos por mes (12 meses)</div>' + vbars(A.porMes, [['n', '#B42828', 'Casos']]) +
+      (Object.keys(A.tipos).length ? '<div class="ley">' + Object.keys(A.tipos).map(function (k) { return '<span class="chip">' + esc(k) + ': <b>' + A.tipos[k] + '</b></span>'; }).join('') + '</div>' : '') +
+      '<div class="g-sub">Medidas correctivas vencidas</div>' + lista(A.medidasVencidas.slice(0, 5), function (m) { return '<div><b>' + esc(m.medida) + '</b><small>Caso ' + esc(m.caso) + ' · ' + esc(m.resp || 'sin responsable') + ' · venció ' + esc(m.plazo) + '</small></div>'; }));
+    h += '</div>';
+    $('g-cont').innerHTML = h;
+    Array.prototype.forEach.call($('g-cont').querySelectorAll('[data-abrir]'), function (b) { b.addEventListener('click', function () { var u = urlModulo(b.dataset.abrir); if (u) abrirUrl(u); }); });
+  }
+
+
+  /* ---------- ARRANQUE: si ya tiene sesion guardada, entra directo ---------- */
+  sb.auth.onAuthStateChange(function (evento, sesion) {
+    sesionActual = sesion || null;
+    if (evento === 'PASSWORD_RECOVERY') {
+      var nueva = prompt('Escriba su clave nueva (mínimo 8 caracteres):');
+      if (nueva && nueva.length >= 8) { sb.auth.updateUser({ password: nueva }).then(function (r) { toast(r.error ? 'No se pudo cambiar la clave.' : 'Clave cambiada. Ya puede usarla.'); }); }
+    }
+  });
+  sb.auth.getSession().then(function (r) { sesionActual = (r.data && r.data.session) || null; if (sesionActual) entrar(); else prepararLogin(); })
+    .catch(function () { prepararLogin(); });
+})();
+</script>
+</body>
+</html>
