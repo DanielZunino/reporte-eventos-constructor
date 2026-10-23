@@ -89,7 +89,9 @@ label.l{display:block;font-weight:bold;font-size:16px;color:#33435c;margin:14px 
 <script>
 // ================== DATOS ==================
 var INFO={cliente:'',oal:'tu mutualidad',fonoOal:'',inscripcion:'',lugares:[],actividades:[]};
-var R={}, YO=null, PILA=[], ACT='inicio', FIRMA=null, ENVIANDO=false;
+var R={}, YO=null, PILA=[], ACT='inicio', FIRMA=null, ENVIANDO=false, SES='', SESNOM='';
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){return null}}
+function cred(){try{return JSON.parse(ls('rep_cred')||'null')}catch(e){return null}}
 var T_ACC='Accidente del trabajo',T_TRA='Accidente de trayecto',T_INC='Incidente / cuasi accidente',T_DAN='Daño material',T_EP='Posible enfermedad profesional',T_LK='Ley Karin';
 var TIPOS=[
   {t:T_ACC,ic:'🤕',tx:'Me accidenté trabajando',d:'Me golpeé, me corté, me caí, me torcí, etc.'},
@@ -154,7 +156,7 @@ var PASOS={
    '<button class="op on" onclick="siguiente()"><span class="ic">▶</span><span>Comenzar</span></button>'}},
 
  rut:{html:function(){
-   var porNombre=R._modo==='nombre';
+   var porNombre=R._modo==='nombre';var c=cred();if(R.q===undefined&&c&&!porNombre)R.q=c.q;
    return titulo(porNombre?'Escribe tu nombre y apellido':'Escribe tu RUT', porNombre?'Como aparece en tu carnet. Ejemplo: Juan Pérez Soto':'Sin puntos, con guion o sin guion. Ejemplo: 12345678-9')+
      (porNombre?campo('q','Nombre y apellido','text','autocomplete="off"'):campo('q','RUT','text','autocomplete="off" inputmode="text" autocapitalize="characters"'))+
      '<p><button class="link" onclick="R._modo=\''+(porNombre?'rut':'nombre')+'\';R.q=\'\';pintar()">'+(porNombre?'Prefiero usar mi RUT':'No me acuerdo de mi RUT: buscar por nombre')+'</button></p>'+
@@ -176,6 +178,16 @@ var PASOS={
    return titulo('¿Cuál eres tú?','Toca tu nombre')+c.map(function(w,i){return '<button class="op" onclick="soyYo('+i+')"><span class="ic">👤</span><span>'+esc(w.nombre)+'<small>'+esc(w.cargo)+' · '+esc(w.sucursal)+' · RUT '+esc(w.run)+'</small></span></button>'}).join('')+
      '<button class="op" onclick="R.q=\'\';ir(\'rut\')"><span class="ic">❌</span><span>No aparezco</span></button>';
  },nav:0},
+
+ clave:{ver:function(){return false},html:function(){
+   var c=cred();if(R.clave===undefined&&c&&c.k===YO.nombre)R.clave=c.c;
+   return titulo('Escribe tu clave','Tu <b>primer nombre</b> + tu <b>año de nacimiento</b>, todo junto y sin espacios.')+
+     caja('info','Ejemplo: si te llamas <b>Juan</b> Pérez y naciste en <b>1985</b>, tu clave es <b>juan1985</b>')+
+     '<input id="clave" type="'+(R._ver?'text':'password')+'" placeholder="Ej: juan1985" value="'+esc(R.clave||'')+'" oninput="R.clave=this.value;botones()" autocomplete="off" autocapitalize="none">'+
+     '<label class="check"><input type="checkbox" '+(R._ver?'checked':'')+' onchange="R._ver=this.checked;pintar()"> Ver clave</label>'+
+     '<label class="check"><input type="checkbox" id="recordar" '+(R._rec!==false?'checked':'')+' onchange="R._rec=this.checked"> Recordar mi RUT y clave en este celular</label>'+
+     (R._err?caja('ro',R._err):'');
+ },ok:function(){return (R.clave||'').trim().length>=5||'Escribe tu clave'},sig:'Entrar',accion:revisarClave},
 
  tipo:{html:function(){return titulo('Hola '+esc(YO.saludo)+' 👋 ¿Qué quieres reportar?','Elige la opción que más se parece. Después puedes agregar otra.')+
    TIPOS.map(function(o){var on=R.tipo===o.t;return '<button class="op'+(o.ro?' ro':'')+(on?' on':'')+'" onclick="eligeTipo(\''+o.t+'\')"><span class="ic">'+o.ic+'</span><span>'+o.tx+'<small>'+o.d+'</small></span></button>'}).join('')},
@@ -403,7 +415,18 @@ function buscar(){
     R._cand=r.candidatos;ir('confirma');
   }).withFailureHandler(function(e){ENVIANDO=false;R._err=esc(e.message);pintar()}).identificar(R.q);
 }
-function soyYo(i){YO=R._cand[i];R.k=YO.k;$('hSub').textContent=YO.nombre+' · '+YO.sucursal;PILA=[];ir('tipo',true)}
+function soyYo(i){YO=R._cand[i];R.k=YO.k;$('hSub').textContent=YO.nombre+' · '+YO.sucursal+(SES?' · por '+SESNOM:'');
+  if(SES){PILA=[];ir('tipo',true)}else ir('clave')}
+function revisarClave(){
+  ENVIANDO=true;botones();
+  google.script.run.withSuccessHandler(function(r){
+    ENVIANDO=false;
+    if(!r.ok){R._err='Clave incorrecta. '+(r.quedan>0?'Te quedan '+r.quedan+' intento(s).':'')+'<br>Recuerda: primer nombre + año de nacimiento (ej: juan1985).';pintar();return}
+    var rec=$('recordar')&&$('recordar').checked;
+    if(rec)ls('rep_cred',JSON.stringify({q:R._modo==='nombre'?'':R.q,k:YO.nombre,c:R.clave}));else ls('rep_cred',null);
+    PILA=[];ir('tipo',true);
+  }).withFailureHandler(function(e){ENVIANDO=false;R._err=esc(e.message);pintar()}).verificarClave(R.k,R.clave);
+}
 
 // ---- Fotos ----
 function fotos(inp){
@@ -450,11 +473,19 @@ function enviar(){
     fotos:R.fotos||[],firma:FIRMA.png()};
   ENVIANDO=true;botones();
   google.script.run.withSuccessHandler(function(r){ENVIANDO=false;R._id=r.id;PILA=[];ir('fin',true)})
-    .withFailureHandler(function(e){ENVIANDO=false;botones();aviso(esc(e.message));if(/RUT/.test(e.message)){PILA=[];ir('rut',true)}})
-    .enviarReporte(R.k,envio);
+    .withFailureHandler(function(e){ENVIANDO=false;botones();aviso(esc(e.message));if(/RUT|clave/.test(e.message)){PILA=[];ir('rut',true)}})
+    .enviarReporte(R.k,envio,SES);
 }
 
 // ================== INICIO ==================
+(function(){ /* Ingreso desde el Portal Integra: no pide clave */
+  var m=location.hash.match(/sso=([^&]+)/);if(!m)return;
+  try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}
+  google.script.run.withSuccessHandler(function(r){SES=r.token;SESNOM=r.u.nombre;
+    var b=document.createElement('div');b.className='caja ok';b.style.margin='0 0 12px';b.innerHTML='🔓 Ingresaste desde el Portal: <b>'+esc(SESNOM)+'</b>. No se pedirá clave al trabajador.';
+    b.style.cssText='max-width:560px;margin:12px auto 0';document.body.insertBefore(b,$('m'));
+  }).withFailureHandler(function(e){aviso(esc(e.message))}).ssoLogin(decodeURIComponent(m[1]));
+})();
 google.script.run.withSuccessHandler(function(i){
   INFO=i;$('hTit').textContent='Reportar un evento — '+i.cliente;$('hSub').textContent='Accidentes, incidentes, daños, molestias y Ley Karin';pintar();
 }).withFailureHandler(function(e){$('m').innerHTML=caja('ro','No se pudo cargar: '+esc(e.message))}).infoPublica();
