@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Reportar un evento</title>
+<style>
+:root{--az:#0b3d91;--az2:#1565c0;--na:#f28c28;--ve:#2e7d32;--ro:#c62828;--am:#f9a825;--gr:#eef2f8;--bo:#c9d3e3;--tx:#1a1a1a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#f4f6fb;color:var(--tx);font-family:Arial,Helvetica,sans-serif;font-size:18px}
+header{background:linear-gradient(90deg,var(--az),var(--az2));color:#fff;padding:12px 16px;position:sticky;top:0;z-index:5}
+header b{font-size:17px;display:block}header small{opacity:.9;font-size:13px}
+.prog{height:8px;background:rgba(255,255,255,.25);border-radius:4px;margin-top:8px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--na);width:0;transition:width .3s}
+main{max-width:560px;margin:0 auto;padding:16px 16px 120px}
+h1{font-size:24px;line-height:1.25;margin:6px 0 6px;color:var(--az)}
+.sub{color:#4a5870;font-size:16px;margin:0 0 16px;line-height:1.4}
+.op{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:#fff;border:3px solid var(--bo);border-radius:16px;
+  padding:16px;margin:0 0 12px;font-size:19px;font-weight:bold;color:var(--tx);cursor:pointer;font-family:inherit;line-height:1.25}
+.op .ic{font-size:34px;flex:none;width:44px;text-align:center}
+.op small{display:block;font-weight:normal;font-size:14px;color:#5a6780;margin-top:3px}
+.op.on{border-color:var(--az);background:#e3ecfb}
+.op.ro{border-color:#ef9a9a}.op.ro.on{border-color:var(--ro);background:#fdecea}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+.chip{border:3px solid var(--bo);background:#fff;border-radius:30px;padding:12px 18px;font-size:17px;cursor:pointer;user-select:none;font-family:inherit;color:var(--tx)}
+.chip.on{background:var(--az);border-color:var(--az);color:#fff;font-weight:bold}
+.grupo{font-size:15px;font-weight:bold;color:var(--az);margin:14px 0 8px}
+input,textarea,select{width:100%;padding:14px;border:3px solid var(--bo);border-radius:12px;font-size:19px;font-family:inherit;background:#fff}
+input:focus,textarea:focus{outline:none;border-color:var(--az2)}
+textarea{min-height:170px;resize:vertical;line-height:1.4}
+label.l{display:block;font-weight:bold;font-size:16px;color:#33435c;margin:14px 0 6px}
+.nav{position:fixed;bottom:0;left:0;right:0;background:#fff;box-shadow:0 -2px 10px rgba(0,0,0,.12);padding:12px 16px;display:flex;gap:10px;z-index:6}
+.nav button{flex:1;border:0;border-radius:14px;padding:16px;font-size:19px;font-weight:bold;cursor:pointer;font-family:inherit}
+.btnAtras{background:#e0e4ec;color:#33435c;flex:0 0 34%!important}
+.btnSig{background:var(--ve);color:#fff}
+.btnSig:disabled{background:#9bbf9d}
+.caja{border-radius:14px;padding:14px;margin:0 0 14px;font-size:16px;line-height:1.45}
+.caja.info{background:#e3f0ff;border-left:7px solid var(--az2);color:#0b3d91}
+.caja.ro{background:#fdecea;border-left:7px solid var(--ro);color:#8e0000}
+.caja.ok{background:#e8f5e9;border-left:7px solid var(--ve);color:#1b5e20}
+.caja.am{background:#fff8e1;border-left:7px solid var(--am);color:#6d4c00}
+.caja ol,.caja ul{margin:6px 0 0;padding-left:22px}.caja li{margin:4px 0}
+.eva{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.eva button{border:3px solid transparent;border-radius:12px;padding:10px 0;font-size:22px;font-weight:bold;cursor:pointer;font-family:inherit}
+.eva button span{display:block;font-size:24px}
+.eva button.on{border-color:#000;transform:scale(1.08)}
+.firma{width:100%;height:200px;border:3px dashed #9aa7bd;border-radius:14px;background:#fff;touch-action:none;display:block}
+.fila{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.borrar{background:#ffcdd2;color:#8e0000;border:0;border-radius:10px;padding:8px 14px;font-weight:bold;font-size:15px;cursor:pointer}
+.res{background:#fff;border-radius:14px;padding:4px 14px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.res div{padding:10px 0;border-bottom:1px solid #e3e7ef;font-size:16px}.res div:last-child{border:0}
+.res b{display:block;font-size:13px;color:#5a6780;text-transform:uppercase}
+.check{display:flex;gap:12px;align-items:flex-start;font-size:17px;background:#fff;border-radius:14px;padding:14px;border:3px solid var(--bo);margin:12px 0}
+.check input{width:28px;height:28px;flex:none;margin:0}
+.yo{background:#fff;border-radius:16px;padding:18px;border:3px solid var(--az);text-align:center;margin-bottom:12px}
+.yo .nom{font-size:24px;font-weight:bold;color:var(--az)}.yo small{display:block;color:#5a6780;font-size:16px;margin-top:6px}
+.fotos{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.fotos img{width:96px;height:96px;object-fit:cover;border-radius:10px;border:2px solid var(--bo)}
+.mic{background:var(--na);color:#fff;border:0;border-radius:30px;padding:10px 16px;font-size:16px;font-weight:bold;cursor:pointer;margin:8px 0}
+.mic.on{background:var(--ro)}
+.grande{font-size:64px;text-align:center;margin:10px 0}
+.link{color:var(--az2);font-weight:bold;background:none;border:0;font-size:17px;text-decoration:underline;cursor:pointer;padding:8px 0;font-family:inherit}
+.spin{text-align:center;padding:40px 0;font-size:18px;color:#5a6780}
+.hide{display:none!important}
+</style>
+</head>
+<body>
+<header><b id="hTit">Reportar un evento de seguridad</b><small id="hSub">Cargando...</small><div class="prog"><i id="prog"></i></div></header>
+<main id="m"><div class="spin">Cargando...</div></main>
+<div class="nav hide" id="nav"><button class="btnAtras" id="bAtras" onclick="atras()">◀ Atrás</button><button class="btnSig" id="bSig" onclick="siguiente()">Siguiente ▶</button></div>
+
+<script>
+/* Puente: fuera de Google (GitHub) usa la API del servidor sin sesión de Chrome */
+(function(){
+  if(window.google&&google.script&&google.script.run)return;
+  var API='https://script.google.com/macros/s/AKfycbyFetoPIT053n1kiihmhFB5XhUF9sti1t96umwnhKn2rIe2oseukyDzn1EZCLtHV7Qx/exec';
+  function runner(ok,ko){return new Proxy({},{get:function(_,fn){
+    if(fn==='withSuccessHandler')return function(h){return runner(h,ko)};
+    if(fn==='withFailureHandler')return function(h){return runner(ok,h)};
+    return function(){var args=Array.prototype.slice.call(arguments);
+      fetch(API,{method:'POST',credentials:'omit',redirect:'follow',body:JSON.stringify({fn:fn,args:args})})
+        .then(function(r){return r.json()})
+        .then(function(j){if(j.ok){ok&&ok(j.r)}else{ko&&ko(new Error(j.e))}})
+        .catch(function(e){ko&&ko(new Error('No hay conexión. Revisa tu internet e intenta de nuevo.'))});
+    }}})}
+  window.google={script:{get run(){return runner(null,null)}}};
+})();
+</script>
+<script>
+// ================== DATOS ==================
+var INFO={cliente:'',oal:'tu mutualidad',fonoOal:'',inscripcion:'',lugares:[],actividades:[]};
+var R={}, YO=null, PILA=[], ACT='inicio', FIRMA=null, ENVIANDO=false;
+var T_ACC='Accidente del trabajo',T_TRA='Accidente de trayecto',T_INC='Incidente / cuasi accidente',T_DAN='Daño material',T_EP='Posible enfermedad profesional',T_LK='Ley Karin';
+var TIPOS=[
+  {t:T_ACC,ic:'🤕',tx:'Me accidenté trabajando',d:'Me golpeé, me corté, me caí, me torcí, etc.'},
+  {t:T_TRA,ic:'🚌',tx:'Me accidenté en el camino',d:'De la casa al trabajo o del trabajo a la casa'},
+  {t:T_INC,ic:'⚠️',tx:'Casi ocurre un accidente',d:'Nadie se lesionó, pero pudo pasar algo'},
+  {t:T_DAN,ic:'💥',tx:'Se dañó un equipo o material',d:'Grúa, camión, rack, producto, instalación'},
+  {t:T_EP,ic:'🩺',tx:'Tengo una molestia por mi trabajo',d:'Dolor o malestar que viene de hace un tiempo'},
+  {t:T_LK,ic:'🛑',tx:'Sufrí acoso, maltrato o violencia',d:'Ley Karin. Es reservado: solo lo ve prevención',ro:1}];
+var PARTES={'Cabeza':['Cabeza','Cara','Ojo der.','Ojo izq.','Oreja der.','Oreja izq.','Boca / dientes','Cuello'],
+  'Tronco':['Hombro der.','Hombro izq.','Pecho','Espalda alta','Espalda baja (lumbar)','Abdomen','Cadera der.','Cadera izq.'],
+  'Brazos y manos':['Brazo der.','Brazo izq.','Codo der.','Codo izq.','Muñeca der.','Muñeca izq.','Mano der.','Mano izq.','Dedos mano der.','Dedos mano izq.'],
+  'Piernas y pies':['Pierna der.','Pierna izq.','Rodilla der.','Rodilla izq.','Tobillo der.','Tobillo izq.','Pie der.','Pie izq.','Dedos pie der.','Dedos pie izq.']};
+var EVA=[['😀','#1b9e3e'],['🙂','#5cb85c'],['🙂','#8bc34a'],['😐','#cddc39'],['😐','#ffeb3b'],['😕','#ffc107'],['😟','#ff9800'],['😣','#ff7043'],['😖','#f4511e'],['😫','#e53935'],['😭','#b71c1c']];
+
+function $(i){return document.getElementById(i)}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function has(t){return (R.tipos||[]).indexOf(t)>-1}
+function acc(){return has(T_ACC)||has(T_TRA)}
+function lesion(){return acc()||has(T_EP)}
+function lk(){return has(T_LK)}
+function hoyISO(o){var h=new Date();h.setDate(h.getDate()-(o||0));return new Date(h-h.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
+function dma(iso){var p=String(iso||'').split('-');return p.length===3?p[2]+'-'+p[1]+'-'+p[0]:iso}
+
+// ================== COMPONENTES ==================
+function opciones(campo,lista,multi){ // lista: [{v,ic,tx,d,ro}]
+  return lista.map(function(o){var on=multi?(R[campo]||[]).indexOf(o.v)>-1:R[campo]===o.v;
+    return '<button class="op'+(o.ro?' ro':'')+(on?' on':'')+'" onclick="elige(\''+campo+'\',\''+esc(o.v).replace(/'/g,"\\'")+'\','+(multi?1:0)+')">'+
+      (o.ic?'<span class="ic">'+o.ic+'</span>':'')+'<span>'+esc(o.tx||o.v)+(o.d?'<small>'+esc(o.d)+'</small>':'')+'</span></button>'}).join('');
+}
+function chips(campo,lista,multi){
+  return '<div class="chips">'+lista.map(function(v){var on=multi?(R[campo]||[]).indexOf(v)>-1:R[campo]===v;
+    return '<button class="chip'+(on?' on':'')+'" onclick="elige(\''+campo+'\',\''+esc(v).replace(/'/g,"\\'")+'\','+(multi?1:0)+')">'+esc(v)+'</button>'}).join('')+'</div>';
+}
+function sino(campo){return chips(campo,['SI','NO'])}
+function elige(campo,v,multi){
+  if(multi){var a=R[campo]=R[campo]||[],i=a.indexOf(v);if(i>-1)a.splice(i,1);else a.push(v)}
+  else R[campo]=R[campo]===v?'':v;
+  var y=window.scrollY;pintar();window.scrollTo(0,y);
+  var p=PASOS[ACT];if(!multi&&p.auto&&R[campo]&&valido(true))setTimeout(siguiente,250);
+}
+function campo(id,ph,tipo,extra){return '<input id="'+id+'" type="'+(tipo||'text')+'" placeholder="'+esc(ph||'')+'" value="'+esc(R[id]||'')+'" oninput="R.'+id+'=this.value;botones()" '+(extra||'')+'>'}
+function texto(id,ph){return '<textarea id="'+id+'" placeholder="'+esc(ph||'')+'" oninput="R.'+id+'=this.value;botones()">'+esc(R[id]||'')+'</textarea>'+mic(id)}
+function mic(id){var ok=window.SpeechRecognition||window.webkitSpeechRecognition;return ok?'<button class="mic" id="mic_'+id+'" onclick="dictar(\''+id+'\')">🎤 Hablar en vez de escribir</button>':''}
+var REC=null;
+function dictar(id){
+  var S=window.SpeechRecognition||window.webkitSpeechRecognition;if(!S)return;
+  if(REC){REC.stop();REC=null;return}
+  REC=new S();REC.lang='es-CL';REC.continuous=true;REC.interimResults=false;
+  var b=$('mic_'+id);b.classList.add('on');b.textContent='⏹ Detener (te estoy escuchando...)';
+  REC.onresult=function(e){for(var i=e.resultIndex;i<e.results.length;i++)if(e.results[i].isFinal){var t=$(id);t.value=(t.value?t.value.replace(/\s*$/,' '):'')+e.results[i][0].transcript;R[id]=t.value}botones()};
+  REC.onend=function(){REC=null;if($('mic_'+id)){$('mic_'+id).classList.remove('on');$('mic_'+id).textContent='🎤 Hablar en vez de escribir'}};
+  try{REC.start()}catch(e){REC=null}
+}
+function caja(c,h){return '<div class="caja '+c+'">'+h+'</div>'}
+function titulo(t,s){return '<h1>'+t+'</h1>'+(s?'<p class="sub">'+s+'</p>':'')}
+
+// ================== PASOS ==================
+// cada paso: ver() -> ¿se muestra?, html() -> contenido, ok() -> ¿puede avanzar? (true o mensaje), auto: avanza solo al elegir
+var PASOS={
+ inicio:{nav:0,html:function(){return '<div class="grande">🦺</div>'+titulo('Reporta lo que pasó','Te haremos unas preguntas cortas, una por una. Toma unos 3 a 5 minutos.')+
+   caja('info','<b>¿Por qué reportar?</b><ul><li>Para que te atiendan y quede todo registrado.</li><li>Para que se investigue la causa y no le pase a otro compañero.</li><li>La empresa debe registrar e investigar los accidentes e incidentes (DS 44).</li></ul>')+
+   '<button class="op on" onclick="siguiente()"><span class="ic">▶</span><span>Comenzar</span></button>'}},
+
+ rut:{html:function(){
+   var porNombre=R._modo==='nombre';
+   return titulo(porNombre?'Escribe tu nombre y apellido':'Escribe tu RUT', porNombre?'Como aparece en tu carnet. Ejemplo: Juan Pérez Soto':'Sin puntos, con guion o sin guion. Ejemplo: 12345678-9')+
+     (porNombre?campo('q','Nombre y apellido','text','autocomplete="off"'):campo('q','RUT','text','autocomplete="off" inputmode="text" autocapitalize="characters"'))+
+     '<p><button class="link" onclick="R._modo=\''+(porNombre?'rut':'nombre')+'\';R.q=\'\';pintar()">'+(porNombre?'Prefiero usar mi RUT':'No me acuerdo de mi RUT: buscar por nombre')+'</button></p>'+
+     (R._err?caja('ro',R._err):'');
+ },ok:function(){return (R.q||'').trim().length>=3||'Escribe tu '+(R._modo==='nombre'?'nombre':'RUT')},sig:'Buscarme',accion:buscar},
+
+ noinscrito:{ver:function(){return false},nav:0,html:function(){
+   return '<div class="grande">📋</div>'+titulo('No estás en la nómina','Para reportar, primero tienes que estar inscrito como trabajador de la empresa.')+
+     caja('am','<b>¿Qué hago?</b><ol><li>Avisa ahora a tu jefatura lo que pasó (en persona o por teléfono).</li><li>Pídele que te inscriba en el <b>Formulario de Inscripción</b>.</li><li>Después vuelve a esta página.</li></ol>')+
+     (INFO.inscripcion?'<a class="op on" style="text-decoration:none" href="'+esc(INFO.inscripcion)+'" target="_blank"><span class="ic">📝</span><span>Abrir Formulario de Inscripción</span></a>':'')+
+     caja('ro','Si estás herido, <b>no esperes</b>: avisa a tu jefatura y atiéndete en '+esc(INFO.oal)+(INFO.fonoOal?' (fono '+esc(INFO.fonoOal)+')':'')+'. Si es grave llama al <b>131</b> (SAMU).')+
+     '<button class="op" onclick="R.q=\'\';ir(\'rut\')"><span class="ic">↩</span><span>Intentar de nuevo</span></button>';
+ }},
+
+ confirma:{html:function(){
+   var c=R._cand||[];
+   if(c.length===1){var w=c[0];return titulo('¿Eres tú?')+'<div class="yo"><div class="nom">'+esc(w.nombre)+'</div><small>'+esc(w.cargo)+'<br>'+esc(w.sucursal)+' · '+esc(w.empresa)+'</small><small>RUT '+esc(w.run)+'</small></div>'+
+     '<button class="op on" onclick="soyYo(0)"><span class="ic">✅</span><span>Sí, soy yo</span></button><button class="op" onclick="R.q=\'\';ir(\'rut\')"><span class="ic">❌</span><span>No soy yo</span></button>'}
+   return titulo('¿Cuál eres tú?','Toca tu nombre')+c.map(function(w,i){return '<button class="op" onclick="soyYo('+i+')"><span class="ic">👤</span><span>'+esc(w.nombre)+'<small>'+esc(w.cargo)+' · '+esc(w.sucursal)+' · RUT '+esc(w.run)+'</small></span></button>'}).join('')+
+     '<button class="op" onclick="R.q=\'\';ir(\'rut\')"><span class="ic">❌</span><span>No aparezco</span></button>';
+ },nav:0},
+
+ tipo:{html:function(){return titulo('Hola '+esc(YO.saludo)+' 👋 ¿Qué quieres reportar?','Elige la opción que más se parece. Después puedes agregar otra.')+
+   TIPOS.map(function(o){var on=R.tipo===o.t;return '<button class="op'+(o.ro?' ro':'')+(on?' on':'')+'" onclick="eligeTipo(\''+o.t+'\')"><span class="ic">'+o.ic+'</span><span>'+o.tx+'<small>'+o.d+'</small></span></button>'}).join('')},
+   ok:function(){return !!R.tipo||'Elige una opción'}},
+
+ extra:{ver:function(){return !lk()},html:function(){
+   var l=TIPOS.filter(function(o){return o.t!==R.tipo&&o.t!==T_LK&&!(R.tipo===T_ACC&&o.t===T_TRA)&&!(R.tipo===T_TRA&&o.t===T_ACC)})
+     .map(function(o){return {v:o.t,ic:o.ic,tx:o.tx}});
+   return titulo('¿Además pasó algo de esto?','Si no, toca <b>Siguiente</b>.')+opciones('extras',l,1)}},
+
+ urgente:{ver:function(){return acc()},auto:1,html:function(){
+   return titulo('¿Estás herido o necesitas atención ahora?')+opciones('urgente',[{v:'SI',ic:'🚑',tx:'Sí, necesito atención',ro:1},{v:'NO',ic:'👍',tx:'No, estoy bien por ahora'}])+
+     (R.urgente==='SI'?caja('ro','<b>Haz esto primero:</b><ol><li>Avisa <b>ahora</b> a tu jefatura.</li><li>Atiéndete en '+esc(INFO.oal)+(INFO.fonoOal?' — fono <b>'+esc(INFO.fonoOal)+'</b>':'')+'.</li><li>Si es grave (sangrado fuerte, pérdida de conciencia, no puedes moverte): llama al <b>131</b> (SAMU).</li></ol>Puedes terminar este reporte después de atenderte.'):'');
+ },ok:function(){return !!R.urgente||'Elige una opción'}},
+
+ cuando:{auto:1,html:function(){
+   return titulo(lk()?'¿Cuándo pasó la última vez?':'¿Cuándo pasó?')+opciones('dia',[{v:'hoy',ic:'📅',tx:'Hoy'},{v:'ayer',ic:'⏪',tx:'Ayer'},{v:'otro',ic:'🗓️',tx:'Otro día'}])+
+     (R.dia==='otro'?'<label class="l">Elige la fecha</label><input type="date" id="fechaOtra" max="'+hoyISO()+'" value="'+esc(R.fechaOtra||'')+'" onchange="R.fechaOtra=this.value;botones()">':'');
+ },ok:function(){return R.dia==='hoy'||R.dia==='ayer'||(R.dia==='otro'&&!!R.fechaOtra)||'Indica el día'}},
+
+ hora:{ver:function(){return !has(T_EP)||R.tipo!==T_EP},auto:1,html:function(){
+   return titulo('¿A qué hora, más o menos?')+opciones('momento',[{v:'En la mañana',ic:'🌅',tx:'En la mañana'},{v:'En la tarde',ic:'☀️',tx:'En la tarde'},{v:'En la noche',ic:'🌙',tx:'En la noche'}])+
+     '<label class="l">Si sabes la hora exacta (opcional)</label>'+campo('horaExacta','','time');
+ },ok:function(){return !!(R.momento||R.horaExacta)||'Elige una opción'}},
+
+ tray1:{ver:function(){return has(T_TRA)},auto:1,html:function(){return titulo('¿Hacia dónde ibas?')+
+   opciones('trayectoSentido',[{v:'Casa → Trabajo',ic:'🏠',tx:'De mi casa al trabajo'},{v:'Trabajo → Casa',ic:'🏢',tx:'Del trabajo a mi casa'},{v:'Entre dos trabajos',ic:'🔁',tx:'Entre dos trabajos'}])},
+   ok:function(){return !!R.trayectoSentido||'Elige una opción'}},
+ tray2:{ver:function(){return has(T_TRA)},html:function(){return titulo('¿Cómo te movías y por dónde?')+
+   chips('trayectoMedio',['A pie','Bus / micro','Colectivo','Auto propio','Moto','Bicicleta','Transporte de la empresa','Otro'])+
+   '<label class="l">¿Dónde pasó? (calle, esquina o sector)</label>'+campo('trayectoLugar','Ej: Av. Alemania con Colón')},
+   ok:function(){return (!!R.trayectoMedio&&(R.trayectoLugar||'').trim().length>2)||'Elige cómo te movías y escribe dónde pasó'}},
+ tray3:{ver:function(){return has(T_TRA)},html:function(){return titulo('¿Tienes cómo demostrar lo que pasó?','Para el accidente de trayecto la mutualidad pide pruebas. Marca lo que tengas.')+
+   chips('trayectoPrueba',['Constancia en Carabineros','Atención de urgencia','Testigos','Fotos del lugar','Parte policial','Todavía nada'],1)+
+   caja('info','Si no tienes nada aún, puedes dejar <b>constancia en Carabineros</b>. Ayuda mucho a que te cubran.')},
+   ok:function(){return (R.trayectoPrueba||[]).length>0||'Marca al menos una opción'}},
+
+ donde:{ver:function(){return !has(T_TRA)||R.tipo!==T_TRA},html:function(){
+   return titulo('¿Dónde pasó?','Tu sucursal: <b>'+esc(YO.sucursal)+'</b>')+chips('lugar',INFO.lugares)+
+     '<label class="l">Más detalle del lugar (opcional)</label>'+campo('lugarDetalle','Ej: pasillo 3, al lado del rack de fierros');
+ },ok:function(){return !!R.lugar||'Elige el lugar'}},
+
+ actividad:{ver:function(){return !lk()&&R.tipo!==T_EP&&R.tipo!==T_TRA},html:function(){
+   return titulo('¿Qué estabas haciendo?')+chips('actividad',INFO.actividades)+
+     '<label class="l">¿Era tu trabajo de siempre?</label>'+sino('habitual');
+ },ok:function(){return (!!R.actividad&&!!R.habitual)||'Responde las dos preguntas'}},
+
+ forma:{ver:function(){return has(T_ACC)||has(T_TRA)},html:function(){
+   return titulo('¿Cómo te lesionaste?','Puedes marcar más de una')+chips('forma',['Me golpeé con algo','Algo me cayó encima','Me caí al mismo nivel (resbalé / tropecé)','Me caí de altura (escalera, camión, rack)',
+     'Me corté','Me atrapó una máquina o carga','Me esforcé levantando o empujando','Choque o colisión de vehículo','Atropello','Me cayó algo al ojo','Quemadura','Otro'],1);
+ },ok:function(){return (R.forma||[]).length>0||'Marca al menos una opción'}},
+
+ incidente:{ver:function(){return has(T_INC)},html:function(){
+   return titulo('¿Qué pasó?','Marca lo que corresponda')+chips('formaInc',['Algo cayó cerca de alguien','Alguien casi se cae o resbala','Casi choque o atropello con grúa o vehículo','Una carga se soltó o desarmó',
+     'Falla de un equipo o grúa','Derrame de producto','Amago de incendio / humo','Problema eléctrico (chispa, cable)','Condición peligrosa que vi','Otro'],1)+
+     '<div class="grupo">¿Qué pudo haber pasado?</div>'+chips('potencial',['Alguien pudo lesionarse','Lesión grave o muerte','Daño a equipos o productos','Incendio','No sé'],1);
+ },ok:function(){return ((R.formaInc||[]).length>0&&(R.potencial||[]).length>0)||'Responde las dos preguntas'}},
+
+ dano:{ver:function(){return has(T_DAN)},html:function(){
+   return titulo('¿Qué se dañó?')+chips('danoBien',['Grúa horquilla','Camión / rampla','Rack / estantería','Producto / mercadería','Portón / puerta','Instalación (muro, techo, piso)','Herramienta','Vehículo de un tercero','Otro'])+
+     '<label class="l">Patente, código o N° del equipo (si sabes)</label>'+campo('danoCodigo','Ej: GH-03 o patente')+
+     '<label class="l">¿Hay alguien externo involucrado? (cliente, otro vehículo)</label>'+sino('danoTerceros');
+ },ok:function(){return (!!R.danoBien&&!!R.danoTerceros)||'Responde lo que se dañó y si hay terceros'}},
+
+ ep1:{ver:function(){return has(T_EP)},html:function(){
+   return titulo('¿Qué molestia tienes?','Marca todas las que sientas')+chips('epSintomas',['Dolor de espalda','Dolor de cuello u hombros','Dolor en muñeca o mano','Dolor en rodillas','Hormigueo o adormecimiento','Me cuesta escuchar / zumbido',
+     'Estrés, angustia o ansiedad','No puedo dormir','Tos o dificultad para respirar','Irritación en la piel','Otro'],1)+
+     '<label class="l">¿Desde cuándo?</label>'+chips('epDesde',['Hace días','Hace semanas','Hace meses','Hace más de un año']);
+ },ok:function(){return ((R.epSintomas||[]).length>0&&!!R.epDesde)||'Responde las dos preguntas'}},
+ ep2:{ver:function(){return has(T_EP)},html:function(){
+   return titulo('¿Qué tarea crees que te provoca esta molestia?')+campo('epTarea','Ej: levantar sacos de cemento todo el día')+
+     '<div class="grupo">¿Con qué crees que tiene que ver?</div>'+chips('epAgente',['Ergonómico / manejo manual de carga','Movimientos repetitivos','Psicosocial / salud mental','Ruido','Polvo','Químico','Vibraciones','Temperatura','No sé'],1);
+ },ok:function(){return ((R.epTarea||'').trim().length>2)||'Cuéntanos qué tarea es'}},
+
+ lk1:{ver:function(){return lk()},html:function(){
+   return caja('ok','🔒 <b>Esto es reservado.</b> Solo lo ve el encargado de prevención. Tu jefatura no recibe el detalle.')+titulo('¿Qué te está pasando?','Marca lo que corresponda')+
+     opciones('lkConducta',[{v:'Acoso laboral',ic:'😠',tx:'Me insultan, humillan, aíslan o hostigan',d:'Acoso laboral'},
+       {v:'Acoso sexual',ic:'🚫',tx:'Comentarios, insinuaciones o contactos sexuales que no quiero',d:'Acoso sexual'},
+       {v:'Violencia en el trabajo ejercida por terceros',ic:'👊',tx:'Un cliente, proveedor o persona externa me agredió o amenazó',d:'Violencia de terceros'}],1);
+ },ok:function(){return (R.lkConducta||[]).length>0||'Marca al menos una opción'}},
+ lk2:{ver:function(){return lk()},html:function(){
+   return titulo('¿Quién lo hace?','Nombre y cargo, o cómo lo identificas')+campo('lkDenunciado','Ej: Pedro, supervisor de bodega')+
+     '<label class="l">¿Cuántas veces ha pasado?</label>'+chips('lkFrecuencia',['Una vez','Varias veces','Todas las semanas','Todos los días']);
+ },ok:function(){return ((R.lkDenunciado||'').trim().length>1&&!!R.lkFrecuencia)||'Responde las dos preguntas'}},
+
+ relato:{html:function(){
+   var t=lk()?'Cuenta lo que pasó':'Ahora cuéntalo con tus palabras';
+   return titulo(t,'Escribe como si se lo contaras a un compañero. Si te cuesta escribir, usa el botón 🎤.')+
+     caja('info',lk()?'<ul><li>¿Qué te dijeron o hicieron?</li><li>¿Dónde y cuándo?</li><li>¿Alguien más lo vio?</li></ul>':
+       '<ul><li>¿Qué estabas haciendo justo antes?</li><li>¿Qué pasó exactamente?</li><li>¿Qué hiciste después?</li></ul>')+texto('relato','Escribe aquí...');
+ },ok:function(){return (R.relato||'').trim().length>=15||'Escribe un poco más (al menos una o dos frases)'}},
+
+ partes:{ver:function(){return lesion()},html:function(){
+   var h=titulo(has(T_EP)&&!acc()?'¿Dónde sientes la molestia?':'¿Qué parte del cuerpo te lesionaste?','Toca todas las que correspondan');
+   for(var g in PARTES)h+='<div class="grupo">'+g+'</div>'+chips('partes',PARTES[g],1);
+   return h+'<div class="chips" style="margin-top:6px">'+'<button class="chip'+((R.partes||[]).indexOf('Ninguna')>-1?' on':'')+'" onclick="elige(\'partes\',\'Ninguna\',1)">No me lesioné</button></div>';
+ },ok:function(){return (R.partes||[]).length>0||'Toca al menos una parte (o "No me lesioné")'}},
+
+ tipoLesion:{ver:function(){return acc()&&(R.partes||[]).indexOf('Ninguna')<0},auto:1,html:function(){
+   return titulo('¿Qué tipo de lesión es?')+opciones('tipoLesion',[{v:'Golpe / contusión',ic:'🟣',tx:'Golpe o moretón'},{v:'Corte / herida',ic:'🩸',tx:'Corte o herida'},
+     {v:'Torcedura / esguince',ic:'🦶',tx:'Torcedura'},{v:'Lumbago / sobreesfuerzo',ic:'🏋️',tx:'Dolor por fuerza / lumbago'},{v:'Fractura (posible)',ic:'🦴',tx:'Creo que me quebré algo'},
+     {v:'Quemadura',ic:'🔥',tx:'Quemadura'},{v:'Cuerpo extraño en ojo',ic:'👁️',tx:'Algo en el ojo'},{v:'Otra',ic:'❓',tx:'Otra'}]);
+ },ok:function(){return !!R.tipoLesion||'Elige una opción'}},
+
+ eva:{ver:function(){return lesion()&&(R.partes||[]).indexOf('Ninguna')<0},html:function(){
+   return titulo('¿Cuánto te duele ahora?','0 = nada · 10 = el peor dolor')+'<div class="eva">'+EVA.map(function(e,i){
+     return '<button class="'+(R.eva===i?'on':'')+'" style="background:'+e[1]+';color:'+(i>7?'#fff':'#000')+'" onclick="R.eva='+i+';pintar()"><span>'+e[0]+'</span>'+i+'</button>'}).join('')+'</div>';
+ },ok:function(){return R.eva!==undefined&&R.eva!==''||'Toca un número'}},
+
+ atencion:{ver:function(){return lesion()&&(R.partes||[]).indexOf('Ninguna')<0},html:function(){
+   return titulo(has(T_EP)&&!acc()?'¿Te ha visto un médico por esto?':'¿Te atendieron?')+
+     opciones('atencion',[{v:'Ya fui a la mutualidad',ic:'🏥',tx:'Sí, fui a la mutualidad'},{v:'Fui a otro centro de salud',ic:'🏨',tx:'Fui a otro centro de salud'},
+       {v:'Todavía no, voy a ir',ic:'⏳',tx:'Todavía no, voy a ir'},{v:'No lo necesito',ic:'👍',tx:'No lo necesito'},{v:'No quise ir',ic:'✋',tx:'No quise ir',ro:1}])+
+     (R.atencion==='No quise ir'?'<label class="l">¿Por qué no quisiste ir?</label>'+campo('motivoNegativa',''):'')+
+     (R.atencion==='Fui a otro centro de salud'?caja('am','Avisa a tu jefatura: la atención por accidente del trabajo corresponde a '+esc(INFO.oal)+'.'):'');
+ },ok:function(){return (!!R.atencion&&(R.atencion!=='No quise ir'||(R.motivoNegativa||'').trim().length>1))||'Elige una opción'}},
+
+ lk3:{ver:function(){return lk()},html:function(){
+   return titulo('¿Qué necesitas para sentirte seguro/a?','La empresa debe tomar medidas para protegerte mientras se investiga.')+
+     chips('lkResguardoPide',['No trabajar cerca de esa persona','Cambiar mi horario','Cambiar mi jefatura directa','No necesito nada por ahora','Otra'])+
+     '<label class="l">¿Quieres apoyo psicológico gratuito de '+esc(INFO.oal)+'?</label>'+sino('lkPsico');
+ },ok:function(){return (!!R.lkResguardoPide&&!!R.lkPsico)||'Responde las dos preguntas'}},
+
+ testigos:{html:function(){
+   var h=titulo('¿Alguien vio lo que pasó?')+sino('hayTestigos');
+   if(R.hayTestigos==='SI'){R.testigos=R.testigos&&R.testigos.length?R.testigos:[{nombre:'',cargo:''}];
+     h+=R.testigos.map(function(t,i){return '<label class="l">Testigo '+(i+1)+'</label><input placeholder="Nombre" value="'+esc(t.nombre)+'" oninput="R.testigos['+i+'].nombre=this.value;botones()">'+
+       '<input style="margin-top:8px" placeholder="Cargo (opcional)" value="'+esc(t.cargo)+'" oninput="R.testigos['+i+'].cargo=this.value">'}).join('')+
+       (R.testigos.length<3?'<p><button class="link" onclick="R.testigos.push({nombre:\'\',cargo:\'\'});pintar()">+ Agregar otro testigo</button></p>':'');}
+   return h;
+ },ok:function(){return R.hayTestigos==='NO'||(R.hayTestigos==='SI'&&(R.testigos||[]).some(function(t){return t.nombre.trim()}))||'Responde si alguien lo vio'}},
+
+ fotos:{ver:function(){return !lk()},html:function(){
+   R.fotos=R.fotos||[];
+   return titulo('¿Puedes sacar una foto?','Del lugar, del equipo o de lo que pasó. Es opcional.')+
+     '<label class="op on" style="cursor:pointer"><span class="ic">📷</span><span>Sacar o elegir foto</span><input type="file" accept="image/*" multiple style="display:none" onchange="fotos(this)"></label>'+
+     '<div class="fotos">'+R.fotos.map(function(f,i){return '<img src="data:image/jpeg;base64,'+f+'" onclick="R.fotos.splice('+i+',1);pintar()" title="Tocar para quitar">'}).join('')+'</div>'+
+     (R.fotos.length?'<p class="sub">Toca una foto para quitarla.</p>':'');
+ }},
+
+ sugerencia:{ver:function(){return !lk()},html:function(){
+   return titulo('¿Cómo crees que se podría evitar?','Tu opinión es importante para la investigación. Es opcional.')+texto('sugerencia','Ej: poner una baranda, más orden en el pasillo, más tiempo para cargar...');
+ }},
+
+ resumen:{html:function(){
+   var f=fechaISO(),filas=[['Quién',YO.nombre+' — '+YO.sucursal],['Qué',R.tipos.join(' + ')],['Cuándo',dma(f)+' '+(R.horaExacta||R.momento||'')],
+     ['Dónde',has(T_TRA)&&R.tipo===T_TRA?R.trayectoLugar:[R.lugar,R.lugarDetalle].filter(Boolean).join(' — ')]];
+   if(R.partes&&R.partes.length)filas.push(['Parte del cuerpo',R.partes.join(', ')]);
+   if(R.eva!==undefined&&R.eva!=='')filas.push(['Dolor',R.eva+' de 10']);
+   if(lk())filas.push(['Persona denunciada',R.lkDenunciado]);
+   filas.push(['Lo que contaste',R.relato]);
+   return titulo('Revisa y firma','Si algo está mal, usa <b>Atrás</b> para corregir.')+
+     '<div class="res">'+filas.map(function(x){return '<div><b>'+x[0]+'</b>'+esc(x[1]||'—')+'</div>'}).join('')+'</div>'+
+     '<label class="check"><input type="checkbox" id="verdad" '+(R.verdad?'checked':'')+' onchange="R.verdad=this.checked;botones()"> Declaro que lo que informo es verdad.</label>'+
+     '<div class="fila"><b style="font-size:16px;color:var(--az)">Firma con tu dedo aquí</b><button class="borrar" onclick="FIRMA.borrar();botones()">Borrar</button></div><canvas class="firma" id="cFirma"></canvas>';
+ },ok:function(){return !R.verdad?'Marca la casilla "Declaro que lo que informo es verdad"':(FIRMA&&FIRMA.vacio()?'Falta tu firma':true)},sig:'✔ Enviar reporte',accion:enviar,
+   despues:function(){FIRMA=pad('cFirma')}},
+
+ fin:{ver:function(){return false},nav:0,html:function(){
+   var pasos=[];
+   if(lk())pasos=['Tu denuncia quedó registrada en forma <b>reservada</b>.','La empresa debe tomar medidas para protegerte y ofrecerte apoyo psicológico de '+esc(INFO.oal)+'.',
+     'Prevención te contactará para tomar tu declaración.','También puedes denunciar directamente en la Dirección del Trabajo.'];
+   else{
+     if(acc())pasos.push('Tu jefatura debe enviarte a '+esc(INFO.oal)+' con la <b>DIAT</b> (dentro de 24 horas).');
+     if(has(T_EP))pasos.push('Tu jefatura debe enviarte a evaluación a '+esc(INFO.oal)+' con la <b>DIEP</b>.');
+     pasos.push('Tu jefatura y prevención ya recibieron el aviso.');
+     pasos.push('Te contactarán para tomar tu declaración y firmarla.');
+     pasos.push('Se investigarán las causas para que no se repita.');
+   }
+   return '<div class="grande">✅</div>'+titulo('¡Reporte enviado!','Gracias '+esc(YO.saludo)+'. Reportar ayuda a que nadie más se lesione.')+
+     '<div class="yo"><small>Tu número de caso</small><div class="nom">'+esc(R._id)+'</div><small>Anótalo o sácale una foto a esta pantalla.</small></div>'+
+     caja('info','<b>¿Qué pasa ahora?</b><ol>'+pasos.map(function(p){return '<li>'+p+'</li>'}).join('')+'</ol>')+
+     (R.urgente==='SI'?caja('ro','Recuerda: atiéndete en '+esc(INFO.oal)+(INFO.fonoOal?' — fono <b>'+esc(INFO.fonoOal)+'</b>':'')+'.'):'')+
+     '<button class="op" onclick="location.reload()"><span class="ic">↩</span><span>Hacer otro reporte</span></button>';
+ }}
+};
+var ORDEN=['inicio','rut','confirma','tipo','extra','urgente','cuando','hora','tray1','tray2','tray3','donde','actividad','forma','incidente','dano','ep1','ep2','lk1','lk2',
+  'relato','partes','tipoLesion','eva','atencion','lk3','testigos','fotos','sugerencia','resumen'];
+
+// ================== MOTOR ==================
+function visible(id){var p=PASOS[id];return !p.ver||p.ver()}
+function pintar(){
+  var p=PASOS[ACT];
+  $('m').innerHTML=p.html();
+  var nav=p.nav!==0;$('nav').classList.toggle('hide',!nav);
+  if(p.despues)p.despues();
+  var vis=ORDEN.filter(visible),i=vis.indexOf(ACT);
+  $('prog').style.width=(ACT==='fin'?100:Math.max(3,Math.round((i<0?0:i)/(vis.length-1)*100)))+'%';
+  botones();
+}
+function valido(silencio){var p=PASOS[ACT];if(!p.ok)return true;var r=p.ok();return r===true}
+function botones(){
+  var p=PASOS[ACT];
+  $('bSig').textContent=ENVIANDO?'Enviando...':(p.sig||'Siguiente ▶');
+  $('bSig').disabled=ENVIANDO;
+  $('bAtras').style.visibility=PILA.length?'visible':'hidden';
+}
+function siguiente(){
+  if(REC){REC.stop();REC=null}
+  var p=PASOS[ACT];
+  if(p.ok){var r=p.ok();if(r!==true){aviso(r);return}}
+  if(p.accion){p.accion();return}
+  var i=ORDEN.indexOf(ACT);
+  for(var j=i+1;j<ORDEN.length;j++)if(visible(ORDEN[j])){ir(ORDEN[j]);return}
+}
+function ir(id,sinPila){if(!sinPila&&ACT!==id&&ACT!=='noinscrito')PILA.push(ACT);ACT=id;R._err='';pintar();window.scrollTo(0,0)}
+function atras(){if(REC){REC.stop();REC=null}if(!PILA.length)return;ACT=PILA.pop();pintar();window.scrollTo(0,0)}
+function aviso(t){var d=document.createElement('div');d.className='caja ro';d.style.cssText='position:fixed;left:12px;right:12px;top:96px;z-index:9;box-shadow:0 2px 10px rgba(0,0,0,.25)';d.innerHTML='⚠ '+t;document.body.appendChild(d);setTimeout(function(){d.remove()},3000)}
+
+function eligeTipo(t){R.tipo=t;R.extras=(R.extras||[]).filter(function(x){return x!==t});actualizaTipos();pintar();setTimeout(siguiente,250)}
+function actualizaTipos(){var t=R.tipo;R.tipos=t===T_LK?[T_LK]:[t].concat(R.extras||[])}
+// recalcula los tipos cada vez que se marcan extras
+var _elige=elige;elige=function(c,v,m){_elige(c,v,m);if(c==='extras'){actualizaTipos()}};
+
+function fechaISO(){return R.dia==='ayer'?hoyISO(1):R.dia==='otro'?R.fechaOtra:hoyISO()}
+
+// ---- Identificación ----
+function buscar(){
+  ENVIANDO=true;botones();
+  google.script.run.withSuccessHandler(function(r){
+    ENVIANDO=false;
+    if(r.error==='NO_INSCRITO'){ir('noinscrito');return}
+    if(r.error==='INACTIVO'){R._err='Hola '+esc(r.nombre)+', apareces como <b>INACTIVO</b> en la nómina. Avisa a tu jefatura para que actualice tu inscripción.';pintar();return}
+    if(r.error){R._err=esc(r.msg);pintar();return}
+    R._cand=r.candidatos;ir('confirma');
+  }).withFailureHandler(function(e){ENVIANDO=false;R._err=esc(e.message);pintar()}).identificar(R.q);
+}
+function soyYo(i){YO=R._cand[i];R.k=YO.k;$('hSub').textContent=YO.nombre+' · '+YO.sucursal;PILA=[];ir('tipo',true)}
+
+// ---- Fotos ----
+function fotos(inp){
+  Array.prototype.forEach.call(inp.files,function(f){
+    if((R.fotos||[]).length>=6)return;
+    var rd=new FileReader();rd.onload=function(){var img=new Image();img.onload=function(){
+      var max=1280,w=img.width,h=img.height;if(w>max||h>max){var k=max/Math.max(w,h);w=Math.round(w*k);h=Math.round(h*k)}
+      var c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+      R.fotos.push(c.toDataURL('image/jpeg',0.72).split(',')[1]);pintar();
+    };img.src=rd.result};rd.readAsDataURL(f);
+  });
+}
+
+// ---- Firma ----
+function pad(id){
+  var c=$(id),x=c.getContext('2d'),dib=false,usado=false,r=c.getBoundingClientRect(),k=window.devicePixelRatio||1;
+  c.width=Math.round(r.width*k);c.height=Math.round(r.height*k);x.scale(k,k);x.lineWidth=2.6;x.lineCap='round';x.lineJoin='round';x.strokeStyle='#0b2a66';
+  function pos(e){var b=c.getBoundingClientRect();return [e.clientX-b.left,e.clientY-b.top]}
+  c.addEventListener('pointerdown',function(e){e.preventDefault();dib=true;usado=true;try{c.setPointerCapture(e.pointerId)}catch(_){}var p=pos(e);x.beginPath();x.moveTo(p[0],p[1]);x.lineTo(p[0]+.1,p[1]+.1);x.stroke()});
+  c.addEventListener('pointermove',function(e){if(!dib)return;e.preventDefault();var p=pos(e);x.lineTo(p[0],p[1]);x.stroke()});
+  ['pointerup','pointercancel','pointerleave'].forEach(function(ev){c.addEventListener(ev,function(){if(dib){dib=false;botones()}})});
+  return {borrar:function(){x.save();x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,c.width,c.height);x.restore();usado=false},
+    vacio:function(){return !usado},png:function(){return c.toDataURL('image/png').split(',')[1]}};
+}
+
+// ---- Enviar ----
+function enviar(){
+  if(ENVIANDO)return;
+  var hora=R.horaExacta||(R.momento||'');
+  var rel=R.relato||'';
+  var forma=(R.forma||[]).concat(R.formaInc||[]);
+  if(has(T_DAN)&&!has(T_ACC)&&!has(T_INC)&&R.danoBien)forma.push('Daño a: '+R.danoBien);
+  var envio={tipos:R.tipos,fecha:fechaISO(),hora:hora,momento:R.momento||'',
+    lugar:has(T_TRA)&&R.tipo===T_TRA?'Trayecto':(R.lugar||''),lugarDetalle:has(T_TRA)&&R.tipo===T_TRA?(R.trayectoLugar||''):(R.lugarDetalle||''),
+    actividad:R.actividad||'',habitual:R.habitual||'',forma:forma,potencial:R.potencial||[],relato:rel,sugerencia:R.sugerencia||'',
+    partes:(R.partes||[]).filter(function(p){return p!=='Ninguna'}),eva:R.eva===undefined?'':R.eva,tipoLesion:R.tipoLesion||'',
+    urgente:R.urgente||'',atencion:R.atencion||'',motivoNegativa:R.motivoNegativa||'',
+    trayectoSentido:R.trayectoSentido||'',trayectoOrigen:R.trayectoSentido?R.trayectoSentido.split(' → ')[0]:'',trayectoDestino:R.trayectoSentido?(R.trayectoSentido.split(' → ')[1]||''):'',
+    trayectoMedio:R.trayectoMedio||'',trayectoPrueba:(R.trayectoPrueba||[]).join(', '),
+    danoBien:R.danoBien||'',danoCodigo:R.danoCodigo||'',danoTerceros:R.danoTerceros||'',danoDesc:has(T_DAN)?rel:'',
+    epSintomas:R.epSintomas||[],epDesde:R.epDesde||'',epTarea:R.epTarea||'',epAgente:(R.epAgente||[]).filter(function(a){return a!=='No sé'}),
+    lkConducta:R.lkConducta||[],lkDenunciado:R.lkDenunciado||'',lkFrecuencia:R.lkFrecuencia||'',lkResguardoPide:R.lkResguardoPide||'',lkPsico:R.lkPsico||'',
+    testigos:R.hayTestigos==='SI'?(R.testigos||[]).filter(function(t){return t.nombre.trim()}):[],
+    fotos:R.fotos||[],firma:FIRMA.png()};
+  ENVIANDO=true;botones();
+  google.script.run.withSuccessHandler(function(r){ENVIANDO=false;R._id=r.id;PILA=[];ir('fin',true)})
+    .withFailureHandler(function(e){ENVIANDO=false;botones();aviso(esc(e.message));if(/RUT/.test(e.message)){PILA=[];ir('rut',true)}})
+    .enviarReporte(R.k,envio);
+}
+
+// ================== INICIO ==================
+google.script.run.withSuccessHandler(function(i){
+  INFO=i;$('hTit').textContent='Reportar un evento — '+i.cliente;$('hSub').textContent='Accidentes, incidentes, daños, molestias y Ley Karin';pintar();
+}).withFailureHandler(function(e){$('m').innerHTML=caja('ro','No se pudo cargar: '+esc(e.message))}).infoPublica();
+window.addEventListener('beforeunload',function(e){if(YO&&ACT!=='fin'){e.preventDefault();e.returnValue=''}});
+</script>
+</body>
+</html>
