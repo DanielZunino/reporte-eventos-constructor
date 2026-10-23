@@ -8,158 +8,249 @@
 <link rel="icon" type="image/png" sizes="32x32" href="icono-32.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icono-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta name="theme-color" content="#2E4A8A">
+<meta name="theme-color" content="#14275A">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--azul:#2E4A8A;--tinta:#1F2A44;--gris:#4A5672;--suave:#6B7690;--fondo:#F4F7FB;--borde:#D5DEEB;--verde:#2E7D32;--naranjo:#E8731A;--prim:#2E4A8A;--acc:#E8731A;--accInk:#FFFFFF;--accSh:#B9560F}
+:root{
+  --navy:#14275A;--azul:#1E5FA8;--cielo:#2F8FE0;--naranjo:#F28C28;--naranjoD:#C9620E;--verde:#2E9E4F;--lima:#8CC63F;
+  --tinta:#1B2440;--gris:#4A5672;--suave:#6B7690;
+  --arena:#F6EFE4;--arena2:#EFE5D5;
+  --prim:#1E5FA8;--prim2:#14275A;--prim3:#2F8FE0;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--fondo) linear-gradient(180deg,color-mix(in srgb,var(--prim) 16%,#F4F7FB) 0,color-mix(in srgb,var(--prim) 6%,#F4F7FB) 360px,#F4F7FB 900px) no-repeat;min-height:100vh;font-family:'Nunito',system-ui,sans-serif;color:var(--tinta)}
+html,body{margin:0}
+body{font-family:'Nunito',system-ui,sans-serif;color:var(--tinta);background:var(--arena)}
 button,input{font-family:inherit}
-a{color:#1E5FA8}
+a{color:var(--azul)}
 .oculto{display:none!important}
-button:focus-visible,a:focus-visible,input:focus{outline:3px solid #F7B267;outline-offset:2px}
+button:focus-visible,a:focus-visible,input:focus{outline:3px solid var(--naranjo);outline-offset:2px}
+@keyframes subir{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes flotar{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes brillo{from{background-position:0 0}to{background-position:200% 0}}
+@keyframes girar{to{transform:rotate(360deg)}}
+.anim{animation:subir .55s cubic-bezier(.2,.8,.2,1) both}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
-/* LOGIN */
-#login{display:flex;flex-wrap:wrap;min-height:100vh}
-.l-izq{flex:1 1 520px;min-width:0;background:#fff;display:flex;flex-direction:column;padding:36px 44px;gap:24px}
-.l-der{flex:1 1 440px;min-width:0;background:var(--prim);position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:48px 24px;gap:24px;min-height:480px}
-.circ{position:absolute;border-radius:50%;background:rgba(255,255,255,.08)}
-.globo{position:relative;background:#fff;color:var(--tinta);border-radius:20px;padding:14px 22px;font-size:19px;font-weight:800;box-shadow:0 8px 24px rgba(0,0,0,.18);max-width:320px;text-align:center}
+/* ===== FONDO VIVO ===== */
+.cielo{position:relative;background:linear-gradient(135deg,var(--prim2) 0%,var(--prim) 55%,var(--prim3) 100%);color:#fff;overflow:hidden}
+.cielo::before,.cielo::after{content:"";position:absolute;border-radius:50%;pointer-events:none}
+.cielo::before{width:520px;height:520px;right:-140px;top:-220px;background:radial-gradient(circle,rgba(242,140,40,.45),rgba(242,140,40,0) 70%)}
+.cielo::after{width:460px;height:460px;left:-160px;bottom:-260px;background:radial-gradient(circle,rgba(140,198,63,.40),rgba(140,198,63,0) 70%)}
+.ola{display:block;width:100%;height:56px;margin-top:-1px}
+.cargando{min-height:100vh;display:flex;flex-direction:column;gap:16px;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;background:linear-gradient(135deg,#14275A,#1E5FA8)}
+.rueda{width:44px;height:44px;border-radius:50%;border:5px solid rgba(255,255,255,.25);border-top-color:var(--naranjo);animation:girar 1s linear infinite}
+
+/* ===== INGRESO ===== */
+#login{display:flex;flex-wrap:wrap;min-height:100vh;background:var(--arena)}
+.l-izq{flex:1 1 520px;min-width:0;display:flex;flex-direction:column;padding:36px 44px;gap:24px;background:linear-gradient(160deg,#FFF8EE 0%,#F6EFE4 55%,#EAF1FB 100%)}
+.l-der{flex:1 1 440px;min-width:0;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:48px 24px;gap:24px;min-height:480px}
+.globo{position:relative;z-index:1;background:#fff;color:var(--tinta);border-radius:22px;padding:16px 24px;font-size:19px;font-weight:900;box-shadow:0 14px 40px rgba(0,0,0,.25);max-width:340px;text-align:center}
+.globo::after{content:"";position:absolute;left:50%;bottom:-10px;width:20px;height:20px;background:#fff;transform:translateX(-50%) rotate(45deg);border-radius:4px}
+.monitos{position:relative;z-index:1;display:flex;align-items:flex-end;gap:8px;animation:flotar 5s ease-in-out infinite}
+.chips-l{position:relative;z-index:1;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:440px}
+.chip-l{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:999px;padding:7px 13px;font-size:13px;font-weight:800;backdrop-filter:blur(4px)}
 .marca{display:flex;align-items:center;gap:16px}
-.placa img{width:100%;height:100%;object-fit:contain;display:block}
-.placa.con-logo{padding:6px;box-shadow:inset 0 0 0 1px #E3E8F0}
-.placa{overflow:hidden;border-radius:16px;transition:transform .2s ease,box-shadow .2s ease;background:var(--prim);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0}
-.form{flex-grow:1;display:flex;flex-direction:column;justify-content:center;gap:22px;max-width:420px;width:100%;align-self:center}
-.kicker{margin:0;font-size:14px;font-weight:800;color:var(--prim);letter-spacing:.08em;text-transform:uppercase}
-h1{margin:0}
-.campo{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:700}
-.campo input{height:52px;border:2px solid var(--borde);border-radius:12px;padding:0 16px;font-size:16px;color:var(--tinta);background:#FAFCFF}
+.placa{border-radius:16px;background:var(--prim);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0;box-shadow:0 6px 16px rgba(20,39,90,.25)}
+.form{flex-grow:1;display:flex;flex-direction:column;justify-content:center;gap:20px;max-width:430px;width:100%;align-self:center}
+.kicker{margin:0;font-size:13px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--naranjoD)}
+h1,h2,h3{margin:0}
+.campo{display:flex;flex-direction:column;gap:6px;font-size:14px;font-weight:800}
+.campo input{height:54px;border:2px solid #E4D9C8;border-radius:14px;padding:0 16px;font-size:16px;color:var(--tinta);background:#fff;transition:border-color .2s,box-shadow .2s}
+.campo input:focus{border-color:var(--azul);box-shadow:0 0 0 4px rgba(30,95,168,.15);outline:none}
 .fila{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
-.check{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;cursor:pointer;min-height:44px}
-.check input{width:22px;height:22px;accent-color:#2E8B3A;margin:0}
-.btn-grande{height:60px;border:none;border-radius:14px;background:var(--acc);color:var(--accInk);font-size:20px;font-weight:900;letter-spacing:.04em;cursor:pointer;box-shadow:0 6px 0 var(--accSh)}
-.btn-grande:disabled{opacity:.6;cursor:wait}
-.error{background:#FDECEC;color:#9B1C1C;border-radius:12px;padding:12px 14px;font-weight:700;font-size:15px}
-.seguro{display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;color:var(--verde);font-weight:700}
-.asesoria{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px;font-size:13px;color:var(--suave);font-weight:700}
+.check{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:800;cursor:pointer;min-height:44px}
+.check input{width:22px;height:22px;accent-color:var(--verde);margin:0}
+.btn-grande{position:relative;overflow:hidden;height:60px;border:none;border-radius:16px;color:#fff;font-size:20px;font-weight:900;letter-spacing:.05em;cursor:pointer;background:linear-gradient(135deg,#F7A440,#F28C28 45%,#E06A12);box-shadow:0 8px 0 #B9560F,0 14px 30px rgba(232,115,26,.35);transition:transform .12s,box-shadow .12s}
+.btn-grande:hover{transform:translateY(-2px)}
+.btn-grande:active{transform:translateY(4px);box-shadow:0 4px 0 #B9560F}
+.btn-grande::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);background-size:200% 100%;animation:brillo 3.5s linear infinite}
+.btn-grande:disabled{opacity:.7;cursor:wait}
+.error{background:#FDECEC;color:#9B1C1C;border-radius:12px;padding:12px 14px;font-weight:800;font-size:15px}
+.seguro{display:flex;align-items:center;justify-content:center;gap:8px;font-size:13px;color:var(--verde);font-weight:800}
+.asesoria{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;font-size:13px;color:var(--suave);font-weight:800}
+.logo-pill{background:#fff;border-radius:14px;padding:6px 10px;display:inline-flex;box-shadow:0 4px 14px rgba(0,0,0,.12)}
 
-/* PANEL */
-.top{background:#fff;border-bottom:4px solid var(--prim);padding:12px 20px;display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+/* ===== BARRA SUPERIOR ===== */
+.top{position:relative;z-index:2;display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:14px 22px}
 .top .esp{flex-grow:1}
+.btn-top{height:44px;padding:0 16px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;backdrop-filter:blur(4px);transition:background .2s}
+.btn-top:hover{background:rgba(255,255,255,.25)}
+.tag-admin{display:flex;align-items:center;gap:8px;background:linear-gradient(135deg,#F7A440,#E06A12);color:#fff;border-radius:999px;padding:8px 14px;font-size:14px;font-weight:900;box-shadow:0 6px 16px rgba(224,106,18,.35)}
+
+/* ===== BANNER PRINCIPAL ===== */
+.cont{max-width:1220px;margin:0 auto;padding:0 20px}
+.hero{position:relative;z-index:1;display:flex;flex-wrap:wrap;align-items:center;gap:20px;padding:18px 0 34px}
+.hero-txt{flex:999 1 420px;min-width:0;display:flex;flex-direction:column;gap:10px}
+.hero-txt h1{font-size:40px;line-height:1.08;font-weight:900;text-shadow:0 2px 0 rgba(0,0,0,.12)}
+.hero-txt p{margin:0;font-size:17px;opacity:.92;line-height:1.5}
+.hero-ilus{flex:0 0 auto;animation:flotar 6s ease-in-out infinite}
+.stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+.stat{display:flex;flex-direction:column;gap:2px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:16px;padding:10px 16px;min-width:120px;backdrop-filter:blur(4px)}
+.stat b{font-size:26px;font-weight:900;line-height:1}
+.stat span{font-size:12px;font-weight:800;opacity:.85;text-transform:uppercase;letter-spacing:.06em}
+
+/* ===== CUERPO ===== */
+.cuerpo{padding:8px 0 40px;display:flex;flex-direction:column;gap:26px}
+.sec-tit{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px}
+.sec-tit h2{font-size:24px;font-weight:900;color:var(--navy)}
+.sec-tit p{margin:0;font-size:15px;color:var(--gris)}
+
+/* trayectoria */
+.tray{background:#fff;border-radius:24px;padding:22px 24px;box-shadow:0 10px 30px rgba(20,39,90,.08);display:flex;flex-direction:column;gap:16px}
+.tray-cab{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.tray-cab h2{font-size:21px;font-weight:900;color:var(--navy)}
+.barra{flex:1 1 220px;max-width:360px;height:14px;background:#EEE6D8;border-radius:999px;overflow:hidden}
+.barra i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--verde),var(--lima));transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.pct{font-size:15px;font-weight:900;color:var(--verde)}
+.linea{overflow-x:auto;padding-bottom:4px}
+.pasos{display:grid;grid-template-columns:repeat(6,minmax(120px,1fr));min-width:720px;position:relative}
+.pasos::before{content:"";position:absolute;left:8%;right:8%;top:25px;height:6px;border-radius:3px;background:repeating-linear-gradient(90deg,#E4D9C8 0 12px,transparent 12px 20px)}
+.paso{all:unset;cursor:pointer;position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:0 6px}
+.nodo{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;border:5px solid #fff;box-shadow:0 6px 16px rgba(20,39,90,.18);transition:transform .2s}
+.paso:hover .nodo{transform:scale(1.08)}
+.paso b{font-size:14px;font-weight:900;color:var(--tinta);line-height:1.2}
+.paso small{font-size:12px;font-weight:800}
+
+/* tarjetas modulos */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+.tarjeta{position:relative;background:#fff;border-radius:24px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(20,39,90,.08);transition:transform .2s,box-shadow .2s}
+.tarjeta:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(20,39,90,.16)}
+.t-cab{position:relative;padding:20px 20px 18px;color:#fff;display:flex;align-items:center;gap:14px;overflow:hidden}
+.t-cab::after{content:"";position:absolute;right:-30px;top:-40px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.14)}
+.t-ico{position:relative;z-index:1;width:60px;height:60px;border-radius:18px;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 6px 14px rgba(0,0,0,.15)}
+.t-tit{position:relative;z-index:1;display:flex;flex-direction:column;gap:2px;min-width:0}
+.t-tit b{font-size:20px;font-weight:900;line-height:1.15}
+.t-tit span{font-size:13px;font-weight:700;opacity:.92}
+.t-num{position:absolute;z-index:1;right:16px;top:12px;font-size:12px;font-weight:900;background:rgba(0,0,0,.18);border-radius:999px;padding:4px 9px}
+.t-cuerpo{padding:16px 20px 20px;display:flex;flex-direction:column;gap:14px;flex-grow:1}
+.estado{align-self:flex-start;display:flex;align-items:center;gap:6px;font-size:13px;font-weight:900;border-radius:999px;padding:5px 11px}
+.punto{width:9px;height:9px;border-radius:50%}
+.pasitos{display:flex;gap:8px}
+.pasito{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;font-weight:800;color:var(--gris);background:#F7F2EA;border-radius:12px;padding:8px 4px}
+.pasito svg{opacity:.8}
+.acciones{display:flex;gap:8px;margin-top:auto}
+.abrir{white-space:nowrap;flex-grow:1;height:46px;border:none;border-radius:14px;color:#fff;font-size:15px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:filter .2s,transform .1s}
+.abrir:hover{filter:brightness(1.08)}.abrir:active{transform:scale(.98)}
+.cuad{width:48px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:transform .15s}
+.cuad:hover{transform:translateY(-2px)}
+.wa{background:#DDF5E5;color:#1E7F45}.ml{background:#E1ECFA;color:#1E5FA8}
+
+/* banner de datos */
+.tips{position:relative;overflow:hidden;border-radius:24px;padding:24px 28px;color:#fff;background:linear-gradient(120deg,#E06A12 0%,#F28C28 40%,#F7B733 100%);display:flex;align-items:center;gap:20px;box-shadow:0 14px 34px rgba(224,106,18,.30)}
+.tips::after{content:"";position:absolute;right:-60px;bottom:-90px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.15)}
+.tips-ico{position:relative;z-index:1;width:64px;height:64px;border-radius:20px;background:rgba(255,255,255,.95);color:#E06A12;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tips-txt{position:relative;z-index:1;display:flex;flex-direction:column;gap:4px;min-width:0}
+.tips-txt small{font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;opacity:.9}
+.tips-txt p{margin:0;font-size:19px;font-weight:900;line-height:1.35;transition:opacity .4s}
+
+/* admin */
+.buscar{height:50px;border:none;border-radius:14px;padding:0 16px 0 44px;font-size:16px;width:100%;max-width:380px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none' stroke='%236B7690' stroke-width='2.4' stroke-linecap='round'%3E%3Ccircle cx='9' cy='9' r='6'/%3E%3Cpath d='M14 14l4 4'/%3E%3C/svg%3E") no-repeat 14px center;box-shadow:0 8px 20px rgba(0,0,0,.15)}
+.filtros{display:flex;flex-wrap:wrap;gap:8px}
+.filtro{border:none;cursor:pointer;height:40px;padding:0 16px;border-radius:999px;background:#fff;color:var(--gris);font-size:14px;font-weight:900;box-shadow:0 4px 12px rgba(20,39,90,.08);transition:all .2s}
+.filtro b{margin-left:6px;background:#F1EBE1;color:var(--navy);border-radius:999px;padding:2px 8px;font-size:12px}
+.filtro.on{background:var(--navy);color:#fff}.filtro.on b{background:rgba(255,255,255,.2);color:#fff}
+.lista-emp{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:20px}
+.emp{all:unset;box-sizing:border-box;cursor:pointer;position:relative;background:#fff;border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 10px 30px rgba(20,39,90,.08);transition:transform .25s,box-shadow .25s}
+.emp:hover,.emp:focus-visible{transform:translateY(-6px) rotate(-.3deg);box-shadow:0 22px 44px rgba(20,39,90,.18)}
+.emp-cab{position:relative;overflow:hidden;padding:18px 18px 16px;color:#fff;display:flex;align-items:center;gap:14px;min-height:104px}
+.emp-cab::before{content:"";position:absolute;right:-40px;top:-60px;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.13)}
+.emp-cab::after{content:"";position:absolute;left:30%;bottom:-70px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.07)}
+.emp-ini{position:relative;z-index:1;width:56px;height:56px;border-radius:17px;background:rgba(255,255,255,.95);display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:900;flex-shrink:0;box-shadow:0 6px 14px rgba(0,0,0,.18)}
+.emp-txt{position:relative;z-index:1;flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.emp-nom{font-size:19px;font-weight:900;line-height:1.15}
+.emp-sub{font-size:13px;font-weight:800;opacity:.9}
+.anillo{position:relative;z-index:1;width:58px;height:58px;flex-shrink:0}
+.anillo b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900}
+.emp-cuerpo{padding:16px 18px 18px;display:flex;flex-direction:column;gap:14px}
+.mods{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.mod{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:10px;font-weight:900;color:#8A8170;text-align:center;line-height:1.1}
+.mod i{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#F1EBE1;color:#B5AA97;transition:transform .2s}
+.emp:hover .mod i{transform:translateY(-2px)}
+.mod.on{color:var(--tinta)}.mod.on i{color:#fff;box-shadow:0 4px 10px rgba(0,0,0,.15)}
+.emp-pie{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.emp-est{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:900;border-radius:999px;padding:6px 12px}
+.emp-ir{display:flex;align-items:center;gap:6px;height:42px;padding:0 18px;border-radius:14px;color:#fff;font-size:15px;font-weight:900;transition:filter .2s,gap .2s}
+.emp:hover .emp-ir{filter:brightness(1.1);gap:10px}
+
+.pie{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:18px 0 26px;border-top:1px solid #E4D9C8;font-size:13px;color:var(--gris);font-weight:700}
+.sello{display:flex;align-items:center;gap:6px;font-weight:900;color:#fff;background:var(--verde);border-radius:999px;padding:7px 13px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:14px 20px;border-radius:14px;font-weight:800;max-width:90vw;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:9}
+
+/* monito poniendose el casco */
+.casco{animation:casco 5s cubic-bezier(.3,.7,.3,1) infinite}
+@keyframes casco{0%{transform:translateY(-70px);opacity:0}10%{transform:translateY(-70px);opacity:1}36%{transform:translateY(0)}42%{transform:translateY(-7px)}48%,90%{transform:translateY(0);opacity:1}100%{transform:translateY(0);opacity:0}}
+.b-arriba{animation:barriba 5s steps(1) infinite}
+@keyframes barriba{0%{opacity:1}50%{opacity:0}97%{opacity:1}}
+.b-abajo{opacity:0;animation:babajo 5s steps(1) infinite}
+@keyframes babajo{0%{opacity:0}50%{opacity:1}97%{opacity:0}}
+.estrella{transform-box:fill-box;transform-origin:center;opacity:0;animation:estrella 5s ease-out infinite}
+@keyframes estrella{0%,46%{opacity:0;transform:scale(.2)}52%{opacity:1;transform:scale(1.2)}60%{transform:scale(1)}85%{opacity:1}92%,100%{opacity:0}}
+.ok-burbuja{opacity:0;animation:okb 5s ease-out infinite}
+@keyframes okb{0%,50%{opacity:0;transform:translateY(8px)}58%,88%{opacity:1;transform:none}95%,100%{opacity:0}}
+
+.saluda{transform-origin:112px 98px;animation:saluda 1.4s ease-in-out infinite}
+@keyframes saluda{0%,100%{transform:rotate(-14deg)}50%{transform:rotate(14deg)}}
+.balanceo{transform-origin:80px 212px;animation:balanceo 2.8s ease-in-out infinite}
+@keyframes balanceo{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+.ojo{transform-box:fill-box;transform-origin:center;animation:parpadeo 4.2s infinite}
+@keyframes parpadeo{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@media (max-width:640px){
+  .l-izq{padding:24px 18px}.l-der{min-height:380px}
+  .hero-txt h1{font-size:30px}.hero-ilus{display:none}
+  .tips{flex-direction:column;align-items:flex-start}
+  .cont{padding:0 14px}
+}
+
+/* Manito siguiente paso */
+.manito{position:absolute;z-index:5;font-size:34px;line-height:1;pointer-events:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.3));animation:tocar 1.1s ease-in-out infinite}
+.manito small{position:absolute;left:50%;transform:translateX(-50%);top:-22px;white-space:nowrap;font:900 11px/1 system-ui,sans-serif;background:#FFD36B;color:#5A3A00;padding:4px 8px;border-radius:999px;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+@keyframes tocar{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-10px) rotate(0)}}
+.con-manito{position:relative;overflow:visible}
+.manito.aba small{top:auto;bottom:-20px}
+.manito.lat{animation:tocarx 1.1s ease-in-out infinite}
+@keyframes tocarx{0%,100%{transform:translateX(0)}50%{transform:translateX(8px)}}
+.manito.lat small{top:50%;left:100%;transform:translateY(-50%);margin-left:4px}
+.manito.dentro small{display:none}
+.manito.dentro{font-size:26px}
+.manito.izq small{left:auto;right:100%;transform:translateY(-50%);margin:0 4px 0 0}
+/* Asistente de voz */
+.voz{position:fixed;right:18px;bottom:18px;z-index:50;display:flex;align-items:center;gap:10px;border:0;cursor:pointer;border-radius:999px;padding:12px 18px 12px 12px;font:900 15px system-ui,sans-serif;color:#fff;background:linear-gradient(135deg,#F28C28,#C2410C);box-shadow:0 10px 24px rgba(194,65,12,.45)}
+.voz i{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center}
+.voz.hablando i{animation:pulso 1s ease-in-out infinite}
+@keyframes pulso{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.6)}50%{box-shadow:0 0 0 10px rgba(255,255,255,0)}}
+.voz-mini{all:unset;cursor:pointer;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.25);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.placa img,.emp-ini img{width:100%;height:100%;object-fit:contain;border-radius:inherit;padding:4px;box-sizing:border-box;background:#fff}
+@media (max-width:600px){.voz span{display:none}.voz{padding:10px}}
+
+/* Bienvenida */
+.bienv{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(40,20,5,.55);backdrop-filter:blur(4px);animation:fadein .3s ease}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+.bv-card{position:relative;width:min(560px,100%);max-height:92vh;overflow:auto;border-radius:28px;background:#FFF8EE;box-shadow:0 30px 70px rgba(0,0,0,.4);animation:subir .5s cubic-bezier(.2,1.4,.4,1)}
+@keyframes subir{from{transform:translateY(40px) scale(.9);opacity:0}to{transform:none;opacity:1}}
+.bv-conf{position:absolute;inset:0;overflow:hidden;border-radius:inherit;pointer-events:none}
+.bv-cab{position:relative;padding:26px 24px 70px;color:#fff;text-align:center;border-radius:28px 28px 0 0}
+.bv-cab h2{font-size:26px;font-weight:900;line-height:1.15;margin-top:6px;text-shadow:0 2px 8px rgba(0,0,0,.2)}
+.bv-cab p{font-weight:800;opacity:.95;margin-top:4px}
+.bv-logo{height:46px;background:#fff;border-radius:14px;padding:6px 12px;box-shadow:0 6px 14px rgba(0,0,0,.2)}
+.bv-emoji{position:absolute;left:50%;bottom:-44px;transform:translateX(-50%);width:96px;height:96px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:52px;box-shadow:0 10px 24px rgba(0,0,0,.25);animation:latir 1.6s ease-in-out infinite;z-index:2}
+@keyframes latir{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.08)}}
+.bv-cuerpo{padding:58px 24px 24px;text-align:center}
+.bv-fiesta{display:inline-block;padding:7px 14px;border-radius:999px;font-weight:900;font-size:14px;color:#fff;margin-bottom:14px}
+.bv-frase{position:relative;font-size:21px;font-weight:900;line-height:1.35;color:#3A2410;padding:18px 18px 14px;border-radius:20px;background:linear-gradient(135deg,#FFE7B8,#FFD0C2);margin:0 0 6px}
+.bv-frase:before{content:'“';position:absolute;left:10px;top:-18px;font-size:70px;color:#F28C28;opacity:.6;font-family:Georgia,serif}
+.bv-autor{font-weight:800;color:#8A5A2B;font-size:15px;margin-bottom:12px}
+.bv-tip{font-weight:700;color:#5A4630;font-size:15px;line-height:1.45;margin-bottom:18px}
+.bv-botones{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.bv-ir{border:0;cursor:pointer;border-radius:16px;padding:14px 26px;font:900 17px system-ui,sans-serif;color:#fff;background:linear-gradient(135deg,#2E9E4F,#1B6B3A);box-shadow:0 8px 18px rgba(27,107,58,.35)}
+.bv-oir{border:0;cursor:pointer;border-radius:16px;padding:14px 18px;font:900 16px system-ui,sans-serif;color:#fff;background:linear-gradient(135deg,#F28C28,#C2410C);display:flex;align-items:center;gap:8px}
+.confeti{position:absolute;top:-12px;width:9px;height:14px;border-radius:2px;opacity:.9;animation:caer linear infinite;pointer-events:none}
+@keyframes caer{to{transform:translateY(560px) rotate(540deg)}}
+
+/* === Gestión, QR e ingreso único (agregado) === */
+:root{--borde:#E2D8C8}
+#sec-gestion .chip{background:#fff;border:1px solid #E6ECF4;border-radius:999px;padding:6px 12px;font-size:13px;font-weight:800;color:var(--gris)}
 .btn-sec{height:44px;padding:0 18px;border:2px solid var(--borde);background:#fff;border-radius:12px;font-size:15px;font-weight:700;color:var(--tinta);cursor:pointer}
-.cont{max-width:1200px;margin:0 auto;padding:26px 20px 40px;display:flex;flex-direction:column;gap:22px}
-.hero{background:linear-gradient(120deg,var(--prim),color-mix(in srgb,var(--prim) 62%,#000));box-shadow:0 10px 28px color-mix(in srgb,var(--prim) 30%,transparent);color:#fff;border-radius:22px;padding:26px 30px;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:8px}
-.hero p{margin:0}
-.tarjeta:hover{transform:translateY(-4px);box-shadow:0 12px 28px color-mix(in srgb,var(--prim) 22%,transparent)}
-.hero-fila{display:flex;align-items:center;gap:22px;position:relative;flex-wrap:wrap}
-.hero-fila>div:first-child{flex:1 1 280px;display:flex;flex-direction:column;gap:8px}
-.hero-logo{flex-shrink:0;background:#fff;border-radius:18px;padding:10px;width:180px;height:110px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(0,0,0,.2)}
-.hero-logo .placa{width:100%!important;height:100%!important;box-shadow:none!important;padding:0!important;font-size:34px!important}
-.hero-est{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.16);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:900;align-self:flex-start}
-.hero-est i{width:11px;height:11px;border-radius:50%}
-/* CONSEJOS DE SEGURIDAD */
-.banner{position:relative;border-radius:22px;overflow:hidden;color:#fff;min-height:150px;display:flex;align-items:stretch;box-shadow:0 8px 24px rgba(20,30,60,.16)}
-.b-slide{position:absolute;inset:0;display:flex;align-items:center;gap:22px;padding:22px 64px 34px 26px;opacity:0;transform:translateX(30px);transition:opacity .6s,transform .6s;pointer-events:none}
-.b-slide.on{opacity:1;transform:none;pointer-events:auto;position:relative}
-.b-ico{font-size:58px;line-height:1;flex-shrink:0;width:92px;height:92px;border-radius:24px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center}
-.b-tx{display:flex;flex-direction:column;gap:4px;min-width:0}
-.b-tx small{font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
-.b-tx b{font-size:23px;font-weight:900;line-height:1.15}
-.b-tx span{font-size:15px;font-weight:700;opacity:.95;line-height:1.45}
-.b-dots{position:absolute;left:26px;bottom:12px;display:flex;gap:6px;z-index:2}
-.b-dots button{all:unset;cursor:pointer;width:9px;height:9px;border-radius:999px;background:rgba(255,255,255,.45);transition:width .3s,background .3s}
-.b-dots button.on{width:26px;background:#fff}
-.b-nav{all:unset;cursor:pointer;position:absolute;right:14px;z-index:2;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900}
-.b-nav:hover{background:rgba(255,255,255,.35)}
-.b-ant{top:calc(50% - 44px)}.b-sig{top:calc(50% + 4px)}
-@media (max-width:600px){.b-slide{padding:18px 54px 32px 16px;gap:14px}.b-ico{width:64px;height:64px;font-size:38px}.b-tx b{font-size:19px}.b-tx span{font-size:14px}}
-/* CONTACTO */
-.contacto{background:#fff;border-radius:20px;padding:20px 22px;display:flex;flex-wrap:wrap;align-items:center;gap:16px;box-shadow:0 2px 10px rgba(30,53,102,.06);border-left:6px solid var(--naranjo)}
-.contacto .ct-tx{flex:1 1 260px;display:flex;flex-direction:column;gap:3px}
-.contacto .ct-tx b{font-size:18px;font-weight:900;color:var(--tinta)}
-.contacto .ct-tx span{font-size:14px;color:var(--gris);font-weight:700}
-.ct-btns{display:flex;flex-wrap:wrap;gap:8px}
-.ct-btns a{display:inline-flex;align-items:center;gap:6px;height:44px;padding:0 16px;border-radius:12px;font-weight:900;font-size:14px;text-decoration:none;color:#fff;transition:transform .15s}
-.ct-btns a:hover{transform:translateY(-2px)}
-.ct-wa{background:#1E9E52}.ct-ml{background:#2E4A8A}.ct-tel{background:#E8731A}
-.l-contacto{position:relative;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:18px;padding:16px 18px;color:#fff;max-width:380px;width:100%;display:flex;flex-direction:column;gap:10px;text-align:center}
-.l-contacto b{font-size:17px;font-weight:900}
-.l-contacto span{font-size:14px;opacity:.92;font-weight:700}
-.l-contacto .ct-btns{justify-content:center}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
-.tarjeta{border-top:5px solid var(--prim);transition:transform .2s,box-shadow .2s;background:#fff;border-radius:20px;padding:20px;display:flex;flex-direction:column;gap:14px;box-shadow:0 2px 10px rgba(30,53,102,.06)}
-.t-top{display:flex;align-items:center;justify-content:space-between}
-.icono{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center}
-.estado{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:var(--gris);background:#EEF2F7;border-radius:999px;padding:5px 10px}
-.punto{width:9px;height:9px;border-radius:50%;background:#9AA6B8}
-.t-tit{font-size:19px;font-weight:900}
-.t-det{font-size:14px;color:var(--gris);line-height:1.4}
-.acciones{display:flex;gap:8px}
-.abrir{white-space:nowrap;flex-grow:1;height:44px;border:none;border-radius:12px;background:var(--prim);color:#fff;font-size:15px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
-.cuad{width:48px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;text-decoration:none}
-.wa{background:#E3F6EA;color:#1E7F45}.ml{background:#E3EEFB;color:#1E5FA8}
-.pie{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding-top:10px;border-top:1px solid #E1E7F0;font-size:13px;color:var(--gris)}
-.sello{display:flex;align-items:center;gap:6px;font-weight:800;color:var(--verde);background:#E8F5E9;border-radius:999px;padding:6px 12px}
-.lista-emp{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
-.emp{all:unset;box-sizing:border-box;cursor:pointer;background:#fff;border-radius:18px;padding:16px 18px;display:flex;align-items:center;gap:18px;height:112px;border:1px solid #E6ECF4;box-shadow:0 2px 8px rgba(30,53,102,.05);transition:border-color .2s,box-shadow .2s,transform .2s}
-.emp:hover,.emp:focus-visible{border-color:var(--azul);box-shadow:0 10px 26px rgba(30,53,102,.16);transform:translateY(-3px)}
-.emp .placa{width:106px!important;height:74px!important;border-radius:14px!important;font-size:26px!important}
-.emp:hover .placa,.emp:focus-visible .placa{transform:scale(1.12);box-shadow:0 6px 16px rgba(30,53,102,.18)}
-.emp:hover .emp-flecha{background:var(--azul);color:#fff}
-@media (max-width:480px){.emp{height:96px;gap:12px;padding:12px}.emp .placa{width:92px!important;height:62px!important}}
-.emp-txt{flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.emp-nom{font-size:18px;font-weight:900;color:var(--tinta);line-height:1.2;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.emp-sub{font-size:13px;color:var(--suave);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.emp-flecha{flex-shrink:0;width:38px;height:38px;border-radius:12px;background:#EEF2F7;color:var(--azul);display:flex;align-items:center;justify-content:center;transition:background .2s,color .2s}
-.resumen{display:flex;flex-wrap:wrap;gap:10px}
-/* SEMÁFORO */
-.emp{position:relative;overflow:hidden}
-.emp-est{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:var(--suave);margin-top:4px;white-space:nowrap}
-.emp-est i{width:10px;height:10px;border-radius:50%;background:#C3CBD8;flex-shrink:0}
-.emp-est.verde{color:#1E6B2A}.emp-est.verde i{background:#2E7D32}
-.emp-est.amarillo{color:#8A5A00}.emp-est.amarillo i{background:#E8A21A}
-.emp-est.rojo{color:#A11B1B}.emp-est.rojo i{background:#D32F2F;animation:latido 1.6s infinite}
-@keyframes latido{0%{box-shadow:0 0 0 0 rgba(211,47,47,.55)}70%{box-shadow:0 0 0 7px rgba(211,47,47,0)}100%{box-shadow:0 0 0 0 rgba(211,47,47,0)}}
-.emp.con-anillo .emp-flecha{display:none}
-.lista-emp{grid-template-columns:repeat(auto-fill,minmax(340px,1fr))!important}
-.emp-barra{position:absolute;left:0;bottom:0;height:5px;background:#EEF2F7;width:100%}
-.emp-barra b{display:block;height:100%;width:0;transition:width .8s ease}
-.anillo{flex-shrink:0;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;font-size:13px;font-weight:900;color:var(--tinta)}
-.anillo::before{content:"";position:absolute;inset:5px;background:#fff;border-radius:50%}
-.anillo span{position:relative}
-.emp.cargando-est .emp-est{opacity:.6}
-/* CENTRO DE CONTROL */
-.centro{background:linear-gradient(135deg,#1F2A44,#2E4A8A);color:#fff;border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:16px;box-shadow:0 8px 26px rgba(30,53,102,.22)}
-.centro h2{font-size:22px;font-weight:900;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.centro h2 small{font-size:13px;font-weight:700;opacity:.75}
-.c-tot{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
-.c-tot button{all:unset;cursor:pointer;box-sizing:border-box;border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:2px;background:rgba(255,255,255,.1);border:2px solid transparent;transition:background .2s,transform .2s}
-.c-tot button:hover,.c-tot button.on{background:rgba(255,255,255,.2);transform:translateY(-2px)}
-.c-tot button.on{border-color:#fff}
-.c-tot b{font-size:34px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums}
-.c-tot span{font-size:13px;font-weight:800;opacity:.9}
-.c-tot .k1 b{color:#FF8A80}.c-tot .k2 b{color:#FFCC80}.c-tot .k3 b{color:#FFF59D}.c-tot .k0 b{color:#A5D6A7}
-.c-lst{display:flex;flex-direction:column;gap:8px}
-.c-al{all:unset;cursor:pointer;box-sizing:border-box;display:flex;align-items:center;gap:12px;background:#fff;color:var(--tinta);border-radius:14px;padding:10px 12px;transition:transform .15s,box-shadow .15s}
-.c-al:hover{transform:translateX(4px);box-shadow:0 4px 14px rgba(0,0,0,.18)}
-.c-al .placa{width:58px;height:40px;border-radius:10px;font-size:14px}
-.c-al .c-tx{flex-grow:1;min-width:0;display:flex;flex-direction:column;gap:1px}
-.c-al .c-tx b{font-size:14px;font-weight:900}
-.c-al .c-tx span{font-size:13px;color:var(--gris);font-weight:700}
-.c-al .tag{font-size:11px;font-weight:900;padding:3px 9px;border-radius:999px;white-space:nowrap}
-.c-al .t1{background:#FDECEC;color:#A11B1B}.c-al .t2{background:#FFF1E0;color:#8A4B00}.c-al .t3{background:#FFF9DB;color:#6B5B00}
-.c-al .ver{font-size:13px;font-weight:900;color:var(--azul);white-space:nowrap}
-.c-mas{all:unset;cursor:pointer;font-size:14px;font-weight:900;color:#fff;opacity:.85;text-decoration:underline}
-.c-ok{background:rgba(255,255,255,.1);border-radius:14px;padding:14px;font-weight:800}
-@media (max-width:600px){.c-al .ver{display:none}.c-tot b{font-size:28px}}
-.chip{background:#fff;border:1px solid #E6ECF4;border-radius:999px;padding:8px 14px;font-size:14px;font-weight:800;color:var(--gris)}
-.chip b{color:var(--azul);font-weight:900}
-.buscar{height:48px;border:2px solid var(--borde);border-radius:12px;padding:0 14px;font-size:16px;width:100%;max-width:360px}
-.admin-tag{display:flex;align-items:center;gap:8px;background:var(--azul);color:#fff;border-radius:999px;padding:8px 14px;font-size:14px;font-weight:800}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--tinta);color:#fff;padding:14px 20px;border-radius:14px;font-weight:700;max-width:90vw;box-shadow:0 10px 30px rgba(0,0,0,.25);z-index:9}
-.cargando{min-height:100vh;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--gris)}
-/* GESTIÓN */
 .tabs-p{display:flex;gap:8px;flex-wrap:wrap}
 .tab-p{height:46px;padding:0 20px;border-radius:999px;border:2px solid var(--borde);background:#fff;font-size:16px;font-weight:900;color:var(--gris);cursor:pointer}
 .tab-p.on{background:var(--prim);border-color:var(--prim);color:#fff}
@@ -174,7 +265,9 @@ h1{margin:0}
 .kp div{background:#F4F7FB;border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:2px}
 .kp b{font-size:26px;font-weight:900;color:var(--tinta);font-variant-numeric:tabular-nums}
 .kp span{font-size:12px;font-weight:700;color:var(--gris);line-height:1.3}
-.kp .ro b{color:#C62828}.kp .na b{color:#C25E0C}.kp .ve b{color:#2E7D32}
+.kp .ro b{color:#C62828}
+.kp .na b{color:#C25E0C}
+.kp .ve b{color:#2E7D32}
 .g-sub{font-size:13px;font-weight:900;color:var(--gris);text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
 .hb{display:flex;flex-direction:column;gap:6px}
 .hb div{display:grid;grid-template-columns:minmax(90px,150px) 1fr 52px;gap:8px;align-items:center;font-size:13px;font-weight:700}
@@ -195,10 +288,10 @@ h1{margin:0}
 .dona .an b{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:1;font-size:20px;font-weight:900}
 .lst{display:flex;flex-direction:column;gap:6px;font-size:13px}
 .lst div{background:#F8FAFD;border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:2px}
-.lst b{font-weight:800}.lst small{color:var(--gris)}
+.lst b{font-weight:800}
+.lst small{color:var(--gris)}
 .alert-i{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;font-size:14px;font-weight:700}
 .alert-i .tag{font-size:11px;font-weight:900;padding:2px 8px;border-radius:999px;background:#fff;white-space:nowrap}
-.n1{background:#FDECEC;color:#8E1B1B}.n2{background:#FFF1E0;color:#8A4B00}.n3{background:#FFF9DB;color:#6B5B00}
 .vacio{color:var(--gris);font-size:14px;font-weight:700}
 .qr{background:#FFF4E5;color:#B45309;border:none;cursor:pointer}
 .modal{position:fixed;inset:0;background:rgba(15,23,42,.55);display:flex;align-items:center;justify-content:center;z-index:20;padding:16px}
@@ -206,39 +299,38 @@ h1{margin:0}
 .modal-box img{width:240px;height:240px;image-rendering:pixelated}
 .modal-box .acciones{width:100%;flex-wrap:wrap}
 .modal-box .acciones>*{flex:1 1 100px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;text-decoration:none;cursor:pointer;font-size:14px;width:auto}
-@media (max-width:600px){.l-izq{padding:24px 18px}.l-der{min-height:380px}.cont{padding:18px 14px 30px}h1{font-size:30px!important}}
 </style>
 </head>
 <body>
 
-<div id="cargando" class="cargando">Cargando…</div>
+<div id="cargando" class="cargando"><div class="rueda"></div>Cargando su portal…</div>
 
-<!-- ============ INGRESO ============ -->
+<!-- ================= INGRESO ================= -->
 <div id="login" class="oculto">
   <div class="l-izq">
-    <div class="marca" id="marca-empresa">
-      <span class="placa" id="l-placa" style="width:120px;height:80px;font-size:28px">IP</span>
-      <div style="display:flex;flex-direction:column;gap:2px">
-        <span id="l-nombre" style="font-size:24px;font-weight:900;color:var(--prim)">Portal de clientes</span>
-        <span style="font-size:13px;font-weight:700;color:var(--suave)">Seguridad y salud en el trabajo</span>
+    <div class="marca" style="justify-content:space-between;flex-wrap:wrap">
+      <img src="logo-t.png" alt="Integra Prevención — La seguridad siempre" style="height:84px;width:auto;display:block">
+      <div id="l-emp" class="oculto" style="display:flex;align-items:center;gap:10px">
+        <span class="placa" id="l-placa" style="width:52px;height:52px;font-size:19px">--</span>
+        <span id="l-nombre" style="font-size:20px;font-weight:900;color:var(--prim)">Empresa</span>
       </div>
     </div>
-    <form class="form" id="form-login" autocomplete="on">
+    <form class="form anim" id="form-login" autocomplete="on">
       <div style="display:flex;flex-direction:column;gap:8px">
         <p class="kicker">Portal de seguridad</p>
-        <h1 id="saludo-login" style="font-size:40px;line-height:1.1;font-weight:900">Bienvenido</h1>
-        <p style="margin:0;font-size:17px;line-height:1.5;color:var(--gris)">Todo el sistema de gestión de su empresa en un solo lugar: capacitaciones, chequeos, accidentes y documentos.</p>
+        <h1 id="saludo-login" style="font-size:42px;line-height:1.05;font-weight:900;color:var(--navy)">Bienvenido</h1>
+        <p style="margin:0;font-size:17px;line-height:1.5;color:var(--gris)">Todo el sistema de gestión de su empresa en un solo lugar: capacitaciones, EPP, chequeos, accidentes y documentos.</p>
       </div>
       <div id="error" class="error oculto" role="alert"></div>
       <label class="campo">Correo
         <input id="email" type="email" name="email" autocomplete="username" placeholder="usuario@empresa.cl" required>
       </label>
       <label class="campo">Clave
-        <input id="clave" type="password" name="password" autocomplete="current-password" placeholder="••••••••" required>
+        <input id="clave" type="password" name="password" autocomplete="current-password" placeholder="Su clave" required>
       </label>
       <div class="fila">
         <label class="check"><input type="checkbox" id="recordar" checked> Recordar mi clave en este equipo</label>
-        <a href="#" id="olvide" style="font-size:14px;font-weight:700">¿Olvidó su clave?</a>
+        <a href="#" id="olvide" style="font-size:14px;font-weight:800">¿Olvidó su clave?</a>
       </div>
       <button class="btn-grande" type="submit" id="btn-entrar">INGRESE AQUÍ</button>
       <div class="seguro">
@@ -246,69 +338,96 @@ h1{margin:0}
         Conexión segura · Respaldo automático diario
       </div>
     </form>
-    <div class="asesoria">Asesoría en prevención: <img src="logo.png" alt="Integra Prevención" style="height:44px;width:auto"></div>
+    <div class="asesoria">Asesoría en prevención <span class="logo-pill"><img src="logo.png" alt="Integra Prevención" style="height:40px;width:auto"></span></div>
   </div>
-  <div class="l-der">
-    <div class="circ" style="width:520px;height:520px;top:-160px;right:-180px"></div>
-    <div class="circ" style="width:380px;height:380px;bottom:-220px;left:-120px"></div>
-    <div class="globo">¡Hola! Aquí ve todo lo que hacemos por su seguridad</div>
-    <div style="position:relative;display:flex;align-items:flex-end;gap:8px">
-      <svg width="180" height="248" viewBox="0 0 160 220" role="img" aria-label="Trabajador con casco saludando"><ellipse cx="80" cy="212" rx="50" ry="6" fill="#000" opacity=".15"/><rect x="58" y="148" width="18" height="56" rx="7" fill="#1E3566"/><rect x="84" y="148" width="18" height="56" rx="7" fill="#1E3566"/><rect x="50" y="198" width="28" height="12" rx="5" fill="#3A2A1A"/><rect x="82" y="198" width="28" height="12" rx="5" fill="#3A2A1A"/><rect x="36" y="94" width="16" height="50" rx="8" fill="#1E5FA8"/><circle cx="44" cy="146" r="8" fill="#F2C29B"/><rect x="110" y="52" width="16" height="50" rx="8" fill="#1E5FA8" transform="rotate(28 118 100)"/><circle cx="134" cy="54" r="9" fill="#F2C29B"/><rect x="50" y="86" width="60" height="72" rx="16" fill="#1E5FA8"/><path d="M54 92 L72 88 L76 156 L54 152 Z" fill="#F08A1C"/><path d="M106 92 L88 88 L84 156 L106 152 Z" fill="#F08A1C"/><rect x="54" y="122" width="22" height="6" fill="#F4F4F4"/><rect x="84" y="122" width="22" height="6" fill="#F4F4F4"/><rect x="73" y="78" width="14" height="12" fill="#F2C29B"/><circle cx="80" cy="62" r="24" fill="#F2C29B"/><circle cx="71" cy="64" r="2.8" fill="#2B2B2B"/><circle cx="89" cy="64" r="2.8" fill="#2B2B2B"/><circle cx="66" cy="72" r="4" fill="#F49A8C" opacity=".6"/><circle cx="94" cy="72" r="4" fill="#F49A8C" opacity=".6"/><path d="M71 73 Q80 81 89 73" stroke="#2B2B2B" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M54 56 Q54 28 80 28 Q106 28 106 56 Z" fill="#1E73BE"/><rect x="49" y="52" width="62" height="8" rx="4" fill="#165C9C"/><rect x="77" y="29" width="6" height="24" rx="3" fill="#4A9BE0"/></svg>
-      <svg width="160" height="226" viewBox="0 0 160 220" role="img" aria-label="Prevencionista con tablet"><ellipse cx="80" cy="212" rx="46" ry="6" fill="#000" opacity=".15"/><rect x="60" y="150" width="16" height="54" rx="7" fill="#24324F"/><rect x="84" y="150" width="16" height="54" rx="7" fill="#24324F"/><rect x="54" y="198" width="26" height="12" rx="5" fill="#3A2A1A"/><rect x="82" y="198" width="26" height="12" rx="5" fill="#3A2A1A"/><path d="M98 50 Q124 60 114 96 Q108 76 98 70 Z" fill="#5A3A22"/><rect x="52" y="88" width="56" height="70" rx="16" fill="#fff"/><path d="M54 94 L72 88 L76 158 L54 154 Z" fill="#7DBE3A"/><path d="M106 94 L88 88 L84 158 L106 154 Z" fill="#7DBE3A"/><rect x="54" y="124" width="22" height="6" fill="#F4F4F4"/><rect x="84" y="124" width="22" height="6" fill="#F4F4F4"/><rect x="58" y="104" width="44" height="32" rx="5" fill="#2E4A8A" transform="rotate(-8 80 120)"/><rect x="63" y="109" width="34" height="22" rx="3" fill="#BFE3FF" transform="rotate(-8 80 120)"/><path d="M70 121 L76 126 L88 114" stroke="#2E8B3A" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="rotate(-8 80 120)"/><circle cx="56" cy="128" r="7" fill="#E9B48C"/><circle cx="104" cy="122" r="7" fill="#E9B48C"/><rect x="73" y="78" width="14" height="12" fill="#E9B48C"/><circle cx="80" cy="62" r="23" fill="#E9B48C"/><path d="M57 60 Q58 44 80 42 Q102 44 103 60 Q96 52 80 52 Q64 52 57 60 Z" fill="#5A3A22"/><circle cx="72" cy="65" r="2.6" fill="#2B2B2B"/><circle cx="88" cy="65" r="2.6" fill="#2B2B2B"/><circle cx="67" cy="72" r="4" fill="#F49A8C" opacity=".6"/><circle cx="93" cy="72" r="4" fill="#F49A8C" opacity=".6"/><path d="M72 73 Q80 80 88 73" stroke="#2B2B2B" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M55 52 Q55 26 80 26 Q105 26 105 52 Z" fill="#fff"/><rect x="50" y="48" width="60" height="8" rx="4" fill="#E3E8EF"/><rect x="77" y="27" width="6" height="22" rx="3" fill="#F08A1C"/></svg>
+  <div class="l-der cielo">
+    <div class="globo">¡Primero el casco! Aquí ve todo lo que hacemos por su seguridad</div>
+    <div class="monitos" id="monitos-login" style="animation:none;position:relative">
+      <div style="display:flex;align-items:flex-end;gap:4px"><svg width="210" height="290" viewBox="0 0 170 235" role="img" aria-label="Trabajador poniéndose el casco de seguridad"><ellipse cx="80" cy="226" rx="52" ry="7" fill="#000" opacity=".2"/><rect x="58" y="160" width="18" height="58" rx="7" fill="#1E3566"/><rect x="84" y="160" width="18" height="58" rx="7" fill="#1E3566"/><rect x="50" y="212" width="28" height="12" rx="5" fill="#3A2A1A"/><rect x="82" y="212" width="28" height="12" rx="5" fill="#3A2A1A"/><rect x="50" y="98" width="60" height="72" rx="16" fill="#1E5FA8"/><path d="M54 104 L72 100 L76 168 L54 164 Z" fill="#F28C28"/><path d="M106 104 L88 100 L84 168 L106 164 Z" fill="#F28C28"/><rect x="54" y="134" width="22" height="6" fill="#F4F4F4"/><rect x="84" y="134" width="22" height="6" fill="#F4F4F4"/><rect x="73" y="88" width="14" height="12" fill="#F2C29B"/><circle cx="80" cy="72" r="24" fill="#F2C29B"/><path d="M57 66 Q60 50 80 49 Q100 50 103 66 Q95 58 80 58 Q65 58 57 66 Z" fill="#4A3020"/><circle cx="71" cy="74" r="2.8" fill="#2B2B2B" class="ojo"/><circle cx="89" cy="74" r="2.8" fill="#2B2B2B" class="ojo"/><circle cx="66" cy="82" r="4" fill="#F49A8C" opacity=".6"/><circle cx="94" cy="82" r="4" fill="#F49A8C" opacity=".6"/><path d="M70 83 Q80 92 90 83" stroke="#2B2B2B" stroke-width="2.6" fill="none" stroke-linecap="round"/><g class="b-arriba"><line x1="56" y1="108" x2="42" y2="62" stroke="#1E5FA8" stroke-width="15" stroke-linecap="round"/><line x1="104" y1="108" x2="118" y2="62" stroke="#1E5FA8" stroke-width="15" stroke-linecap="round"/><circle cx="42" cy="60" r="8" fill="#F2C29B"/><circle cx="118" cy="60" r="8" fill="#F2C29B"/></g><g class="b-abajo"><rect x="36" y="104" width="16" height="50" rx="8" fill="#1E5FA8"/><circle cx="44" cy="156" r="8" fill="#F2C29B"/><rect x="110" y="62" width="16" height="50" rx="8" fill="#1E5FA8" transform="rotate(28 118 110)"/><circle cx="134" cy="62" r="9" fill="#F2C29B"/><rect x="131" y="47" width="6" height="12" rx="3" fill="#F2C29B"/></g><g class="casco"><path d="M54 64 Q54 34 80 34 Q106 34 106 64 Z" fill="#F7B733"/><rect x="48" y="60" width="64" height="9" rx="4.5" fill="#E0A21F"/><rect x="77" y="35" width="6" height="26" rx="3" fill="#FFD36B"/><path d="M62 52 Q66 42 74 40" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/></g><g class="estrella"><path d="M138 22 l4 9 10 1 -8 6 3 10 -9-5 -9 5 3-10 -8-6 10-1z" fill="#FFD36B" stroke="#E0A21F" stroke-width="1.5"/></g></svg><span id="prev-login"></span></div>
+      <div class="ok-burbuja" style="position:absolute;left:-10px;top:10px;background:#2E9E4F;color:#fff;font-weight:900;font-size:15px;border-radius:14px;padding:8px 12px;box-shadow:0 8px 20px rgba(0,0,0,.2)">¡Casco puesto! ✓</div>
     </div>
-    <div class="l-contacto"><b>¿Quiere este portal para su empresa?</b><span>Daniel Zunino Urrutia · Asesor en Prevención de Riesgos · Reg. BB/P-226</span><div class="ct-btns" data-contacto></div></div>
+    <div class="chips-l">
+      <span class="chip-l">Capacitaciones</span><span class="chip-l">EPP</span><span class="chip-l">Chequeos</span><span class="chip-l">Accidentes</span><span class="chip-l">Documentos</span><span class="chip-l">Protocolos</span>
+    </div>
   </div>
 </div>
 
-<!-- ============ VISTA ADMINISTRADOR ============ -->
+<!-- ================= ADMINISTRADOR ================= -->
 <div id="admin" class="oculto">
-  <div class="top" style="--prim:#2E4A8A">
-    <img src="logo.png" alt="Integra Prevención" style="height:50px;width:auto">
-    <span class="esp"></span>
-    <span class="admin-tag">Administrador · <span id="admin-nombre">Daniel</span></span>
-    <button class="btn-sec" data-salir>Salir</button>
-  </div>
-  <div class="cont">
-    <div class="fila" style="align-items:flex-end">
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <h1 style="font-size:30px;font-weight:900;color:var(--azul)">Mis empresas</h1>
-        <div class="resumen"><span class="chip"><b id="n-emp">0</b> empresas</span><span class="chip"><b id="n-rs">0</b> razones sociales</span></div>
+  <div class="cielo" style="--prim:#1E5FA8;--prim2:#14275A;--prim3:#2F8FE0">
+    <div class="top">
+      <span class="logo-pill"><img src="logo.png" alt="Integra Prevención" style="height:42px;width:auto"></span>
+      <span class="esp"></span>
+      <span class="tag-admin">★ Administrador · <span id="admin-nombre">Daniel</span></span>
+      <button class="btn-top" data-salir>Salir</button>
+    </div>
+    <div class="cont">
+      <div class="hero">
+        <div class="hero-txt anim">
+          <p id="saludo-admin" style="font-weight:800;opacity:.85">Buenos días</p>
+          <h1>Su centro de control</h1>
+          <p>Todas sus empresas en un solo lugar. Entre a cualquiera para ver su avance, ejecutar y descargar informes.</p>
+          <div class="stats">
+            <div class="stat"><b id="n-emp">0</b><span>Empresas</span></div>
+            <div class="stat"><b id="n-rs">0</b><span>Razones sociales</span></div>
+            <div class="stat"><b id="n-mod">0</b><span>Módulos activos</span></div>
+          </div>
+        </div>
+        <div class="hero-ilus" id="monitos-admin"></div>
       </div>
+    </div>
+    <svg class="ola" viewBox="0 0 1440 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 30 C240 60 480 0 720 22 C960 44 1200 10 1440 30 L1440 56 L0 56 Z" fill="#F6EFE4"/></svg>
+  </div>
+  <div class="cont cuerpo">
+    <div class="sec-tit">
+      <div style="display:flex;flex-direction:column;gap:10px"><h2>Mis empresas</h2><div class="filtros" id="filtros"></div></div>
       <input type="search" id="buscar" class="buscar" placeholder="Buscar empresa o razón social…" aria-label="Buscar empresa">
     </div>
-    <div class="centro" id="centro"><h2>📡 Centro de control <small id="c-act">Revisando todas tus empresas…</small></h2><div class="c-tot" id="c-tot"></div><div class="c-lst" id="c-lst"></div></div>
-    <div class="banner" data-banner></div>
     <div class="lista-emp" id="lista-empresas"></div>
     <div class="pie"><span>Daniel Zunino Urrutia · Asesor en Prevención de Riesgos · Reg. BB/P-226 · Integra Prevención SpA</span><span class="sello">✓ Respaldo automático diario</span></div>
   </div>
 </div>
 
-<!-- ============ PANEL EMPRESA ============ -->
+<!-- ================= PANEL EMPRESA ================= -->
 <div id="panel" class="oculto">
-  <div class="top">
-    <div class="marca">
-      <span class="placa" id="p-placa" style="width:84px;height:56px;font-size:20px;border-radius:12px">--</span>
+  <div class="cielo" id="panel-cielo">
+    <div class="top">
+      <span class="placa" id="p-placa" style="width:48px;height:48px;font-size:18px;border-radius:14px;background:rgba(255,255,255,.95);color:var(--prim)">--</span>
       <div style="display:flex;flex-direction:column">
-        <span id="p-nombre" style="font-size:18px;font-weight:900;color:var(--prim)">Empresa</span>
-        <span id="p-rs" style="font-size:13px;color:var(--gris)"></span>
+        <span id="p-nombre" style="font-size:18px;font-weight:900">Empresa</span>
+        <span id="p-rs" style="font-size:13px;opacity:.85;font-weight:700"></span>
+      </div>
+      <span class="esp"></span>
+      <span class="logo-pill"><img src="logo.png" alt="Integra Prevención" style="height:34px;width:auto"></span>
+      <button class="btn-top oculto" id="volver">← Mis empresas</button>
+      <button class="btn-top" data-salir>Salir</button>
+    </div>
+    <div class="cont">
+      <div class="hero">
+        <div class="hero-txt anim">
+          <p id="saludo-panel" style="font-weight:800;opacity:.85">Buenos días</p>
+          <h1 id="hero-nombre">Empresa</h1>
+          <p>Aquí está todo lo que estamos haciendo por la seguridad de su gente.</p>
+          <div class="stats">
+            <div class="stat"><b id="st-mod">0/6</b><span>Módulos activos</span></div>
+            <div class="stat"><b id="st-tray">0%</b><span>Trayectoria</span></div>
+            <div class="stat"><b>✓</b><span>Respaldo diario</span></div>
+          </div>
+        </div>
+        <div class="hero-ilus" id="monitos-panel"></div>
       </div>
     </div>
-    <span class="esp"></span>
-    <span class="asesoria" style="gap:8px">Asesoría: <img src="logo.png" alt="Integra Prevención" style="height:38px;width:auto"></span>
-    <button class="btn-sec oculto" id="volver">← Mis empresas</button>
-    <button class="btn-sec" data-salir>Salir</button>
+    <svg class="ola" viewBox="0 0 1440 56" preserveAspectRatio="none" aria-hidden="true"><path d="M0 30 C240 60 480 0 720 22 C960 44 1200 10 1440 30 L1440 56 L0 56 Z" fill="#F6EFE4"/></svg>
   </div>
-  <div class="cont">
-    <div class="hero">
-      <div class="circ" style="width:260px;height:260px;right:-60px;top:-90px"></div>
-      <div class="hero-fila"><div>
-      <p id="saludo-panel" style="font-size:15px;font-weight:700;opacity:.85">Buenos días</p>
-      <h1 id="hero-nombre" style="font-size:34px;font-weight:900;line-height:1.15">Empresa</h1>
-      <p style="font-size:16px;opacity:.9;line-height:1.5">Aquí está todo lo que estamos haciendo por la seguridad de su gente.</p>
-      <span class="hero-est oculto" id="hero-est"></span>
-      </div><div class="hero-logo"><span class="placa" id="hero-placa"></span></div></div>
+  <div class="cont cuerpo">
+    <div class="tray anim" style="animation-delay:.1s">
+      <div class="tray-cab">
+        <div style="display:flex;flex-direction:column;gap:2px"><h2>Trayectoria de seguridad</h2><span style="font-size:14px;color:var(--gris);font-weight:700">El camino que estamos recorriendo juntos, paso a paso.</span></div>
+        <div style="display:flex;align-items:center;gap:12px;flex:1 1 260px;justify-content:flex-end"><div class="barra"><i id="tray-barra"></i></div><span class="pct" id="tray-pct">0%</span></div>
+      </div>
+      <div class="linea"><div class="pasos" id="pasos"></div></div>
     </div>
-    <div class="banner" data-banner></div>
+
     <div class="tabs-p" role="tablist">
       <button class="tab-p on" id="tab-mod" type="button">Módulos</button>
       <button class="tab-p" id="tab-ges" type="button">📊 Gestión y avance</button>
@@ -319,17 +438,20 @@ h1{margin:0}
       <div id="g-cont" style="display:flex;flex-direction:column;gap:16px"><div class="vacio">Cargando indicadores…</div></div>
     </div>
     <div id="sec-modulos" style="display:flex;flex-direction:column;gap:22px">
-    <div style="display:flex;flex-direction:column;gap:4px">
-      <h2 style="margin:0;font-size:22px;font-weight:900">¿Qué quiere revisar?</h2>
-      <p style="margin:0;font-size:15px;color:var(--gris)">En cada tarjeta: <strong style="color:var(--prim)">Abrir</strong> para ejecutar, o envíela por <strong style="color:#1E7F45">WhatsApp</strong> o <strong style="color:#1E5FA8">correo</strong> a quien deba gestionarla.</p>
-    </div>
+    <div class="sec-tit"><div style="display:flex;flex-direction:column;gap:4px"><h2>¿Qué quiere revisar?</h2><p>En cada módulo: <b style="color:var(--naranjoD)">Ejecutar</b>, ver el <b style="color:var(--azul)">avance</b> y descargar <b style="color:var(--verde)">informes</b>. Compártalo por WhatsApp o correo.</p></div></div>
     <div class="grid" id="tarjetas"></div>
     </div>
-    <div class="contacto"><div class="ct-tx"><b>¿Necesita asesoría o tiene una consulta?</b><span>Daniel Zunino Urrutia · Asesor en Prevención de Riesgos · Integra Prevención SpA</span></div><div class="ct-btns" data-contacto></div></div>
+
+    <div class="tips anim" style="animation-delay:.2s">
+      <div class="tips-ico"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z" fill="currentColor" fill-opacity=".15"/></svg></div>
+      <div class="tips-txt"><small>Dato seguro del día</small><p id="tip">Cada charla cuenta: un trabajador capacitado se cuida y cuida a su equipo.</p></div>
+    </div>
+
     <div class="pie"><span>Daniel Zunino Urrutia · Asesor en Prevención de Riesgos · Reg. BB/P-226 · Integra Prevención SpA</span><span class="sello">✓ Respaldo automático diario</span></div>
   </div>
 </div>
 
+<button class="voz" id="voz" type="button" aria-label="Asistente de voz: escuchar instrucciones"><i></i><span>Escúcheme</span></button>
 <div id="toast" class="toast oculto" role="status"></div>
 <div id="qr-modal" class="modal oculto" role="dialog" aria-modal="true" aria-labelledby="qr-tit">
   <div class="modal-box">
@@ -345,7 +467,6 @@ h1{margin:0}
 </div>
 
 <script src="supabase.js"></script>
-<script src="logos.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script>
 (function () {
@@ -353,25 +474,41 @@ h1{margin:0}
   var SUPABASE_URL = 'https://tutgzfmysbyhhttclgce.supabase.co';
   var SUPABASE_KEY = 'sb_publishable_UaugyU8lOm1CVTRSmAXKsQ_Ucb7YuNW';
 
-  /* Colores del ingreso por empresa: integraprevencion.cl/?e=prosip */
   var TEMAS = {
     'constructor-center': ['Constructor Center', '#B3261E'], 'perello': ['Perelló', '#1B6B3A'], 'zg': ['ZG', '#2E4A8A'],
     'oym': ['OYM', '#8A4B00'], 'claudio-lagos': ['Claudio Lagos', '#4B3FB0'], 'maestranza-ali': ['Maestranza ALI', '#0E6E7A'],
-    'maestranza-gala': ['Maestranza Gala', '#A3245F'], 'prosip': ['PROSIP', '#1B6B3A'], 'comfrut': ['Comfrut Nursery', '#2E7D32'],
+    'maestranza-gala': ['Maestranza Gala', '#A3245F'], 'prosip': ['PROSIP', '#1B6B3A'], 'comfrut': ['COMFRUT Nursery', '#2E7D32'],
     'hotel-salto-del-laja': ['Hotel Salto del Laja', '#1E5FA8'], 'notaria-ali': ['Notaría ALI', '#5B4636'], 'flete-norte': ['Flete Norte', '#C25E0C'],
-    'plaza-propiedades': ['Plaza Propiedades', '#2E4A8A'], 'agro-troncos-viejos': ['Agro Troncos Viejos', '#6B5B1F'], 'montasip': ['Montasip', '#0E6E7A']
+    'plaza-propiedades': ['Constructora Plaza Propiedades', '#2E4A8A'], 'agro-troncos-viejos': ['Agro Troncos Viejos', '#6B5B1F'], 'montasip': ['Montasip', '#0E6E7A']
   };
 
+  /* Iconos duotono (relleno suave + trazo) */
+  var ICO = {
+    documentos: '<path d="M6 2h9l5 5v15H6z" fill="currentColor" fill-opacity=".18"/><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/><path d="M9 13h8M9 17h5"/>',
+    capacitaciones: '<path d="M2 9l10-5 10 5-10 5z" fill="currentColor" fill-opacity=".18"/><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5"/><path d="M22 9v6"/>',
+    epp: '<path d="M4 15a8 8 0 0 1 16 0z" fill="currentColor" fill-opacity=".18"/><path d="M4 15a8 8 0 0 1 16 0z"/><path d="M2 15h20v2H2z"/><path d="M10 7v4M14 7v4"/>',
+    protocolos: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" fill="currentColor" fill-opacity=".18"/><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12h6M12 9v6"/>',
+    camiones: '<path d="M2 6h12v10H2z" fill="currentColor" fill-opacity=".18"/><path d="M2 6h12v10H2zM14 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="2" fill="#fff"/><circle cx="17" cy="18" r="2" fill="#fff"/>',
+    accidentes: '<path d="M12 3l9 16H3z" fill="currentColor" fill-opacity=".18"/><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/>'
+  };
+  /* Orden = trayectoria de implementacion */
   var MODULOS = [
-    { k: 'capacitaciones', t: 'Capacitaciones', d: 'Inducción, DS 44 y charlas por trabajador', bg: '#E3EEFB', c: '#1E5FA8', i: '<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>' },
-    { k: 'camiones', t: 'Chequeo de camiones', d: 'Checklists pre-uso y alertas de fallas', bg: '#FFEFD9', c: '#C25E0C', i: '<path d="M2 6h12v10H2zM14 10h4l3 3v3h-7z"/><circle cx="6" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>' },
-    { k: 'accidentes', t: 'Accidentes', d: 'Reportes, investigaciones y medidas', bg: '#FDE6E6', c: '#B42828', i: '<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/>' },
-    { k: 'documentos', t: 'Documentos legales', d: 'RIOHS, programas y protocolos firmados', bg: '#E6F4E2', c: '#2E7D32', i: '<path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h8M9 17h6"/>' },
-    { k: 'epp', t: 'EPP', d: 'Entregas y registros por sucursal', bg: '#EAE8FA', c: '#4B3FB0', i: '<path d="M4 15a8 8 0 0 1 16 0z"/><path d="M2 15h20M12 7v4"/>' },
-    { k: 'psicosocial', t: 'Riesgo psicosocial', d: 'CEAL-SM y medidas DS 44', bg: '#FCE7F1', c: '#A3245F', i: '<path d="M12 21s-8-5-8-11a4.5 4.5 0 0 1 8-3 4.5 4.5 0 0 1 8 3c0 6-8 11-8 11z"/>' }
+    { k: 'documentos', t: 'Documentos legales', d: 'RIOHS, programas y protocolos firmados', g: 'linear-gradient(135deg,#2EB872,#1E8449)', c: '#1E8449' },
+    { k: 'capacitaciones', t: 'Capacitaciones', d: 'Inducción, DS 44 y charlas por trabajador', g: 'linear-gradient(135deg,#3FA2F7,#1E5FA8)', c: '#1E5FA8' },
+    { k: 'epp', t: 'EPP', d: 'Entrega y firma de equipos de protección', g: 'linear-gradient(135deg,#A66CF0,#6C3FC4)', c: '#6C3FC4' },
+    { k: 'protocolos', t: 'Protocolos aplicables', d: 'Protocolos MINSAL que aplican a su empresa', g: 'linear-gradient(135deg,#25C8B4,#0E8C7F)', c: '#0E8C7F' },
+    { k: 'camiones', t: 'Chequeo de equipos', d: 'Camiones y grúas: checklist y alertas de fallas', g: 'linear-gradient(135deg,#F7A440,#E06A12)', c: '#E06A12' },
+    { k: 'accidentes', t: 'Accidentes', d: 'Reportes, investigaciones y medidas', g: 'linear-gradient(135deg,#F2676B,#C0392B)', c: '#C0392B' }
+  ];
+  var TIPS = [
+    'Cada charla cuenta: un trabajador capacitado se cuida y cuida a su equipo.',
+    'El EPP solo protege si se usa bien: casco abrochado, lentes puestos y zapatos amarrados.',
+    'Antes de partir, 5 minutos de chequeo al equipo pueden evitar un accidente grave.',
+    'Si ve una condición insegura, avise de inmediato: reportar también es prevenir.',
+    'Orden y aseo en bodega: pasillos despejados son caminos seguros.',
+    'Nunca suba a las horquillas de una grúa: no son un elevador de personas.'
   ];
 
-  /* "Recordar mi clave": guarda la sesion en este equipo o solo mientras la pestana este abierta */
   function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
   var almacen = {
@@ -384,45 +521,170 @@ h1{margin:0}
   var $ = function (id) { return document.getElementById(id); };
   var empresasCache = [];
   var perfil = null;
-  var sesionActual = null;
-  /* Módulos que reciben la sesión del portal para no pedir clave otra vez */
+  var tipTimer = null;
+  var sesionActual = null, empActual = null, ESTADOS = {};
+  /* Módulos propios que reciben la sesión del portal (no piden clave) */
   var SSO_OK = ['https://danielzunino.github.io/reporte-eventos-constructor/'];
-  /* Servidor que junta los indicadores de todos los módulos (una fila por empresa en su planilla de configuración) */
   var GESTION_API = 'https://script.google.com/macros/s/AKfycbyFetoPIT053n1kiihmhFB5XhUF9sti1t96umwnhKn2rIe2oseukyDzn1EZCLtHV7Qx/exec';
-  var empActual = null;
 
+
+  /* ===== Asistente de voz ===== */
+  var ICO_VOZ = svg('<path d="M11 5L6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>', 22, '#fff');
+  var ICO_STOP = svg('<rect x="7" y="7" width="10" height="10" rx="2"/>', 22, '#fff');
+  var guion = 'Bienvenido al portal de Integra Prevención.';
+  var vozOk = 'speechSynthesis' in window;
+  function hablar(texto, boton) {
+    if (!vozOk) { toast('Su equipo no tiene voz disponible.'); return; }
+    var b = boton || $('voz');
+    if (speechSynthesis.speaking) { speechSynthesis.cancel(); return; }
+    var u = new SpeechSynthesisUtterance(texto);
+    var vs = speechSynthesis.getVoices();
+    var v = vs.find(function (x) { return /es[-_]CL/i.test(x.lang); }) || vs.find(function (x) { return /es[-_](419|MX|US|AR|CO)/i.test(x.lang); }) || vs.find(function (x) { return /^es/i.test(x.lang); });
+    if (v) u.voice = v; u.lang = v ? v.lang : 'es-CL'; u.rate = 1; u.pitch = 1.05;
+    u.onstart = function () { $('voz').classList.add('hablando'); $('voz').querySelector('i').innerHTML = ICO_STOP; };
+    u.onend = u.onerror = function () { $('voz').classList.remove('hablando'); $('voz').querySelector('i').innerHTML = ICO_VOZ; };
+    speechSynthesis.speak(u);
+  }
+  if (vozOk) speechSynthesis.getVoices();
+  $('voz').querySelector('i').innerHTML = ICO_VOZ;
+  $('voz').addEventListener('click', function () { hablar(guion); });
+  if (!vozOk) $('voz').classList.add('oculto');
+
+  /* ===== Manito de siguiente paso ===== */
+  function manito(destino, texto, lado) {
+    Array.prototype.forEach.call(document.querySelectorAll('.manito'), function (m) { if (m.parentNode === destino) m.remove(); });
+    if (!destino) return;
+    destino.classList.add('con-manito');
+    var m = el('span', { 'class': 'manito', 'aria-hidden': 'true' });
+    var mano = lado === 'izq' ? '👉' : (lado === 'der' ? '👈' : '👆');
+    m.innerHTML = mano + '<small>' + (texto || 'Siguiente paso') + '</small>';
+    if (lado === 'izq') { m.style.right = '100%'; m.style.top = '50%'; m.style.marginTop = '-17px'; m.style.marginRight = '4px'; m.classList.add('lat', 'izq'); }
+    else if (lado === 'der') { m.style.left = '100%'; m.style.top = '50%'; m.style.marginTop = '-17px'; m.style.marginLeft = '2px'; m.classList.add('lat'); }
+    else if (lado === 'dentro') { m.innerHTML = '👈'; m.style.right = '12px'; m.style.top = '50%'; m.style.marginTop = '-14px'; m.classList.add('lat', 'dentro'); }
+    else { m.style.left = '50%'; m.style.top = '100%'; m.style.marginLeft = '-17px'; m.style.marginTop = '2px'; m.classList.add('aba'); }
+    destino.appendChild(m);
+  }
+  function logoEn(nodo, emp, nom) {
+    if (emp && emp.logo_url) { nodo.textContent = ''; var im = el('img', { src: emp.logo_url, alt: 'Logo ' + nom }); im.onerror = function () { nodo.textContent = iniciales(nom); }; nodo.appendChild(im); }
+    else nodo.textContent = iniciales(nom);
+  }
+
+  /* ===== Bienvenida con frase de la semana ===== */
+  function pascua(y) { var a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451), mes = Math.floor((h + l - 7 * m + 114) / 31), dia = ((h + l - 7 * m + 114) % 31) + 1; return new Date(y, mes - 1, dia); }
+  function nDomingo(y, mes, n) { var d = new Date(y, mes, 1); var off = (7 - d.getDay()) % 7; return new Date(y, mes, 1 + off + 7 * (n - 1)); }
+  var FIESTAS = [
+    { n: 'Año Nuevo', f: function (y) { return new Date(y, 0, 1); }, e: '🎆', g: 'linear-gradient(135deg,#7B2FF7,#F107A3)', t: 'Año nuevo, metas nuevas: que este año todos lleguen sanos a casa.', a: 'Integra Prevención' },
+    { n: 'Día Internacional de la Mujer', f: function (y) { return new Date(y, 2, 8); }, e: '💜', g: 'linear-gradient(135deg,#8E2DE2,#C2185B)', t: 'Solos podemos hacer muy poco; juntos podemos hacer mucho.', a: 'Helen Keller' },
+    { n: 'Semana Santa', f: function (y) { var p = pascua(y); return new Date(y, p.getMonth(), p.getDate() - 2); }, e: '🕊️', g: 'linear-gradient(135deg,#5B86E5,#36D1DC)', t: 'Si sale a la carretera este fin de semana largo: descanse, no maneje cansado y use siempre el cinturón.', a: 'Integra Prevención' },
+    { n: 'Día Mundial de la Seguridad y Salud en el Trabajo', f: function (y) { return new Date(y, 3, 28); }, e: '⛑️', g: 'linear-gradient(135deg,#F7B733,#FC4A1A)', t: 'La seguridad no es un trámite: es la forma en que nos cuidamos todos los días.', a: 'Integra Prevención' },
+    { n: 'Día del Trabajador', f: function (y) { return new Date(y, 4, 1); }, e: '👷', g: 'linear-gradient(135deg,#E53935,#F28C28)', t: 'Nada es particularmente difícil si lo divides en pequeños trabajos.', a: 'Henry Ford' },
+    { n: 'Día de la Madre', f: function (y) { return nDomingo(y, 4, 2); }, e: '💐', g: 'linear-gradient(135deg,#F857A6,#FF5858)', t: 'Hay alguien en casa esperándote: trabaja seguro por ella.', a: 'Integra Prevención' },
+    { n: 'Día de las Glorias Navales', f: function (y) { return new Date(y, 4, 21); }, e: '⚓', g: 'linear-gradient(135deg,#1E3C72,#2A5298)', t: 'Mientras yo viva, esa bandera flameará en su lugar.', a: 'Arturo Prat, 1879' },
+    { n: 'Día del Padre', f: function (y) { return nDomingo(y, 5, 3); }, e: '👨‍👧', g: 'linear-gradient(135deg,#11998E,#38EF7D)', t: 'El mejor regalo para tus hijos es volver sano a casa cada día.', a: 'Integra Prevención' },
+    { n: 'Día de los Pueblos Indígenas', f: function (y) { return new Date(y, 5, 20); }, e: '🌄', g: 'linear-gradient(135deg,#C04848,#480048)', t: 'Un nuevo ciclo comienza: cuidemos la tierra y cuidémonos entre nosotros.', a: 'Integra Prevención' },
+    { n: 'Virgen del Carmen', f: function (y) { return new Date(y, 6, 16); }, e: '🙏', g: 'linear-gradient(135deg,#4568DC,#B06AB3)', t: 'La fe nos acompaña; el casco y la prevención también.', a: 'Integra Prevención' },
+    { n: 'Día del Niño', f: function (y) { return nDomingo(y, 7, 2); }, e: '🎈', g: 'linear-gradient(135deg,#FDC830,#F37335)', t: 'Ellos aprenden de lo que ven: enseñemos con el ejemplo a trabajar seguro.', a: 'Integra Prevención' },
+    { n: 'Fiestas Patrias', f: function (y) { return new Date(y, 8, 18); }, e: '🇨🇱', g: 'linear-gradient(135deg,#0033A0,#D52B1E)', t: '¡Viva Chile! Celebre con alegría: si toma, no maneje, y que la fonda no termine en urgencia.', a: 'Integra Prevención' },
+    { n: 'Encuentro de Dos Mundos', f: function (y) { return new Date(y, 9, 12); }, e: '🌎', g: 'linear-gradient(135deg,#00B09B,#96C93D)', t: 'Donde haya un árbol que plantar, plántalo tú.', a: 'Gabriela Mistral' },
+    { n: 'Día de Todos los Santos', f: function (y) { return new Date(y, 10, 1); }, e: '🕯️', g: 'linear-gradient(135deg,#614385,#516395)', t: 'Recordar a los que se fueron nos enseña a cuidar a los que están.', a: 'Integra Prevención' },
+    { n: 'Navidad', f: function (y) { return new Date(y, 11, 25); }, e: '🎄', g: 'linear-gradient(135deg,#1D976C,#C62828)', t: 'La paz comienza con una sonrisa.', a: 'Madre Teresa de Calcuta' },
+    { n: 'Fin de año', f: function (y) { return new Date(y, 11, 31); }, e: '🥂', g: 'linear-gradient(135deg,#F7971E,#FFD200)', t: 'Cerramos el año agradecidos: cada día sin accidentes es un triunfo de todos.', a: 'Integra Prevención' }
+  ];
+  var FRASES = [
+    ['La calidad nunca es un accidente; siempre es el resultado de un esfuerzo inteligente.', 'John Ruskin'],
+    ['El éxito es la suma de pequeños esfuerzos repetidos día tras día.', 'Robert Collier'],
+    ['La educación es el arma más poderosa que puedes usar para cambiar el mundo.', 'Nelson Mandela'],
+    ['Más vale prevenir que curar.', 'Refrán popular'],
+    ['Dime y lo olvido, enséñame y lo recuerdo, involúcrame y lo aprendo.', 'Atribuida a Benjamin Franklin'],
+    ['Si piensas que la seguridad es cara, prueba con un accidente.', 'Dicho de los prevencionistas'],
+    ['Solos podemos hacer muy poco; juntos podemos hacer mucho.', 'Helen Keller'],
+    ['Nada es particularmente difícil si lo divides en pequeños trabajos.', 'Henry Ford'],
+    ['Donde haya un árbol que plantar, plántalo tú.', 'Gabriela Mistral'],
+    ['Puedo aceptar el fracaso, todos fracasan en algo. Pero no puedo aceptar no intentarlo.', 'Michael Jordan'],
+    ['Trabajar seguro es la mejor forma de decirle a tu familia que la quieres.', 'Integra Prevención'],
+    ['Un minuto de prevención vale más que una vida de lamentos.', 'Integra Prevención'],
+    ['El casco no pesa; lo que pesa es la ausencia.', 'Integra Prevención']
+  ];
+  function semanaDelAño(d) { var a = new Date(d.getFullYear(), 0, 1); return Math.floor(((d - a) / 864e5 + a.getDay()) / 7); }
+  function fraseDeLaSemana() {
+    var hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+    for (var dy = -1; dy <= 1; dy++) {
+      var y = hoy.getFullYear() + dy;
+      for (var i = 0; i < FIESTAS.length; i++) {
+        var f = FIESTAS[i].f(y), dif = Math.round((f - hoy) / 864e5);
+        if (dif >= -2 && dif <= 5) return { fiesta: FIESTAS[i], dif: dif, t: FIESTAS[i].t, a: FIESTAS[i].a, e: FIESTAS[i].e, g: FIESTAS[i].g };
+      }
+    }
+    var k = FRASES[semanaDelAño(hoy) % FRASES.length];
+    return { t: k[0], a: k[1], e: '⛑️', g: 'linear-gradient(135deg,#F28C28,#E53935 60%,#8E2DE2)' };
+  }
+  function bienvenida(nombre, empresa) {
+    var clave = 'ip_bienv_' + new Date().toDateString();
+    try { if (sessionStorage.getItem(clave)) return; sessionStorage.setItem(clave, '1'); } catch (x) {}
+    var fr = fraseDeLaSemana();
+    var pila = nombre ? nombre.split(' ')[0] : '';
+    var fondo = el('div', { 'class': 'bienv', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Bienvenida' });
+    var card = el('div', { 'class': 'bv-card' });
+    var cab = el('div', { 'class': 'bv-cab', style: 'background:' + fr.g });
+    var cols = ['#FFD36B', '#fff', '#7CF2B0', '#FF8FB1', '#8FD3FF', '#FFB86B'];
+    var conf = el('div', { 'class': 'bv-conf' }); cab.appendChild(conf);
+    for (var i = 0; i < 26; i++) { var c = el('i', { 'class': 'confeti', style: 'left:' + Math.random() * 100 + '%;background:' + cols[i % cols.length] + ';animation-duration:' + (2.5 + Math.random() * 3) + 's;animation-delay:' + (-Math.random() * 4) + 's' }); conf.appendChild(c); }
+    cab.appendChild(el('img', { src: 'logo-t.png', alt: 'Integra Prevención', 'class': 'bv-logo' }));
+    cab.appendChild(el('h2', null, '¡' + saludo() + (pila ? ', ' + pila : '') + '!'));
+    cab.appendChild(el('p', null, 'Bienvenido al portal de Integra Prevención' + (empresa ? ' · ' + empresa : '')));
+    var emo = el('div', { 'class': 'bv-emoji', 'aria-hidden': 'true' }, fr.e); cab.appendChild(emo);
+    card.appendChild(cab);
+    var cu = el('div', { 'class': 'bv-cuerpo' });
+    if (fr.fiesta) cu.appendChild(el('span', { 'class': 'bv-fiesta', style: 'background:' + fr.g }, (fr.dif === 0 ? 'Hoy: ' : (fr.dif > 0 ? 'Se viene: ' : 'Esta semana: ')) + fr.fiesta.n + ' ' + fr.e));
+    else cu.appendChild(el('span', { 'class': 'bv-fiesta', style: 'background:' + fr.g }, 'Frase de la semana ✨'));
+    cu.appendChild(el('p', { 'class': 'bv-frase' }, fr.t));
+    cu.appendChild(el('p', { 'class': 'bv-autor' }, '— ' + fr.a));
+    cu.appendChild(el('p', { 'class': 'bv-tip' }, 'Aquí encuentra todo en orden: 1) toque el módulo, 2) Ejecute, 3) revise el Avance y 4) descargue sus Informes. Siga la manito 👆 y, si quiere, toque el parlante para que le explique.'));
+    var bt = el('div', { 'class': 'bv-botones' });
+    var oir = el('button', { 'class': 'bv-oir', type: 'button' }); oir.innerHTML = ICO_VOZ + 'Escuchar';
+    var texto = saludo() + (pila ? ' ' + pila : '') + '. Bienvenido al portal de Integra Prevención. ' + (fr.fiesta ? 'Esta semana celebramos ' + fr.fiesta.n + '. ' : 'La frase de la semana es: ') + fr.t + ' ' + fr.a + '.';
+    oir.addEventListener('click', function () { hablar(texto); });
+    var ir = el('button', { 'class': 'bv-ir con-manito', type: 'button' }, '¡Vamos! Entrar al portal');
+    function cerrar() { try { speechSynthesis.cancel(); } catch (x) {} fondo.remove(); }
+    ir.addEventListener('click', cerrar);
+    fondo.addEventListener('click', function (ev) { if (ev.target === fondo) cerrar(); });
+    document.addEventListener('keydown', function esc(ev) { if (ev.key === 'Escape') { cerrar(); document.removeEventListener('keydown', esc); } });
+    bt.appendChild(oir); bt.appendChild(ir); cu.appendChild(bt); card.appendChild(cu);
+    fondo.appendChild(card); document.body.appendChild(fondo);
+    manito(ir, 'Toque aquí', 'abajo');
+    setTimeout(function () { ir.focus(); }, 300);
+  }
   function saludo() { var h = new Date().getHours(); return h < 12 ? 'Buenos días' : (h < 20 ? 'Buenas tardes' : 'Buenas noches'); }
   function iniciales(n) { var p = (n || '').replace(/[^A-Za-zÁÉÍÓÚÑáéíóúñ ]/g, '').split(' ').filter(Boolean); return (p.length > 1 ? p[0][0] + p[1][0] : (p[0] || '--').slice(0, 2)).toUpperCase(); }
-  /* Logo de la empresa dentro de la placa; si no hay logo, quedan las iniciales */
-  function logoDe(slug) { return (window.LOGOS && slug && window.LOGOS[slug]) || null; }
-  function ponerPlaca(nodo, slug, nombre, color) {
-    var lg = logoDe(slug); nodo.textContent = '';
-    if (lg) { nodo.classList.add('con-logo'); nodo.style.background = lg.bg; var im = document.createElement('img'); im.src = lg.src; im.alt = 'Logo ' + nombre; nodo.appendChild(im); }
-    else { nodo.classList.remove('con-logo'); nodo.style.background = color || ''; nodo.textContent = iniciales(nombre); }
-  }
-  function oscurecer(hex) { var n = parseInt(hex.slice(1), 16); var f = function (x) { return Math.max(0, Math.round(x * 0.75)); }; return '#' + ((1 << 24) + (f(n >> 16 & 255) << 16) + (f(n >> 8 & 255) << 8) + f(n & 255)).toString(16).slice(1); }
-  function tema(color) { document.documentElement.style.setProperty('--prim', color || '#2E4A8A'); }
-  function mostrar(id) { ['cargando', 'login', 'admin', 'panel'].forEach(function (x) { $(x).classList.toggle('oculto', x !== id); }); window.scrollTo(0, 0); }
+  function oscurecer(hex, f) { var n = parseInt(hex.slice(1), 16); var m = function (x) { return Math.max(0, Math.round(x * f)); }; return '#' + ((1 << 24) + (m(n >> 16 & 255) << 16) + (m(n >> 8 & 255) << 8) + m(n & 255)).toString(16).slice(1); }
+  function tema(color) { color = color || '#1E5FA8'; document.documentElement.style.setProperty('--prim', color); document.documentElement.style.setProperty('--prim2', oscurecer(color, 0.55)); document.documentElement.style.setProperty('--prim3', aclarar(color, 0.35)); }
+  function aclarar(hex, f) { var n = parseInt(hex.slice(1), 16); var m = function (x) { return Math.min(255, Math.round(x + (255 - x) * f)); }; return '#' + ((1 << 24) + (m(n >> 16 & 255) << 16) + (m(n >> 8 & 255) << 8) + m(n & 255)).toString(16).slice(1); }
+  function mostrar(id) { try { if (window.speechSynthesis) speechSynthesis.cancel(); } catch (e) {} ['cargando', 'login', 'admin', 'panel'].forEach(function (x) { $(x).classList.toggle('oculto', x !== id); }); window.scrollTo(0, 0); }
   function toast(msg) { var t = $('toast'); t.textContent = msg; t.classList.remove('oculto'); clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.add('oculto'); }, 3500); }
   function error(msg) { var e = $('error'); e.textContent = msg; e.classList.toggle('oculto', !msg); }
   function el(tag, attrs, text) { var x = document.createElement(tag); if (attrs) Object.keys(attrs).forEach(function (k) { if (k === 'style') x.style.cssText = attrs[k]; else x.setAttribute(k, attrs[k]); }); if (text != null) x.textContent = text; return x; }
+  function svg(paths, size, stroke) { return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="' + (stroke || 'currentColor') + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + paths + '</svg>'; }
+  function nombreVisible(e) { return (TEMAS[e.slug] && TEMAS[e.slug][0]) || e.nombre; }
+
+  /* Monitos */
+  var TRABAJADOR = '<svg width="150" height="206" viewBox="0 0 160 220" role="img" aria-label="Trabajador con casco saludando"><ellipse cx="80" cy="212" rx="50" ry="6" fill="#000" opacity=".18"/><rect x="58" y="148" width="18" height="56" rx="7" fill="#1E3566"/><rect x="84" y="148" width="18" height="56" rx="7" fill="#1E3566"/><rect x="50" y="198" width="28" height="12" rx="5" fill="#3A2A1A"/><rect x="82" y="198" width="28" height="12" rx="5" fill="#3A2A1A"/><rect x="36" y="94" width="16" height="50" rx="8" fill="#1E5FA8"/><circle cx="44" cy="146" r="8" fill="#F2C29B"/><g class="saluda"><rect x="110" y="52" width="16" height="50" rx="8" fill="#1E5FA8" transform="rotate(28 118 100)"/><circle cx="134" cy="54" r="9" fill="#F2C29B"/></g><rect x="50" y="86" width="60" height="72" rx="16" fill="#1E5FA8"/><path d="M54 92 L72 88 L76 156 L54 152 Z" fill="#F28C28"/><path d="M106 92 L88 88 L84 156 L106 152 Z" fill="#F28C28"/><rect x="54" y="122" width="22" height="6" fill="#F4F4F4"/><rect x="84" y="122" width="22" height="6" fill="#F4F4F4"/><rect x="73" y="78" width="14" height="12" fill="#F2C29B"/><circle cx="80" cy="62" r="24" fill="#F2C29B"/><circle cx="71" cy="64" r="2.8" fill="#2B2B2B" class="ojo"/><circle cx="89" cy="64" r="2.8" fill="#2B2B2B" class="ojo"/><circle cx="66" cy="72" r="4" fill="#F49A8C" opacity=".6"/><circle cx="94" cy="72" r="4" fill="#F49A8C" opacity=".6"/><path d="M71 73 Q80 81 89 73" stroke="#2B2B2B" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M54 56 Q54 28 80 28 Q106 28 106 56 Z" fill="#F7B733"/><rect x="49" y="52" width="62" height="8" rx="4" fill="#E0A21F"/><rect x="77" y="29" width="6" height="24" rx="3" fill="#FFD36B"/></svg>';
+  var PREVENCIONISTA = '<svg width="136" height="190" viewBox="0 0 160 220" role="img" aria-label="Prevencionista con tablet"><g class="balanceo"><ellipse cx="80" cy="212" rx="46" ry="6" fill="#000" opacity=".18"/><rect x="60" y="150" width="16" height="54" rx="7" fill="#24324F"/><rect x="84" y="150" width="16" height="54" rx="7" fill="#24324F"/><rect x="54" y="198" width="26" height="12" rx="5" fill="#3A2A1A"/><rect x="82" y="198" width="26" height="12" rx="5" fill="#3A2A1A"/><path d="M98 50 Q124 60 114 96 Q108 76 98 70 Z" fill="#5A3A22"/><rect x="52" y="88" width="56" height="70" rx="16" fill="#fff"/><path d="M54 94 L72 88 L76 158 L54 154 Z" fill="#8CC63F"/><path d="M106 94 L88 88 L84 158 L106 154 Z" fill="#8CC63F"/><rect x="54" y="124" width="22" height="6" fill="#F4F4F4"/><rect x="84" y="124" width="22" height="6" fill="#F4F4F4"/><rect x="58" y="104" width="44" height="32" rx="5" fill="#14275A" transform="rotate(-8 80 120)"/><rect x="63" y="109" width="34" height="22" rx="3" fill="#BFE3FF" transform="rotate(-8 80 120)"/><path d="M70 121 L76 126 L88 114" stroke="#2E9E4F" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="rotate(-8 80 120)"/><circle cx="56" cy="128" r="7" fill="#E9B48C"/><circle cx="104" cy="122" r="7" fill="#E9B48C"/><rect x="73" y="78" width="14" height="12" fill="#E9B48C"/><circle cx="80" cy="62" r="23" fill="#E9B48C"/><path d="M57 60 Q58 44 80 42 Q102 44 103 60 Q96 52 80 52 Q64 52 57 60 Z" fill="#5A3A22"/><circle cx="72" cy="65" r="2.6" fill="#2B2B2B" class="ojo"/><circle cx="88" cy="65" r="2.6" fill="#2B2B2B" class="ojo"/><circle cx="67" cy="72" r="4" fill="#F49A8C" opacity=".6"/><circle cx="93" cy="72" r="4" fill="#F49A8C" opacity=".6"/><path d="M72 73 Q80 80 88 73" stroke="#2B2B2B" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M55 52 Q55 26 80 26 Q105 26 105 52 Z" fill="#fff"/><rect x="50" y="48" width="60" height="8" rx="4" fill="#E3E8EF"/><rect x="77" y="27" width="6" height="22" rx="3" fill="#F28C28"/></g></svg>';
+  $('prev-login').innerHTML = PREVENCIONISTA;
+  ['monitos-admin', 'monitos-panel'].forEach(function (id) { $(id).innerHTML = '<div style="display:flex;align-items:flex-end;gap:6px">' + TRABAJADOR + PREVENCIONISTA + '</div>'; });
 
   /* ---------- INGRESO ---------- */
   function prepararLogin() {
     var slug = new URLSearchParams(location.search).get('e');
     var t = slug && TEMAS[slug];
-    if (t) {
-      tema(t[1]);
-      document.documentElement.style.setProperty('--acc', '#E8731A');
-      $('l-nombre').textContent = t[0]; ponerPlaca($('l-placa'), slug, t[0], '');
-    } else {
-      tema('#2E4A8A');
-      $('l-nombre').textContent = 'Portal de clientes'; ponerPlaca($('l-placa'), null, 'IP', '');
-    }
+    tema(t ? t[1] : '#1E5FA8');
+    $('l-emp').classList.toggle('oculto', !t);
+    if (t) { $('l-nombre').textContent = t[0]; $('l-placa').textContent = iniciales(t[0]); }
     $('saludo-login').textContent = saludo();
     $('recordar').checked = lsGet('ip_recordar') !== 'no';
     error('');
     mostrar('login');
+    manito($('btn-entrar'), 'Toque aquí', 'abajo');
+    guion = saludo() + '. Bienvenido al portal de Integra Prevención' + (t ? ' de ' + t[0] : '') + '. Para entrar, escriba su correo, luego su clave, y toque el botón naranjo que dice Ingrese aquí. Si olvidó su clave, toque ¿Olvidó su clave?, y le llegará un correo para crear una nueva.';
   }
 
   $('form-login').addEventListener('submit', async function (ev) {
@@ -460,252 +722,188 @@ h1{margin:0}
     if (!u) { prepararLogin(); return; }
     var p = await sb.from('perfiles').select('rol,nombre,empresa_id,activo').eq('id', u.id).maybeSingle();
     if (p.error || !p.data || !p.data.activo) {
-      await sb.auth.signOut();
-      prepararLogin();
+      await sb.auth.signOut(); prepararLogin();
       error('Su usuario aún no está habilitado. Contacte a Integra Prevención.');
       return;
     }
     perfil = p.data;
-    var e = await sb.from('empresas').select('id,slug,nombre,razones_sociales,color,activa,enlaces').order('nombre');
-    empresasCache = e.data || [];
+    var e = await sb.from('empresas').select('id,slug,nombre,razones_sociales,color,activa,enlaces,logo_url').order('nombre');
+    empresasCache = (e.data || []).sort(function (a, b) { return nombreVisible(a).localeCompare(nombreVisible(b), 'es'); });
     try { await sb.from('accesos').insert({ empresa_id: perfil.empresa_id }); } catch (x) {}
-    if (perfil.rol === 'admin') { verAdmin(); }
+    if (perfil.rol === 'admin') { verAdmin(); bienvenida(perfil.nombre, ''); }
     else {
       var mia = empresasCache.find(function (x) { return x.id === perfil.empresa_id; });
       if (!mia) { await sb.auth.signOut(); prepararLogin(); error('Su usuario no tiene empresa asignada. Contacte a Integra Prevención.'); return; }
       verPanel(mia, false);
+      bienvenida(perfil.nombre, nombreVisible(mia));
     }
   }
 
+  function activos(emp) { var en = emp.enlaces || {}; return MODULOS.filter(function (m) { return !!en[m.k]; }).length; }
+  function animarNumero(nodo, hasta, sufijo) { var t0 = null; sufijo = sufijo || ''; function f(t) { if (!t0) t0 = t; var k = Math.min(1, (t - t0) / 900); nodo.textContent = Math.round(hasta * (1 - Math.pow(1 - k, 3))) + sufijo; if (k < 1) requestAnimationFrame(f); } requestAnimationFrame(f); }
+
   function verAdmin() {
-    tema('#2E4A8A');
+    tema('#1E5FA8');
     $('admin-nombre').textContent = perfil.nombre || 'Administrador';
-    $('n-emp').textContent = empresasCache.length;
-    $('n-rs').textContent = empresasCache.reduce(function (s, x) { return s + (x.razones_sociales || []).length; }, 0);
+    $('saludo-admin').textContent = saludo() + ', ' + ((perfil.nombre || 'Administrador').split(' ')[0]);
+    animarNumero($('n-emp'), empresasCache.length);
+    animarNumero($('n-rs'), empresasCache.reduce(function (s, x) { return s + (x.razones_sociales || []).length; }, 0));
+    animarNumero($('n-mod'), empresasCache.reduce(function (s, x) { return s + activos(x); }, 0));
+    pintarFiltros();
     pintarEmpresas('');
     mostrar('admin');
-    if (!verAdmin._cargado) { verAdmin._cargado = true; cargarSemaforo(false); }
+    var enMarcha = empresasCache.filter(function (x) { return activos(x) > 0; }).length;
+    guion = saludo() + ' ' + ((perfil.nombre || '').split(' ')[0]) + '. Tiene ' + empresasCache.length + ' empresas. ' + enMarcha + ' están en marcha y ' + (empresasCache.length - enMarcha) + ' por partir. Toque la tarjeta de una empresa para entrar a su panel, o use los filtros de arriba para ver solo las que están en marcha.';
   }
 
+  var filtro = 'todas';
+  function pintarFiltros() {
+    var f = $('filtros'); f.textContent = '';
+    var cuenta = { todas: empresasCache.length, marcha: empresasCache.filter(function (x) { return activos(x) > 0; }).length };
+    cuenta.partir = cuenta.todas - cuenta.marcha;
+    [['todas', 'Todas'], ['marcha', 'En marcha'], ['partir', 'Por partir']].forEach(function (o) {
+      var b = el('button', { 'class': 'filtro' + (filtro === o[0] ? ' on' : ''), type: 'button' }, o[1]);
+      b.appendChild(el('b', null, String(cuenta[o[0]])));
+      b.addEventListener('click', function () { filtro = o[0]; pintarFiltros(); pintarEmpresas($('buscar').value); });
+      f.appendChild(b);
+    });
+  }
+  function anillo(pct) {
+    var r = 24, c = 2 * Math.PI * r;
+    return '<svg width="58" height="58" viewBox="0 0 58 58" aria-hidden="true"><circle cx="29" cy="29" r="' + r + '" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="6"/><circle cx="29" cy="29" r="' + r + '" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-dasharray="' + c + '" stroke-dashoffset="' + c + '" transform="rotate(-90 29 29)" style="transition:stroke-dashoffset 1.2s cubic-bezier(.2,.8,.2,1)" data-to="' + (c * (1 - pct / 100)) + '"/></svg><b>' + pct + '%</b>';
+  }
   function pintarEmpresas(q) {
     var cont = $('lista-empresas'); cont.textContent = '';
     q = (q || '').toLowerCase();
-    empresasCache.filter(function (x) { return !q || (x.nombre + ' ' + (x.razones_sociales || []).join(' ')).toLowerCase().indexOf(q) >= 0; })
-      .forEach(function (x) {
-        var rs = x.razones_sociales || [];
-        var c = el('button', { 'class': 'emp', type: 'button', title: rs.join(' · '), 'aria-label': 'Entrar a ' + x.nombre });
-        var pl = el('span', { 'class': 'placa', style: 'width:52px;height:52px;font-size:19px;border-radius:14px' }); ponerPlaca(pl, x.slug, x.nombre, x.color); c.appendChild(pl);
+    empresasCache.filter(function (x) {
+      var n = activos(x);
+      if (filtro === 'marcha' && !n) return false;
+      if (filtro === 'partir' && n) return false;
+      return !q || (nombreVisible(x) + ' ' + (x.razones_sociales || []).join(' ')).toLowerCase().indexOf(q) >= 0;
+    }).forEach(function (x, i) {
+        var rs = x.razones_sociales || [], n = activos(x), nom = nombreVisible(x), en = x.enlaces || {};
+        var g = 'linear-gradient(135deg,' + aclarar(x.color, 0.15) + ',' + oscurecer(x.color, 0.65) + ')';
+        var pct = Math.round(n / MODULOS.length * 100);
+        var c = el('button', { 'class': 'emp anim', type: 'button', title: rs.join(' · '), 'aria-label': 'Entrar a ' + nom, style: 'animation-delay:' + (i * 0.04) + 's' });
+        var cab = el('span', { 'class': 'emp-cab', style: 'background:' + g });
+        var ini = el('span', { 'class': 'emp-ini', style: 'color:' + x.color }); logoEn(ini, x, nom); cab.appendChild(ini);
         var tx = el('span', { 'class': 'emp-txt' });
-        tx.appendChild(el('span', { 'class': 'emp-nom' }, x.nombre));
+        tx.appendChild(el('span', { 'class': 'emp-nom' }, nom));
         tx.appendChild(el('span', { 'class': 'emp-sub' }, rs.length > 1 ? rs.length + ' razones sociales' : 'Empresa individual'));
-        var es = el('span', { 'class': 'emp-est', 'data-est': x.slug }); pintarEstado(es, x.slug); tx.appendChild(es);
-        c.appendChild(tx);
-        var an = el('span', { 'class': 'anillo', 'data-anillo': x.slug }); c.appendChild(an);
-        var ba = el('span', { 'class': 'emp-barra' }); ba.appendChild(el('b', { 'data-barra': x.slug })); c.appendChild(ba);
-        var fl = el('span', { 'class': 'emp-flecha', 'aria-hidden': 'true' });
-        fl.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
-        c.appendChild(fl);
+        cab.appendChild(tx);
+        var an = el('span', { 'class': 'anillo' }); an.innerHTML = anillo(pct); cab.appendChild(an);
+        c.appendChild(cab);
+        var cu = el('span', { 'class': 'emp-cuerpo' });
+        var mods = el('span', { 'class': 'mods' });
+        var cortos = { documentos: 'Docs', capacitaciones: 'Capac.', epp: 'EPP', protocolos: 'Protoc.', camiones: 'Equipos', accidentes: 'Accid.' };
+        MODULOS.forEach(function (m) {
+          var on = !!en[m.k];
+          var md = el('span', { 'class': 'mod' + (on ? ' on' : ''), title: m.t + (on ? ': en marcha' : ': por implementar') });
+          var ic = el('i', { style: on ? 'background:' + m.g : '' }); ic.innerHTML = svg(ICO[m.k], 20, on ? '#fff' : 'currentColor');
+          md.appendChild(ic); md.appendChild(document.createTextNode(cortos[m.k]));
+          mods.appendChild(md);
+        });
+        cu.appendChild(mods);
+        var pie = el('span', { 'class': 'emp-pie' });
+        var est = el('span', { 'class': 'emp-est', style: n ? 'background:#E3F5E8;color:#1B5E20' : 'background:#FFF1E2;color:#B4520C' }, n ? '● ' + n + ' en marcha' : '● Por partir');
+        pie.appendChild(est);
+        var ir = el('span', { 'class': 'emp-ir', style: 'background:' + g }); ir.textContent = 'Entrar'; ir.insertAdjacentHTML('beforeend', svg('<path d="M5 12h14M13 6l6 6-6 6"/>', 18, '#fff'));
+        pie.appendChild(ir); cu.appendChild(pie);
+        c.appendChild(cu);
+        setTimeout(function () { var k = an.querySelector('[data-to]'); if (k) k.style.strokeDashoffset = k.getAttribute('data-to'); }, 250 + i * 40);
         c.addEventListener('click', function () { verPanel(x, true); });
         cont.appendChild(c);
-        pintarAnillo(x.slug);
       });
-  }
-
-  /* ---------- CONTACTO ---------- */
-  var CONTACTO = { tel: '+56973342579', telTxt: '+56 9 7334 2579', mail: 'zunino.prevencion@gmail.com' };
-  Array.prototype.forEach.call(document.querySelectorAll('[data-contacto]'), function (n) {
-    n.innerHTML = '<a class="ct-wa" target="_blank" rel="noopener" href="https://wa.me/' + CONTACTO.tel.replace('+', '') + '?text=' + encodeURIComponent('Hola Daniel, vi el Portal Integra y quiero más información.') + '">💬 WhatsApp</a>' +
-      '<a class="ct-tel" href="tel:' + CONTACTO.tel + '">📞 ' + CONTACTO.telTxt + '</a>' +
-      '<a class="ct-ml" href="mailto:' + CONTACTO.mail + '?subject=' + encodeURIComponent('Consulta Portal Integra') + '">✉️ Correo</a>';
-  });
-
-  /* ---------- BANNERS: CONSEJOS DE SEGURIDAD ---------- */
-  var CONSEJOS = [
-    ['🦺', 'Su EPP lo protege solo si lo usa', 'Casco, lentes, guantes y zapatos de seguridad durante toda la jornada, no solo cuando lo están mirando.'],
-    ['🏋️', 'Levante con las piernas, no con la espalda', 'Doble las rodillas, mantenga la carga pegada al cuerpo y pida ayuda o use carro si es pesada. Máximo 25 kg por persona.'],
-    ['🪜', 'Trabajo en altura: siempre amarrado', 'Desde 1,8 metros use arnés con dos colas enganchado a un punto firme. Revise la escalera antes de subir.'],
-    ['🚨', '¿Tuvo un accidente? Avise de inmediato', 'Informe a su jefatura aunque parezca menor. Así queda cubierto por la Ley 16.744 y recibe atención en su mutualidad.'],
-    ['⚠️', 'Un incidente hoy es un accidente mañana', 'Reporte las casi caídas, los golpes que no pasaron y las condiciones inseguras. Reportar previene.'],
-    ['🧹', 'Orden y aseo es seguridad', 'Pasillos despejados, cables recogidos y derrames limpios evitan la mayoría de las caídas.'],
-    ['🔥', 'Conozca su extintor', 'Sepa dónde está, revise que esté vigente y recuerde: tire el seguro, apunte a la base del fuego y presione.'],
-    ['🔌', 'Bloquee antes de intervenir', 'Antes de mantener una máquina, desconecte la energía, bloquee y etiquete. Nunca meta la mano con el equipo en marcha.'],
-    ['🧪', 'Productos químicos: lea la hoja de seguridad', 'Use el EPP que indica, nunca trasvasije a botellas de bebida y mantenga todo rotulado.'],
-    ['☀️', 'Protéjase del sol', 'Entre 10 y 17 horas use bloqueador, gorro con legionario y lentes con filtro UV. Hidrátese seguido.'],
-    ['🚚', 'Al volante, solo manejar', 'Cinturón siempre, celular guardado y respete las velocidades. Haga el chequeo del vehículo antes de salir.'],
-    ['🍺', 'Alcohol y drogas: tolerancia cero', 'Nadie trabaja bajo sus efectos. Si ve a un compañero en esa condición, avise a su jefatura.'],
-    ['🧘', 'Pausas activas', 'Cada dos horas estire cuello, hombros, manos y espalda por cinco minutos. Su cuerpo se lo agradecerá.'],
-    ['💬', 'Su bienestar también es seguridad', 'Si siente estrés o tiene un problema en el trabajo, convérselo. El buen trato y el respeto son parte de la prevención.'],
-    ['🤝', 'Ley Karin: respeto en el trabajo', 'El acoso laboral, el acoso sexual y la violencia en el trabajo se pueden denunciar. Su empresa tiene un protocolo para recibirlo.']
-  ];
-  function crearBanner(nodo) {
-    var orden = CONSEJOS.map(function (c, i) { return i; }).sort(function () { return Math.random() - 0.5; });
-    var i = 0, t = null;
-    nodo.innerHTML = '';
-    nodo.style.background = 'linear-gradient(120deg,color-mix(in srgb,var(--acc) 92%,#000),color-mix(in srgb,var(--prim) 85%,#000))';
-    var sl = orden.map(function (k, j) { var c = CONSEJOS[k];
-      var d = el('div', { 'class': 'b-slide' + (j === 0 ? ' on' : '') });
-      d.innerHTML = '<div class="b-ico" aria-hidden="true">' + c[0] + '</div><div class="b-tx"><small>Consejo de seguridad</small><b>' + esc(c[1]) + '</b><span>' + esc(c[2]) + '</span></div>';
-      nodo.appendChild(d); return d; });
-    var dots = el('div', { 'class': 'b-dots' });
-    var db = sl.map(function (x, j) { var b = el('button', { type: 'button', 'aria-label': 'Consejo ' + (j + 1), 'class': j === 0 ? 'on' : '' }); b.addEventListener('click', function () { ir(j); }); dots.appendChild(b); return b; });
-    nodo.appendChild(dots);
-    var a = el('button', { 'class': 'b-nav b-ant', type: 'button', 'aria-label': 'Consejo anterior' }, '‹'), s2 = el('button', { 'class': 'b-nav b-sig', type: 'button', 'aria-label': 'Consejo siguiente' }, '›');
-    a.addEventListener('click', function () { ir(i - 1); }); s2.addEventListener('click', function () { ir(i + 1); });
-    nodo.appendChild(a); nodo.appendChild(s2);
-    function ir(j) { j = (j + sl.length) % sl.length; sl[i].classList.remove('on'); db[i].classList.remove('on'); i = j; sl[i].classList.add('on'); db[i].classList.add('on'); reloj(); }
-    function reloj() { clearTimeout(t); t = setTimeout(function () { ir(i + 1); }, 8000); }
-    nodo.addEventListener('mouseenter', function () { clearTimeout(t); }); nodo.addEventListener('mouseleave', reloj);
-    reloj();
-  }
-  Array.prototype.forEach.call(document.querySelectorAll('[data-banner]'), crearBanner);
-
-  /* ---------- SEMÁFORO Y CENTRO DE CONTROL ---------- */
-  var ESTADOS = {}; /* slug -> {r, p, nivel} */
-  var NIVEL_COLOR = { verde: '#2E7D32', amarillo: '#E8A21A', rojo: '#D32F2F', gris: '#C3CBD8' };
-  function lim(v) { return Math.max(0, Math.min(100, v)); }
-  /* Puntaje 0-100: promedio de los módulos conectados */
-  function puntaje(r) {
-    var v = [];
-    if (r.cap && !r.cap.error) v.push(r.cap.cumplimiento != null ? r.cap.cumplimiento : (r.cap.avance || 0));
-    if (r.epp && !r.epp.error && r.epp.alDia != null) v.push(r.epp.alDia);
-    if (r.cheq && !r.cheq.error && r.cheq.equipos) v.push(r.cheq.criticas ? 30 : lim(100 - (r.cheq.nAbiertas || 0) / r.cheq.equipos * 100));
-    if (r.acc && !r.acc.error) v.push(r.acc.graves ? 20 : lim(100 - (r.acc.nVencidas || 0) * 20 - (r.acc.abiertos || 0) * 10 - (r.acc.declPendientes || 0) * 10));
-    return v.length ? Math.round(v.reduce(function (a, b) { return a + b; }, 0) / v.length) : null;
-  }
-  function nivelDe(r, p) {
-    if (p == null) return 'gris';
-    var crit = (r.alertas || []).some(function (a) { return a.n === 1; });
-    if (crit || p < 50) return 'rojo';
-    return p >= 80 ? 'verde' : 'amarillo';
-  }
-  function pintarEstado(nodo, slug) {
-    var e = ESTADOS[slug];
-    nodo.className = 'emp-est';
-    if (!e) { nodo.innerHTML = '<i></i>Revisando…'; return; }
-    if (e.err) { nodo.innerHTML = '<i></i>Sin conexión'; return; }
-    if (e.nivel === 'gris') { nodo.innerHTML = '<i></i>Sin módulos conectados'; return; }
-    nodo.classList.add(e.nivel);
-    var n = (e.r.alertas || []).length;
-    nodo.innerHTML = '<i></i>' + (n ? n + (n === 1 ? ' alerta' : ' alertas') : 'Todo al día');
-  }
-  function pintarAnillo(slug) {
-    var e = ESTADOS[slug], a = document.querySelector('[data-anillo="' + slug + '"]'), b = document.querySelector('[data-barra="' + slug + '"]');
-    if (!a) return;
-    var card = a.closest('.emp');
-    if (!e || e.p == null) { a.style.display = 'none'; if (card) card.classList.remove('con-anillo'); if (b) b.style.width = '0'; return; }
-    if (card) card.classList.add('con-anillo');
-    var c = NIVEL_COLOR[e.nivel];
-    a.style.display = ''; a.style.background = 'conic-gradient(' + c + ' ' + e.p * 3.6 + 'deg,#EEF2F7 0)';
-    a.innerHTML = '<span>' + e.p + '%</span>'; a.title = 'Cumplimiento general ' + e.p + '%';
-    if (b) { b.style.background = c; b.style.width = e.p + '%'; }
-  }
-  function refrescarTarjeta(slug) {
-    var es = document.querySelector('[data-est="' + slug + '"]'); if (es) pintarEstado(es, slug);
-    pintarAnillo(slug);
-  }
-  function ordenarEmpresas() {
-    var orden = { rojo: 0, amarillo: 1, verde: 2, gris: 3 };
-    empresasCache.sort(function (a, b) {
-      var ea = ESTADOS[a.slug], eb = ESTADOS[b.slug];
-      var oa = ea ? orden[ea.nivel] : 4, ob = eb ? orden[eb.nivel] : 4;
-      if (oa !== ob) return oa - ob;
-      if (ea && eb && ea.p != null && eb.p != null && ea.p !== eb.p) return ea.p - eb.p;
-      return a.nombre.localeCompare(b.nombre);
-    });
-  }
-  var filtroCentro = 0;
-  function pintarCentro(terminado) {
-    var tot = { 1: 0, 2: 0, 3: 0 }, lst = [], verdes = 0, conectadas = 0;
-    empresasCache.forEach(function (x) {
-      var e = ESTADOS[x.slug]; if (!e || !e.r || e.nivel === 'gris') return;
-      conectadas++; if (e.nivel === 'verde') verdes++;
-      (e.r.alertas || []).forEach(function (a) { tot[a.n] = (tot[a.n] || 0) + 1; lst.push({ emp: x, a: a }); });
-    });
-    lst.sort(function (u, v) { return u.a.n - v.a.n; });
-    var T = [[1, 'k1', 'Críticas: actuar hoy'], [2, 'k2', 'Importantes'], [3, 'k3', 'Avisos'], [0, 'k0', 'Empresas al día']];
-    $('c-tot').innerHTML = T.map(function (t) { var n = t[0] ? tot[t[0]] : verdes + ' / ' + conectadas;
-      return '<button type="button" class="' + t[1] + (filtroCentro === t[0] && t[0] ? ' on' : '') + '" data-f="' + t[0] + '"><b>' + n + '</b><span>' + t[2] + '</span></button>'; }).join('');
-    Array.prototype.forEach.call($('c-tot').querySelectorAll('button'), function (b) { b.addEventListener('click', function () { var f = +b.dataset.f; filtroCentro = (filtroCentro === f || !f) ? 0 : f; pintarCentro(true); }); });
-    var ver = filtroCentro ? lst.filter(function (o) { return o.a.n === filtroCentro; }) : lst;
-    var cont = $('c-lst'); cont.textContent = '';
-    if (!ver.length) { cont.appendChild(el('div', { 'class': 'c-ok' }, terminado ? (conectadas ? '✅ Sin alertas pendientes. ¡Buen trabajo!' : 'Aún no hay empresas con módulos conectados.') : 'Revisando…')); }
-    var max = pintarCentro._todo ? ver.length : 6;
-    ver.slice(0, max).forEach(function (o) {
-      var b = el('button', { 'class': 'c-al', type: 'button' });
-      var pl = el('span', { 'class': 'placa' }); ponerPlaca(pl, o.emp.slug, o.emp.nombre, o.emp.color); b.appendChild(pl);
-      var tx = el('span', { 'class': 'c-tx' }); tx.appendChild(el('b', null, o.emp.nombre)); tx.appendChild(el('span', null, o.a.m + ': ' + o.a.t)); b.appendChild(tx);
-      b.appendChild(el('span', { 'class': 'tag t' + o.a.n }, ['', 'CRÍTICA', 'IMPORTANTE', 'AVISO'][o.a.n]));
-      b.appendChild(el('span', { 'class': 'ver' }, 'Ver →'));
-      b.addEventListener('click', function () { verPanel(o.emp, true); pestana('ges'); });
-      cont.appendChild(b);
-    });
-    if (ver.length > 6) { var m = el('button', { 'class': 'c-mas', type: 'button' }, pintarCentro._todo ? 'Ver menos' : 'Ver las ' + ver.length + ' alertas');
-      m.addEventListener('click', function () { pintarCentro._todo = !pintarCentro._todo; pintarCentro(true); }); cont.appendChild(m); }
-    $('c-act').textContent = terminado ? 'Actualizado ' + new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' }) + ' · ' + conectadas + ' de ' + empresasCache.length + ' empresas con datos' : 'Revisando todas tus empresas…';
-  }
-  function cargarSemaforo(fresco) {
-    if (GESTION_API.indexOf('http') !== 0) return;
-    var pend = empresasCache.length; if (!pend) return;
-    pintarCentro(false);
-    empresasCache.forEach(function (x) {
-      fetch(GESTION_API, { method: 'POST', credentials: 'omit', redirect: 'follow',
-        body: JSON.stringify({ fn: 'gestionResumen', args: [sesionActual && sesionActual.access_token, x.slug, !!fresco] }) })
-        .then(function (r) { return r.json(); })
-        .then(function (j) { if (!j.ok) throw new Error(j.e); var r = j.r || {}; var p = r.sinConfig ? null : puntaje(r);
-          ESTADOS[x.slug] = { r: r, p: p, nivel: r.sinConfig ? 'gris' : nivelDe(r, p) }; })
-        .catch(function () { ESTADOS[x.slug] = { err: true, nivel: 'gris', p: null }; })
-        .then(function () { refrescarTarjeta(x.slug); pintarCentro(false);
-          if (--pend === 0) { ordenarEmpresas(); pintarEmpresas($('buscar').value); pintarCentro(true); } });
-    });
+    if (cont.firstChild) manito(cont.firstChild.querySelector('.emp-ir'), 'Entre aquí', 'izq');
+    if (!cont.children.length) cont.appendChild(el('p', { style: 'grid-column:1/-1;text-align:center;font-weight:800;color:var(--gris);padding:30px' }, 'No hay empresas con ese filtro o búsqueda.'));
   }
   $('buscar').addEventListener('input', function () { pintarEmpresas(this.value); });
   $('volver').addEventListener('click', verAdmin);
 
   function verPanel(emp, desdeAdmin) {
+    var nom = nombreVisible(emp), en = emp.enlaces || {};
+    empActual = emp;
     tema(emp.color);
-    ponerPlaca($('p-placa'), emp.slug, emp.nombre, '');
-    $('p-nombre').textContent = emp.nombre;
+    logoEn($('p-placa'), emp, nom);
+    $('p-nombre').textContent = nom;
     var n = (emp.razones_sociales || []).length;
-    $('p-rs').textContent = n > 1 ? n + ' razones sociales' : '';
-    $('hero-nombre').textContent = emp.nombre;
-    ponerPlaca($('hero-placa'), emp.slug, emp.nombre, emp.color);
-    var eh = ESTADOS[emp.slug], he = $('hero-est');
-    if (eh && eh.p != null) { he.classList.remove('oculto'); he.innerHTML = '<i style="background:' + NIVEL_COLOR[eh.nivel] + '"></i>Cumplimiento general ' + eh.p + '% · ' + ((eh.r.alertas || []).length ? eh.r.alertas.length + ' alerta(s)' : 'todo al día'); }
-    else he.classList.add('oculto');
+    $('p-rs').textContent = n > 1 ? n + ' razones sociales' : 'Seguridad y salud en el trabajo';
+    $('hero-nombre').textContent = nom;
     $('saludo-panel').textContent = saludo();
     $('volver').classList.toggle('oculto', !desdeAdmin);
+    var act = activos(emp), pct = Math.round(act / MODULOS.length * 100);
+    $('st-mod').textContent = act + '/' + MODULOS.length;
+    animarNumero($('st-tray'), pct, '%');
+    animarNumero($('tray-pct'), pct, '%');
+    $('tray-barra').style.width = '0';
+    setTimeout(function () { $('tray-barra').style.width = pct + '%'; }, 250);
+
+    /* Trayectoria */
+    var pasos = $('pasos'); pasos.textContent = '';
+    MODULOS.forEach(function (m, i) {
+      var listo = !!en[m.k];
+      var b = el('button', { 'class': 'paso', type: 'button', 'aria-label': m.t + (listo ? ': en marcha' : ': por implementar') });
+      var nodo = el('span', { 'class': 'nodo', style: 'background:' + (listo ? m.g : '#D9CFC0') });
+      nodo.innerHTML = listo ? svg('<path d="M5 12l5 5 9-10"/>', 26, '#fff') : '<span style="font-weight:900;font-size:20px">' + (i + 1) + '</span>';
+      b.appendChild(nodo);
+      b.appendChild(el('b', null, m.t));
+      b.appendChild(el('small', { style: 'color:' + (listo ? m.c : '#8A8170') }, listo ? 'En marcha' : 'Por implementar'));
+      b.addEventListener('click', function () { var t = document.getElementById('mod-' + m.k); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'center' }); });
+      pasos.appendChild(b);
+    });
+
+    /* Tarjetas */
     var cont = $('tarjetas'); cont.textContent = '';
-    MODULOS.forEach(function (m) {
-      var c = el('div', { 'class': 'tarjeta' });
-      var top = el('div', { 'class': 't-top' });
-      var ic = el('div', { 'class': 'icono', style: 'background:' + m.bg + ';color:' + m.c });
-      ic.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + m.i + '</svg>';
-      top.appendChild(ic);
-      var url = (emp.enlaces || {})[m.k];
-      var es = el('span', { 'class': 'estado', style: url ? 'background:#E8F5E9;color:#1B5E20' : '' }); es.appendChild(el('span', { 'class': 'punto', style: url ? 'background:#2E8B3A' : '' })); es.appendChild(document.createTextNode(url ? 'Disponible' : 'Próximamente'));
-      top.appendChild(es); c.appendChild(top);
-      var tx = el('div', { style: 'display:flex;flex-direction:column;gap:4px;flex-grow:1' });
-      tx.appendChild(el('span', { 'class': 't-tit' }, m.t)); tx.appendChild(el('span', { 'class': 't-det' }, m.d));
-      c.appendChild(tx);
-      var ac = el('div', { 'class': 'acciones' });
-      var ab = el('button', { 'class': 'abrir', style: url ? '' : 'background:#C9D2DF;color:#4A5672' }, url ? '▶ Abrir' : 'Próximamente');
-      ab.addEventListener('click', function () {
-        if (!url) { toast(m.t + ': esta sección se está preparando. Muy pronto disponible.'); return; }
-        abrirUrl(url);
+    MODULOS.forEach(function (m, i) {
+      var url = en[m.k];
+      var c = el('div', { 'class': 'tarjeta anim', id: 'mod-' + m.k, style: 'animation-delay:' + (0.15 + i * 0.07) + 's' });
+      var cab = el('div', { 'class': 't-cab', style: 'background:' + m.g });
+      var ic = el('div', { 'class': 't-ico', style: 'color:' + m.c }); ic.innerHTML = svg(ICO[m.k], 32); cab.appendChild(ic);
+      var tt = el('div', { 'class': 't-tit' }); tt.appendChild(el('b', null, m.t)); tt.appendChild(el('span', null, m.d)); cab.appendChild(tt);
+      cab.appendChild(el('span', { 'class': 't-num' }, 'Paso ' + (i + 1)));
+      var vm = el('button', { 'class': 'voz-mini', type: 'button', 'aria-label': 'Escuchar ' + m.t, title: 'Escuchar' }); vm.innerHTML = ICO_VOZ;
+      vm.addEventListener('click', function (ev) { ev.stopPropagation(); hablar(m.t + '. ' + m.d + '. ' + (url ? 'Este módulo está en marcha. Toque Ejecutar para abrirlo. Primero ejecute, después revise el avance, y al final descargue los informes. También puede enviarlo por WhatsApp o correo con los botones verde y azul.' : 'Este módulo lo estamos preparando para su empresa. Pronto estará disponible.')); });
+      cab.appendChild(vm);
+      c.appendChild(cab);
+      var cu = el('div', { 'class': 't-cuerpo' });
+      var es = el('span', { 'class': 'estado', style: url ? 'background:#E3F5E8;color:#1B5E20' : 'background:#F1EBE1;color:#6B6252' });
+      es.appendChild(el('span', { 'class': 'punto', style: 'background:' + (url ? '#2E9E4F' : '#B5AA97') }));
+      es.appendChild(document.createTextNode(url ? 'En marcha' : 'Por implementar'));
+      cu.appendChild(es);
+      var ps = el('div', { 'class': 'pasitos' });
+      [['Ejecutar', '<path d="M7 5l11 7-11 7z"/>'], ['Avance', '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'], ['Informes', '<path d="M4 4h6l2 3h8v13H4z"/>']].forEach(function (p) {
+        var x = el('span', { 'class': 'pasito' }); x.innerHTML = svg(p[1], 18, m.c); x.appendChild(document.createTextNode(p[0])); ps.appendChild(x);
       });
-      var msg = 'Integra Prevención · ' + emp.nombre + '\n' + m.t + '\n' + (url ? 'Ingrese aquí: ' + url : 'Revisar en el portal: ' + location.origin + '/?e=' + emp.slug);
+      cu.appendChild(ps);
+      var ac = el('div', { 'class': 'acciones' });
+      var ab = el('button', { 'class': 'abrir', style: url ? 'background:' + m.g : 'background:#E4DCCF;color:#6B6252' }, url ? '▶  Ejecutar' : 'Próximamente');
+      ab.addEventListener('click', function () { if (url) abrirUrl(url); else toast(m.t + ': lo estamos preparando para su empresa.'); });
+      var msg = 'Integra Prevención · ' + nom + '\n' + m.t + '\n' + (url ? 'Ingrese aquí: ' + url : 'Revisar en el portal: ' + location.origin + '/?e=' + emp.slug);
       var wa = el('a', { 'class': 'cuad wa', href: 'https://wa.me/?text=' + encodeURIComponent(msg), target: '_blank', rel: 'noopener', 'aria-label': 'Enviar por WhatsApp', title: 'Enviar por WhatsApp' });
-      wa.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-1.8-1.8l.8-1-1-2z"/></svg>';
-      var ml = el('a', { 'class': 'cuad ml', href: 'mailto:?subject=' + encodeURIComponent(emp.nombre + ' · ' + m.t) + '&body=' + encodeURIComponent(msg), 'aria-label': 'Enviar por correo', title: 'Enviar por correo' });
-      ml.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>';
+      wa.innerHTML = svg('<path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-1.8-1.8l.8-1-1-2z"/>', 22);
+      var ml = el('a', { 'class': 'cuad ml', href: 'mailto:?subject=' + encodeURIComponent(nom + ' · ' + m.t) + '&body=' + encodeURIComponent(msg), 'aria-label': 'Enviar por correo', title: 'Enviar por correo' });
+      ml.innerHTML = svg('<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>', 22);
       ac.appendChild(ab);
       if (url) { var qb = el('button', { 'class': 'cuad qr', type: 'button', 'aria-label': 'Ver código QR', title: 'Código QR para compartir' });
-        qb.innerHTML = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg>';
+        qb.innerHTML = svg('<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/>', 22);
         qb.addEventListener('click', function () { verQR(emp, m, url); }); ac.appendChild(qb); }
-      ac.appendChild(wa); ac.appendChild(ml); c.appendChild(ac);
+      ac.appendChild(wa); ac.appendChild(ml); cu.appendChild(ac);
+      c.appendChild(cu);
       cont.appendChild(c);
     });
-    empActual = emp;
+
+    /* Manitos de siguiente paso */
+    var primeroOn = MODULOS.find(function (m) { return !!en[m.k]; });
+    var primeroOff = MODULOS.findIndex(function (m) { return !en[m.k]; });
+    if (primeroOn) manito(document.querySelector('#mod-' + primeroOn.k + ' .abrir'), 'Comience aquí', 'dentro');
+    if (primeroOff >= 0) manito(pasos.children[primeroOff].querySelector('.nodo'), desdeAdmin ? 'Siguiente paso' : 'Lo que viene', 'der');
+    var lista = MODULOS.filter(function (m) { return !!en[m.k]; }).map(function (m) { return m.t; });
+    guion = saludo() + '. Este es el portal de seguridad de ' + nom + '. ' + (lista.length ? 'Tiene ' + lista.length + ' de ' + MODULOS.length + ' módulos en marcha: ' + lista.join(', ') + '. Baje a las tarjetas y toque Ejecutar en el módulo que necesite. Cada tarjeta tiene un parlante para escuchar qué hace.' : 'Estamos preparando sus módulos. Pronto verá aquí sus capacitaciones, chequeos y documentos.') + (primeroOff >= 0 ? ' El siguiente paso de la trayectoria es ' + MODULOS[primeroOff].t + '.' : ' ¡Felicitaciones, su trayectoria está completa!');
+
+    /* Dato seguro rotativo */
+    var k = Math.floor(Math.random() * TIPS.length); $('tip').textContent = TIPS[k];
+    clearInterval(tipTimer);
+    tipTimer = setInterval(function () { var t = $('tip'); t.style.opacity = 0; setTimeout(function () { k = (k + 1) % TIPS.length; t.textContent = TIPS[k]; t.style.opacity = 1; }, 400); }, 7000);
     pestana('mod');
     $('g-cont').innerHTML = '<div class="vacio">Cargando indicadores…</div>'; $('g-act').textContent = '';
     gestion._cargado = false;
@@ -741,8 +939,8 @@ h1{margin:0}
     var x = cv.getContext('2d'); x.fillStyle = '#fff'; x.fillRect(0, 0, W, H);
     x.fillStyle = emp.color || '#2E4A8A'; x.fillRect(0, 0, W, 120);
     x.fillStyle = '#fff'; x.textAlign = 'center'; x.font = '900 42px Nunito, Arial'; x.fillText(m.t, W / 2, 62);
-    x.font = '700 26px Nunito, Arial'; x.fillText(emp.nombre, W / 2, 100);
-    var lg = logoDe(emp.slug), dibujar = function () {
+    x.font = '700 26px Nunito, Arial'; x.fillText(nomE, W / 2, 100);
+    var nomE = nombreVisible(emp), lg = null, dibujar = function () {
     x.fillStyle = '#111'; var x0 = (W - lado) / 2;
     for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) if (q.isDark(r, c)) x.fillRect(x0 + (c + borde) * celda, 130 + (r + borde) * celda, celda, celda);
     x.fillStyle = '#1F2A44'; x.font = '800 28px Nunito, Arial'; x.fillText('Escanee con la cámara del celular', W / 2, H - 82);
@@ -751,10 +949,10 @@ h1{margin:0}
     if (lg) { var li = new Image(); li.onload = function () { var bw = 150, bh = 96, s = Math.min((bw - 12) / li.width, (bh - 12) / li.height);
       x.fillStyle = lg.bg; x.fillRect(12, 12, bw, bh); x.drawImage(li, 12 + (bw - li.width * s) / 2, 12 + (bh - li.height * s) / 2, li.width * s, li.height * s); dibujar(); }; li.onerror = dibujar; li.src = lg.src; }
     dibujar();
-    $('qr-tit').textContent = m.t + ' · ' + emp.nombre;
+    $('qr-tit').textContent = m.t + ' · ' + nomE;
     $('qr-img').src = q.createDataURL(6, 2);
-    $('qr-dl').href = cv.toDataURL('image/png'); $('qr-dl').setAttribute('download', 'QR ' + m.t + ' ' + emp.nombre + '.png');
-    $('qr-wa').href = 'https://wa.me/?text=' + encodeURIComponent('Integra Prevención · ' + emp.nombre + '\n' + m.t + '\nIngrese aquí: ' + url);
+    $('qr-dl').href = cv.toDataURL('image/png'); $('qr-dl').setAttribute('download', 'QR ' + m.t + ' ' + nomE + '.png');
+    $('qr-wa').href = 'https://wa.me/?text=' + encodeURIComponent('Integra Prevención · ' + nomE + '\n' + m.t + '\nIngrese aquí: ' + url);
     $('qr-modal').classList.remove('oculto');
   }
   $('qr-cerrar').addEventListener('click', function () { $('qr-modal').classList.add('oculto'); });
@@ -839,9 +1037,8 @@ h1{margin:0}
   }
 
 
-  /* ---------- ARRANQUE: si ya tiene sesion guardada, entra directo ---------- */
-  sb.auth.onAuthStateChange(function (evento, sesion) {
-    sesionActual = sesion || null;
+  sb.auth.onAuthStateChange(function (evento, sesion) { sesionActual = sesion || null; });
+  sb.auth.onAuthStateChange(function (evento) {
     if (evento === 'PASSWORD_RECOVERY') {
       var nueva = prompt('Escriba su clave nueva (mínimo 8 caracteres):');
       if (nueva && nueva.length >= 8) { sb.auth.updateUser({ password: nueva }).then(function (r) { toast(r.error ? 'No se pudo cambiar la clave.' : 'Clave cambiada. Ya puede usarla.'); }); }
