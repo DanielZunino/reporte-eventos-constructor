@@ -68,6 +68,15 @@ label.l{display:block;font-weight:bold;font-size:16px;color:#33435c;margin:14px 
 .burbuja button{border:0;background:var(--na);color:#fff;border-radius:20px;padding:6px 12px;font-weight:bold;font-size:14px;margin-top:6px;cursor:pointer;font-family:inherit}
 .burbuja button.on{background:var(--ro)}
 .mano{font-size:40px;animation:bote 1s infinite;pointer-events:none}
+.guia.min .burbuja,.guia.min .mano{display:none}.guia.min .miniG{display:block}
+.guia.movida{width:auto;justify-content:flex-start}.guia.movida .mano{display:none}
+.guia.movida .burbuja{max-width:min(340px,calc(100vw - 24px))}
+.barG{display:flex;align-items:center;gap:6px;margin:-4px -4px 6px;padding-bottom:5px;border-bottom:1px dashed #f5c79b}
+.grip{flex:1;cursor:grab;user-select:none;touch-action:none;font-size:12px;color:#b26a1f;font-weight:bold;padding:4px 2px}
+.grip:active{cursor:grabbing}
+.barG button{margin:0!important;background:#fff3e6!important;color:#b26a1f!important;border:1px solid #f5c79b!important;border-radius:8px!important;padding:2px 9px!important;font-size:14px!important;font-weight:bold;line-height:1.2}
+.miniG{display:none;width:54px;height:54px;border-radius:50%;border:3px solid var(--na);background:#fff;font-size:26px;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer;touch-action:none;pointer-events:auto;padding:0}
+
 @keyframes bote{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
 main{padding-bottom:240px!important}
 .alt{margin:18px 0 6px;padding:12px;border:2px dashed var(--bo);border-radius:14px;background:#fafbfe}
@@ -85,7 +94,7 @@ main{padding-bottom:240px!important}
 <body>
 <header><b id="hTit">Reportar un evento de seguridad</b><small id="hSub">Cargando...</small><div class="prog"><i id="prog"></i></div></header>
 <main id="m"><div class="spin">Cargando...</div></main>
-<div class="guia hide" id="guia"><div class="burbuja"><span id="guiaTx"></span><br><button id="bVoz" onclick="voz()">🔊 Escúchame</button></div><span class="mano" id="mano">👇</span></div>
+<div class="guia hide" id="guia"><div class="burbuja"><div class="barG"><span class="grip">✥ Arrástrame</span><button onclick="centrarG('guia','gR')" title="Volver a su lugar">⟲</button><button onclick="minG('guia','gR',true)" title="Achicar">–</button></div><span id="guiaTx"></span><br><button id="bVoz" onclick="voz()">🔊 Escúchame</button></div><span class="mano" id="mano">👇</span><button class="miniG" onclick="minG('guia','gR',false)" title="Mostrar ayuda">💬</button></div>
 <div class="nav hide" id="nav"><button class="btnAtras" id="bAtras" onclick="atras()">◀ Atrás</button><button class="btnSig" id="bSig" onclick="siguiente()">Siguiente ▶</button></div>
 
 <script>
@@ -476,6 +485,26 @@ function botones(){
   $('bAtras').style.visibility=PILA.length?'visible':'hidden';
   guia();
 }
+
+// ---- Globo de ayuda: mover (arrastrar) y minimizar; recuerda la posición ----
+function lsG(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+function arrastrable(cont,key){
+  var ini=null,mov=false;
+  function pon(x,y){var w=cont.offsetWidth,h=cont.offsetHeight;x=Math.max(4,Math.min(window.innerWidth-w-4,x));y=Math.max(4,Math.min(window.innerHeight-h-4,y));
+    cont.style.left=x+'px';cont.style.top=y+'px';cont.style.right='auto';cont.style.bottom='auto';cont.classList.add('movida')}
+  cont.addEventListener('pointerdown',function(e){if(!e.target.closest('.grip,.miniG'))return;var r=cont.getBoundingClientRect();ini={x:e.clientX,y:e.clientY,l:r.left,t:r.top};mov=false;
+    try{e.target.setPointerCapture(e.pointerId)}catch(_){}});
+  cont.addEventListener('pointermove',function(e){if(!ini)return;var dx=e.clientX-ini.x,dy=e.clientY-ini.y;if(!mov&&Math.abs(dx)+Math.abs(dy)<6)return;mov=true;e.preventDefault();pon(ini.l+dx,ini.t+dy)});
+  cont.addEventListener('pointerup',function(){if(ini&&mov){var r=cont.getBoundingClientRect();lsG(key+'Pos',JSON.stringify([r.left,r.top]))}ini=null;setTimeout(function(){mov=false},0)});
+  cont.addEventListener('click',function(e){if(mov){e.stopPropagation();e.preventDefault()}},true);
+  var p=null;try{p=JSON.parse(lsG(key+'Pos')||'null')}catch(e){}if(p)setTimeout(function(){pon(p[0],p[1])},0);
+  if(lsG(key+'Min')==='1')cont.classList.add('min');
+  window.addEventListener('resize',function(){if(cont.classList.contains('movida')){var r=cont.getBoundingClientRect();pon(r.left,r.top)}});
+}
+function minG(id,key,si){var c=document.getElementById(id);c.classList.toggle('min',si);lsG(key+'Min',si?'1':'0');
+  if(c.classList.contains('movida')){var r=c.getBoundingClientRect();c.style.left=Math.max(4,Math.min(window.innerWidth-c.offsetWidth-4,r.left))+'px';c.style.top=Math.max(4,Math.min(window.innerHeight-c.offsetHeight-4,r.top))+'px'}}
+function centrarG(id,key){var c=document.getElementById(id);c.classList.remove('movida');c.style.left=c.style.top=c.style.right=c.style.bottom='';lsG(key+'Pos','')}
+
 // ---- Manito que guía + voz ----
 function textoGuia(){var p=PASOS[ACT];if(!p)return '';
   if((R._alt||{})[ACT])return 'Marcaste <b>'+R._alt[ACT]+'</b>. Toca <b>Siguiente</b> 👉';
@@ -652,6 +681,7 @@ if(TK){
 google.script.run.withSuccessHandler(function(i){
   INFO=i;$('hTit').textContent='Reportar un evento — '+i.cliente;$('hSub').textContent='Accidentes, incidentes, daños, molestias y Ley Karin';pintar();
 }).withFailureHandler(function(e){$('m').innerHTML=caja('ro','No se pudo cargar: '+esc(e.message))}).infoPublica();
+arrastrable($('guia'),'gR');
 window.addEventListener('beforeunload',function(e){if(YO&&ACT!=='fin'&&ACT!=='inicio'){e.preventDefault();e.returnValue=''}});
 </script>
 </body>
