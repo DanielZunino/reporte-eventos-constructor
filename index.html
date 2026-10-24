@@ -100,6 +100,23 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 .proto{display:grid;grid-template-columns:1.6fr 1fr 1.2fr 1.6fr;gap:6px;align-items:center;margin-bottom:6px;font-size:13px}
 .proto.hecho select{background:#e8f5e9;color:var(--ve);font-weight:bold}.proto.pend select{background:#fdecea;color:var(--ro);font-weight:bold}
 .nodo{display:grid;grid-template-columns:110px 1fr 160px 34px;gap:6px;margin-bottom:6px}
+#coachInv{position:sticky;top:96px;z-index:7;display:flex;gap:10px;align-items:flex-start;background:linear-gradient(135deg,#0b3d91,#1565c0);color:#fff;border-radius:14px;padding:10px 12px;margin-bottom:12px;box-shadow:0 4px 14px rgba(11,61,145,.25)}
+#coachInv .av{font-size:34px;line-height:1}
+#coachInv .tx{flex:1;font-size:15px;line-height:1.35}
+#coachInv .tx b{color:#ffe082}
+#coachInv .tx small{display:block;opacity:.85;font-size:12.5px;margin-top:3px}
+#coachInv button{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:8px;padding:5px 8px;font-size:12.5px;cursor:pointer;white-space:nowrap}
+#manoInv{position:absolute;z-index:9;pointer-events:none;font-size:42px;transition:top .5s ease,left .5s ease;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}
+#manoInv span{display:inline-block;animation:empuja .9s infinite}
+#manoInv i{position:absolute;left:44px;top:6px;white-space:nowrap;font:bold 13px system-ui;font-style:normal;background:#f28c28;color:#fff;border-radius:8px;padding:3px 8px}
+.cfoco{outline:4px solid #f28c28 !important;outline-offset:3px;border-radius:8px}
+.nomTag{display:block;font-size:11.5px;margin-top:2px;font-weight:bold}
+.nomTag.si{color:#2e7d32}.nomTag.no{color:#e65100}
+.cursoL{max-height:55vh;overflow:auto;text-align:left;margin:8px 0}
+.cursoL .sec{font-weight:bold;color:var(--az);margin:10px 0 4px;font-size:13px}
+.cursoL .cu{display:block;width:100%;text-align:left;border:2px solid var(--bo);background:#fff;border-radius:10px;padding:8px 10px;margin:4px 0;cursor:pointer;font-size:14px}
+.cursoL .cu:hover{border-color:var(--az);background:#eef4ff}
+.cursoL .cu.sug{border-color:#f28c28;background:#fff8ec}
 .ipasos{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
 .ipasos .ip{flex:1;min-width:120px;border:2px solid var(--bo);border-radius:12px;padding:8px;text-align:center;cursor:pointer;background:#fff;font-size:13px;line-height:1.25}
 .ipasos .ip b{display:block;font-size:20px}
@@ -209,7 +226,7 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 </header>
 
 <div id="bannerG" class="hide"></div>
-<div id="manoMov" class="hide"><span>👉</span></div>
+<div id="manoMov" class="hide"><span>👉</span></div><div id="manoInv" class="hide"><span>👉</span><i id="manoInvTx">aquí</i></div>
 <div class="guiaA" id="guiaA"><div class="bur"><div class="barG"><span class="grip" title="Mantén apretado y arrastra">✥ Arrástrame</span><button onclick="centrarG('guiaA','gA')" title="Volver a su lugar">⟲</button><button onclick="minG('guiaA','gA',true)" title="Minimizar">–</button></div><span id="guiaATx"></span><br><button id="bVozA" onclick="vozA()">🔊 Escúchame</button><button onclick="llevar(true)">👉 Llévame</button></div><button class="miniG" onclick="minG('guiaA','gA',false)" title="Mostrar la ayuda (puedes arrastrarla)">👉</button></div>
 <main id="vNuevo">
 
@@ -261,7 +278,7 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
         <div><label>Teléfono</label><input id="t_telefono"></div>
         <div><label>Sistema de salud</label><input id="t_salud"></div>
         <div><label>Contacto de emergencia</label><input id="t_emergencia"></div>
-        <div><label>Jefatura directa</label><input id="t_jefatura"></div>
+        <div><label>Jefatura directa</label><input id="t_jefatura" list="dlNomina" placeholder="De la nómina o escribe otro"></div>
         <div><label>Correo</label><input id="t_correo" type="email"></div>
         <div><label>Edad (auto)</label><input id="edad" readonly></div>
         <div><label>Antigüedad (auto)</label><input id="antiguedad" readonly></div>
@@ -410,6 +427,7 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 
   <!-- INVESTIGACIÓN -->
   <div class="card" id="cInvest"><h2><span class="n">7</span>Investigación <small style="font-weight:normal">(supervisor directo) — 4 pasos cortos</small></h2><div class="in">
+    <div id="coachInv"><div class="av">🧑‍🏫</div><div class="tx" id="coachTx">Te voy guiando.</div><div style="display:flex;flex-direction:column;gap:4px"><button type="button" id="coachVoz" onclick="coachVozT()">🔊 Háblame</button><button type="button" onclick="coachLlevar()">👉 Llévame</button></div></div>
     <div class="ipasos" id="ipasos"></div>
 
     <!-- PASO 1 -->
@@ -479,7 +497,8 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
       <div id="medSug"></div>
       <div class="grupo" style="margin-top:8px">Medidas correctivas <small style="font-weight:normal;color:#666">(marca "Cumplida" cuando se ejecute)</small></div>
       <div id="medidas"></div>
-      <button class="btn sm" onclick="addMedida('medidas')">+ Agregar medida</button>
+      <button class="btn sm" onclick="addMedida('medidas')">+ Escribir una medida</button>
+      <button class="btn sm na" id="bCursoMed" onclick="elegirCurso()">🎓 Agregar un curso del portal como medida</button>
       <div class="grupo" style="margin-top:14px">¿Quiénes participaron en la investigación?</div>
       <div id="participantes"></div>
       <button class="btn sm" onclick="addParticipante()">+ Agregar participante</button>
@@ -599,6 +618,7 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 })();
 </script>
 <script>
+var CURSOS=[];
 var TOKEN='', USR=null, CHARLAS=[], NOMINA=[], ST={}, EDIT=null, CASOS=[], MEDS=[], DOT=0, SUBS=[];
 var TIPOS=['Accidente del trabajo','Accidente de trayecto','Incidente / cuasi accidente','Daño material','Posible enfermedad profesional','Ley Karin'];
 var PARTES={'Cabeza y cara':['Cabeza','Nuca','Cara','Ojo|','Oreja|','Nariz','Boca / dientes','Mandíbula','Cuello'],
@@ -645,7 +665,7 @@ function entrar(){
 }
 function credGuardada(){try{return JSON.parse(ls('cred_eventos')||'null')}catch(e){return null}}
 function arrancar(r){
-  TOKEN=r.token;USR=r.u;CHARLAS=r.charlas||[];ls('tk_eventos',TOKEN);
+  TOKEN=r.token;USR=r.u;CHARLAS=r.charlas||[];CURSOS=r.cursos||[];ls('tk_eventos',TOKEN);
   $('login').classList.add('hide');$('app').classList.remove('hide');
   $('hola').textContent=USR.nombre+' · '+(USR.rol==='ADMIN'?'Administrador':'Gerente — '+USR.sucursal);
   init();
@@ -696,7 +716,7 @@ function init(){
         '<span class="chip" style="border-style:dashed;color:var(--na);font-weight:bold" onclick="otraCausa(\''+campo+'\',this)">✏️ Otra (escribir)</span>';
     });
     $('tipoLesion').addEventListener('change',function(){$('tipoLesionOtro').classList.toggle('hide',this.value!=='Otra');if(this.value==='Otra')$('tipoLesionOtro').focus()});
-    $('charla').innerHTML='<option value="">— Ninguna —</option>'+CHARLAS.map(function(c){return '<option>'+esc(c)+'</option>'}).join('');
+    $('charla').innerHTML='<option value="">— Ninguna —</option>'+cursosLista().map(function(c){return '<option>'+esc(c.n)+'</option>'}).join('');
     PEND_F.forEach(function(id){var e=$(id);if(!e)return;e.dataset.tipo=e.type||'';var d=document.createElement('div');d.className='pend';d.dataset.para=id;
       d.innerHTML=PENDS.map(function(x){return '<span onclick="pend(\''+id+'\',\''+x+'\')">'+x+'</span>'}).join('');e.parentNode.appendChild(d);
       e.addEventListener('input',function(){marcarPend(id)});e.addEventListener('change',function(){marcarPend(id)})});
@@ -905,7 +925,7 @@ function calcDias(){
 function setK(row,o){row.querySelectorAll('[data-k]').forEach(function(e){if(o[e.dataset.k]!=null)e.value=o[e.dataset.k]})}
 function addMedida(cont,m){
   var d=document.createElement('div');d.className='fila4';
-  d.innerHTML='<input placeholder="Medida" data-k="medida"><input placeholder="Responsable" data-k="responsable"><input type="date" data-k="plazo" title="Plazo"><select data-k="estado" onchange="estMedida(this)"><option>Pendiente</option><option>Cumplida</option></select><input type="hidden" data-k="cumplida"><button class="x" onclick="this.parentNode.remove()">✕</button>';
+  d.innerHTML='<input placeholder="Medida" data-k="medida"><input placeholder="Responsable (de la nómina o escribe otro)" data-k="responsable" list="dlNomina"><input type="date" data-k="plazo" title="Plazo"><select data-k="estado" onchange="estMedida(this)"><option>Pendiente</option><option>Cumplida</option></select><input type="hidden" data-k="cumplida"><button class="x" onclick="this.parentNode.remove()">✕</button>';
   $(cont).appendChild(d);
   if(m){setK(d,m);d.classList.toggle('ok',m.estado==='Cumplida')}
 }
@@ -945,7 +965,7 @@ function pedirTestigo(btn){
 function dlNomina(rehacer){
   var dl=$('dlNomina');if(dl&&!rehacer)return;
   if(!dl){dl=document.createElement('datalist');dl.id='dlNomina';document.body.appendChild(dl)}
-  dl.innerHTML=NOMINA.map(function(w){return '<option value="'+esc(w.nombre)+'">'}).join('');
+  dl.innerHTML=NOMINA.map(function(w){return '<option value="'+esc(w.nombre)+'" label="'+esc((w.run||'')+' · '+(w.cargo||'')+' · '+(w.sucursal||''))+'">'}).join('');
 }
 function buscaW(n){return NOMINA.find(function(x){return x.nombre===n})}
 function autoPersona(inp){
@@ -1090,7 +1110,7 @@ function pintaMedSug(){var c=$('medSug');if(!c)return;var hojas=causasFondo();
   if(!hojas.length){c.innerHTML='<div class="alerta">Primero arma el árbol en el paso 3; aquí aparecerán las causas de fondo para ponerles medida. <button class="btn sm" onclick="invPaso(3)">Ir al paso 3</button></div>';return}
   var meds=filas('medidas','.fila4').map(function(m){return norm(m.medida)}).join(' | ');
   c.innerHTML='<div class="asis" style="margin:0"><div class="paso">CAUSAS DE FONDO DEL ÁRBOL</div><ul class="lista">'+hojas.map(function(n){var tiene=meds.indexOf(norm(n.txt).slice(0,25))>-1;
-    return '<li style="margin:4px 0">'+esc(n.txt)+' '+(tiene?'<b style="color:var(--ve)">✔ tiene medida</b>':'<button class="btn sm na" onclick="arbMedida(\''+n.id+'\')">➕ Ponerle medida</button>')+'</li>'}).join('')+'</ul></div>'}
+    return '<li style="margin:4px 0">'+esc(n.txt)+' '+(tiene?'<b style="color:var(--ve)">✔ tiene medida</b>':'<button class="btn sm na" onclick="arbMedida(\''+n.id+'\')">➕ Ponerle medida</button> <button class="btn sm" onclick="elegirCurso(\''+n.id+'\')">🎓 Curso</button>')+'</li>'}).join('')+'</ul></div>'}
 function arbMedida(id){var n=leerArbol().find(function(x){return x.id===id});if(!n)return;addMedida('medidas',{medida:'Corregir: '+n.txt,estado:'Pendiente'});pintaMedSug();pintaPasos();toast('Medida creada: ahora ponle responsable y plazo');
   var u=$('medidas').lastChild;if(u){u.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){var e=u.querySelector('[data-k="responsable"]');if(e)e.focus()},500)}}
 document.addEventListener('input',function(e){if(e.target&&e.target.closest&&e.target.closest('#medidas')){pintaPasos();pintaMedSug()}});
@@ -1101,6 +1121,81 @@ function arbEjemplo(){var ns=[{id:'a',txt:'Juan se esguinza el tobillo derecho',
   var d=document.createElement('div');d.className='modal';
   d.innerHTML='<div class="cx" style="max-width:900px;width:96%"><h3>👀 Ejemplo de árbol de causas</h3><p style="font-size:13.5px">Se lee de <b>derecha a izquierda</b>: a la derecha lo que pasó, y cada caja a la izquierda responde <b>¿por qué?</b> a la caja de su derecha. Las cajas del borde izquierdo son las <b>causas de fondo</b>: cada una lleva su medida (ej: "revisar fugas antes de descargar", "comprar carro de arrastre").</p><div class="arbol"><div class="lienzo">'+dibujoArbol(ns,null,true)+'</div></div><div class="bt"><button style="background:var(--az);color:#fff">Entendido</button></div></div>';
   d.querySelector('button').onclick=function(){d.remove()};d.onclick=function(e){if(e.target===d)d.remove()};document.body.appendChild(d)}
+
+// ---------- ASISTENTE EXPERTO DE LA INVESTIGACIÓN (habla y apunta con la mano) ----------
+var COACH={el:null,msg:'',voz:false};
+function chipsMarcados(){return ['accInseguras','condInseguras','factPersonales','factTrabajo'].some(function(id){return $(id)&&$(id).value.trim()})}
+function coachEstado(){var q=function(s){return document.querySelector(s)};
+  if(IPASO===1){var d=v('descripcion');
+    if(!d)return [q('#cInvest .ipaso[data-p="1"] .btn'),'Toca este botón','<b>Paso 1:</b> cuenta qué pasó. Toca <b>"Ayúdame con el formato"</b> y te dejo escrito ANTES, DURANTE y DESPUÉS para que solo completes.','Paso 1. Cuenta qué pasó. Toca el botón ayúdame con el formato y completa antes, durante y después.'];
+    if(d.length<=30||/:\s*$/m.test(d)&&d.replace(/(ANTES|DURANTE|DESPU[EÉ]S)[^:]*:/g,'').trim().length<30)return [$('descripcion'),'Escribe aquí','Completa lo que pasó <b>antes</b>, <b>durante</b> y <b>después</b>. Escribe como si se lo contaras a alguien que no estaba: dónde, qué hacía, qué pasó y qué se hizo.','Completa lo que pasó antes, durante y después, como si se lo contaras a alguien que no estaba.'];
+    return [$('iSig'),'Siguiente','¡Bien! El relato está. Toca <b>Siguiente</b> para anotar a los testigos.','Bien. Toca siguiente para anotar a los testigos.']}
+  if(IPASO===2){var ts=[].slice.call(document.querySelectorAll('#testigos .testigo'));
+    var sin=ts.filter(function(t){return !t.querySelector('[data-k="nombre"]').value.trim()})[0];
+    if(sin)return [sin.querySelector('[data-k="nombre"]'),'Nombre','Escribe el <b>nombre o RUT</b> del testigo. Si está en la nómina aparece solo; si no está (cliente, contratista), escríbelo igual y marca "Externo".','Escribe el nombre o RUT del testigo. Si no está en la nómina, escríbelo igual y marca externo.'];
+    if(!ts.length)return [q('#cInvest .ipaso[data-p="2"] > .btn'),'Agregar','<b>Paso 2:</b> ¿alguien vio lo que pasó o llegó justo después? Toca <b>+ Agregar testigo</b>. Si nadie vio, toca <b>Siguiente</b>.<small>Consejo de experto: entrevista a cada testigo por separado y lo antes posible.</small>','Paso 2. Si alguien vio lo que pasó, toca agregar testigo. Si nadie vio, toca siguiente.'];
+    return [$('iSig'),'Siguiente','Testigos anotados. Puedes mandarles el link para que declaren con <b>📲 Pedirle su declaración</b>. Cuando termines, toca <b>Siguiente</b>.','Testigos anotados. Puedes pedirles su declaración por link. Después toca siguiente.']}
+  if(IPASO===3){var ns=leerArbol().filter(function(n){return n.txt});
+    if(!chipsMarcados()&&!ns.length)return [q('#cInvest .ipaso[data-p="3"] .chips'),'Toca los que apliquen','<b>Paso 3:</b> marca las causas que apliquen tocando los botones de cada pregunta (puedes marcar varias). Esto me sirve para darte ideas en el árbol.','Paso 3. Toca los botones de las causas que apliquen. Puedes marcar varios.'];
+    if(!ns.length){var b=q('#arbAsis .btn.ve');return [b||$('arbAsis'),'Toca aquí','Ahora el árbol. Arriba te dejé escrito <b>lo que pasó</b>. Si está bien, toca el botón verde <b>"Sí, eso fue lo que pasó"</b>.','Ahora armamos el árbol. Si la frase de lo que pasó está bien, toca el botón verde.']}
+    var pend=ns.filter(function(n){return !n.fondo&&!hijosDe(ns,n.id).length}),f=ns.find(function(n){return n.id===ASIS.foco});
+    if(f){var hs=hijosDe(ns,f.id),t=v('asTxt');
+      if(!t&&!hs.length)return [$('asTxt'),'Escribe el porqué','Pregúntate: <b>¿por qué pasó «'+esc(f.txt)+'»?</b> Escribe la razón aquí o toca una de las ideas celestes.<small>Experto: escribe hechos que se puedan ver o comprobar, nunca culpas ("descuido").</small>','Pregúntate: por qué pasó '+f.txt+'. Escribe la razón o toca una de las ideas.'];
+      if(t)return [q('#arbAsis .acc .btn'),'Agregar','Bien escrito. Ahora toca <b>➕ Agregar esta razón</b>.','Ahora toca agregar esta razón.'];
+      return [q('#arbAsis .btn.ve'),'¿No hay más?','¿Hay <b>otra razón</b> para «'+esc(f.txt)+'»? Escríbela. Si ya no hay más, toca el botón verde <b>"No hay otra razón, sigamos"</b>.<small>Experto: casi siempre hay 2 razones: algo que hizo la persona y algo del lugar, equipo u organización.</small>','Hay otra razón más? Si no hay más, toca el botón verde.']}
+    return [q('#arbAsis .btn.ve')||$('iSig'),'Paso 4','¡Árbol listo! Las cajas del borde izquierdo son las <b>causas de fondo</b>. Toca <b>"Ir al paso 4"</b> para ponerles medida.','Árbol listo. Toca ir al paso cuatro para ponerle medidas a las causas de fondo.']}
+  if(IPASO===4){var bm=q('#medSug .btn.na');
+    if(bm)return [bm,'Ponle medida','Cada <b>causa de fondo</b> necesita una medida. Toca <b>"➕ Ponerle medida"</b> o, si se corrige capacitando, <b>"🎓 Curso"</b>.<small>Experto: la mejor medida elimina el peligro; capacitar sola es la más débil, úsala junto a otra.</small>','Cada causa de fondo necesita una medida. Toca ponerle medida, o curso si se corrige capacitando.'];
+    var ms=[].slice.call(document.querySelectorAll('#medidas .fila4'));
+    for(var i=0;i<ms.length;i++){var r=ms[i],g=function(k){return r.querySelector('[data-k="'+k+'"]')};
+      if(!g('medida').value.trim())return [g('medida'),'Escribe la medida','Escribe <b>qué se va a hacer</b>, concreto. Ej: "Instalar bandeja antiderrame bajo el camión".','Escribe qué se va a hacer, concreto.'];
+      if(!g('responsable').value.trim())return [g('responsable'),'Responsable','¿<b>Quién</b> lo hace? Elige de la nómina o escribe el nombre si no está.','Quién es el responsable? Elige de la nómina o escribe el nombre.'];
+      if(!g('plazo').value)return [g('plazo'),'Plazo','¿<b>Para cuándo</b>? Pon la fecha límite.','Para cuándo? Pon la fecha límite.']}
+    if(!ms.length)return [q('#cInvest .ipaso[data-p="4"] > .btn'),'Agregar','Agrega al menos una medida con responsable y plazo.','Agrega al menos una medida con responsable y plazo.'];
+    if(!$('participantes').children.length)return [q('#cInvest .ipaso[data-p="4"] .btn[onclick^="addParticipante"]'),'Participantes','Medidas listas ✔. Anota <b>quiénes participaron</b> de la investigación (jefatura, comité paritario, prevencionista).','Medidas listas. Anota quiénes participaron de la investigación.'];
+    return [$('btnGuardar')||$('iSig'),'Guardar','🎉 ¡Investigación completa! Revisa y toca <b>Guardar caso y generar PDF</b>.','Investigación completa. Toca guardar caso y generar PDF.']}
+  return [null,'','','']}
+function coach(){var c=$('coachTx');if(!c||$('cInvest').closest('.hide'))return;
+  var e=coachEstado(),el=e[0],m=e[2];
+  if(m!==COACH.msg){c.innerHTML=m;COACH.msg=m;if(COACH.voz)hablar(e[3],1)}
+  if(COACH.el!==el){if(COACH.el)COACH.el.classList.remove('cfoco');COACH.el=el;if(el)el.classList.add('cfoco')}
+  $('manoInvTx').textContent=e[1]||'aquí';manoInv()}
+function manoInv(){var m=$('manoInv'),o=COACH.el;if(!o||!o.offsetParent||$('cInvest').closest('.hide')){m.classList.add('hide');return}
+  var r=o.getBoundingClientRect(),x=r.left+window.scrollX-48,y=r.top+window.scrollY+Math.min(r.height,44)/2-24;if(x<2)x=2;
+  m.style.left=x+'px';m.style.top=y+'px';m.classList.remove('hide')}
+function coachLlevar(){var o=COACH.el;if(!o)return;o.scrollIntoView({behavior:'smooth',block:'center'});if(o.matches('input,textarea'))setTimeout(function(){o.focus()},450)}
+function coachVozT(){COACH.voz=!COACH.voz;$('coachVoz').textContent=COACH.voz?'🔇 Callar':'🔊 Háblame';if(COACH.voz){var e=coachEstado();hablar(e[3],1)}else try{speechSynthesis.cancel()}catch(e){}}
+setInterval(function(){try{coach()}catch(e){}},700);
+window.addEventListener('scroll',function(){try{manoInv()}catch(e){}},{passive:true});window.addEventListener('resize',function(){try{manoInv()}catch(e){}});
+
+// ---------- NÓMINA en todos los campos de nombre (con opción de persona que no está) ----------
+function nomTag(inp){if(!inp||inp.getAttribute('list')!=='dlNomina')return;var t=inp.nextElementSibling;if(!t||!t.classList||!t.classList.contains('nomTag')){t=document.createElement('small');t.className='nomTag';inp.insertAdjacentElement('afterend',t)}
+  var val=inp.value.trim();if(!val){t.textContent='';t.className='nomTag';return}
+  var w=buscaW(val)||NOMINA.find(function(x){return rutN(x.run)&&rutN(x.run)===rutN(val)});
+  if(w&&w.nombre!==val&&rutN(val)===rutN(w.run)){inp.value=w.nombre;try{inp.dispatchEvent(new Event('change',{bubbles:true}))}catch(e){}}
+  t.className='nomTag '+(w?'si':'no');t.textContent=w?'✔ En la nómina'+(w.cargo?' · '+w.cargo:'')+(w.sucursal?' · '+w.sucursal:''):'➕ No está en la nómina: se guarda igual como persona externa'}
+function rutN(s){return String(s||'').toUpperCase().replace(/[^0-9K]/g,'').replace(/^0+/,'')}
+document.addEventListener('change',function(e){if(e.target&&e.target.getAttribute&&e.target.getAttribute('list')==='dlNomina')nomTag(e.target)});
+document.addEventListener('focusout',function(e){if(e.target&&e.target.getAttribute&&e.target.getAttribute('list')==='dlNomina')nomTag(e.target)});
+
+// ---------- CURSOS DEL PORTAL como medida correctiva ----------
+function cursosLista(){return (CURSOS&&CURSOS.length?CURSOS:(CHARLAS||[]).map(function(c){return {n:c,s:''}}))}
+function cursoSugerido(c,txt){var a=norm(txt||''),pal=norm(c.n).match(/[A-Z]{5,}/g)||[];return a&&pal.some(function(p){return a.indexOf(p.slice(0,6))>-1})}
+function elegirCurso(causaId){var cs=cursosLista();if(!cs.length)return toast('No encontré cursos en el portal de capacitaciones');
+  var causa=causaId?(leerArbol().find(function(x){return x.id===causaId})||{}).txt:'';
+  var grupos={};cs.forEach(function(c){var s=c.s||'Cursos';(grupos[s]=grupos[s]||[]).push(c)});
+  var d=document.createElement('div');d.className='modal';
+  var lista=function(f){var h='';Object.keys(grupos).forEach(function(s){var it=grupos[s].filter(function(c){return !f||norm(c.n).indexOf(norm(f))>-1});if(!it.length)return;
+    h+='<div class="sec">'+esc(s)+'</div>'+it.map(function(c){return '<button class="cu'+(cursoSugerido(c,causa)?' sug':'')+'" data-n="'+esc(c.n)+'">'+(cursoSugerido(c,causa)?'⭐ ':'🎓 ')+esc(c.n)+'</button>'}).join('')});return h||'<p>No hay cursos con ese nombre.</p>'};
+  d.innerHTML='<div class="cx" style="max-width:640px;width:94%"><h3>🎓 Cursos del portal de capacitaciones</h3>'+(causa?'<p style="font-size:13px">Para la causa: <b>«'+esc(causa)+'»</b>. Los ⭐ parecen relacionados.</p>':'<p style="font-size:13px">Elige el curso que deben hacer. Queda como medida y el trabajador lo hace en el portal.</p>')+
+    '<input id="cuBus" placeholder="🔎 Buscar curso..." style="width:100%;padding:10px;border:2px solid var(--bo);border-radius:10px;box-sizing:border-box"><div class="cursoL" id="cuL">'+lista('')+'</div><div class="bt"><button style="background:#e0e4ec;color:#33435c">Cancelar</button></div></div>';
+  document.body.appendChild(d);
+  var pick=function(e){var b=e.target.closest('.cu');if(!b)return;var n=b.dataset.n;d.remove();
+    addMedida('medidas',{medida:'Capacitación: «'+n+'» (curso del portal de capacitaciones)'+(causa?' — para corregir: '+causa:''),estado:'Pendiente'});
+    if($('charla')&&!$('charla').value){var o=[].slice.call($('charla').options).find(function(x){return x.text===n});if(o)$('charla').value=o.value}
+    pintaMedSug();pintaPasos();toast('Curso agregado como medida: ponle responsable y plazo');var u=$('medidas').lastChild;if(u)setTimeout(function(){u.scrollIntoView({behavior:'smooth',block:'center'})},100)};
+  d.querySelector('#cuL').onclick=pick;d.querySelector('#cuBus').oninput=function(){d.querySelector('#cuL').innerHTML=lista(this.value)};
+  d.querySelector('.bt button').onclick=function(){d.remove()};d.onclick=function(e){if(e.target===d)d.remove()}}
 
 // ---------- INVITACIONES ----------
 function autoInv(){var q=$('invNombre').value,qn=norm(q);var w=NOMINA.find(function(x){return x.nombre===q})||NOMINA.find(function(x){return qn.length>6&&norm(x.run)===qn});
@@ -1164,7 +1259,7 @@ var OBJ=null,PRIMERA=true;
 function guiaA(){if(!$('guiaATx'))return;$('guiaATx').innerHTML=textoGuiaA();$('bVozA').textContent=VOZA?'🔇 Silenciar':'🔊 Escúchame';
   var o=objetivoA();if(o&&o.closest&&o.closest('.ipaso.hide')){var pc=document.querySelector('#ipasos .ip[data-p="'+o.closest('.ipaso').dataset.p+'"]');if(pc)o=pc}var cambio=o!==OBJ;if(OBJ&&cambio)OBJ.classList.remove('foco');OBJ=o;moverMano();
   if(cambio&&o){o.classList.add('foco');if(!PRIMERA)llevar(false);if(VOZA)leerA()}PRIMERA=false}
-function moverMano(){var m=$('manoMov'),o=OBJ;if(!o||!o.offsetParent||$('app').classList.contains('hide')){m.classList.add('hide');return}
+function moverMano(){var m=$('manoMov'),o=OBJ;if(!o||!o.offsetParent||$('app').classList.contains('hide')||(o.closest&&o.closest('#cInvest'))){m.classList.add('hide');return}
   var r=o.getBoundingClientRect(),x=r.left+window.scrollX-52,y=r.top+window.scrollY+Math.min(r.height,48)/2-26;
   if(x<2)x=2;m.style.left=x+'px';m.style.top=y+'px';m.classList.remove('hide')}
 function llevar(siempre){var o=OBJ;if(!o)return;var ip=o.closest&&o.closest('.ipaso.hide');if(ip){invPaso(+ip.dataset.p);setTimeout(function(){llevar(siempre)},400);return}var r=o.getBoundingClientRect();
