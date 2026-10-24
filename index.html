@@ -96,6 +96,18 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 .guiaA .mano{font-size:34px;animation:bote 1s infinite}
 .guiaA.min .bur{display:none}
 @keyframes bote{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+#manoMov{position:absolute;z-index:8;font-size:44px;pointer-events:none;transition:top .7s ease,left .7s ease,opacity .3s;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}
+#manoMov span{display:inline-block;animation:empuja .9s infinite}
+@keyframes empuja{0%,100%{transform:translateX(0)}50%{transform:translateX(10px)}}
+.foco{outline:4px solid var(--na)!important;outline-offset:3px;border-radius:10px;animation:pulso 1.4s infinite}
+@keyframes pulso{0%,100%{outline-color:var(--na)}50%{outline-color:rgba(242,140,40,.25)}}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal .cx{background:#fff;border-radius:16px;max-width:420px;width:100%;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.3);text-align:center}
+.modal h3{margin:0 0 8px;color:var(--az)}.modal p{font-size:14px;color:#33435c;margin:0 0 16px}
+.modal .bt{display:flex;gap:10px}.modal .bt button{flex:1;padding:12px;border:0;border-radius:10px;font-size:16px;font-weight:bold;cursor:pointer}
+.acc{white-space:nowrap}.acc button{border:0;border-radius:8px;padding:5px 8px;margin:2px;cursor:pointer;font-size:12px;font-weight:bold}
+.tab.limpia{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.5)}
+.est.ARCHIVADO{background:#607d8b}
 .falta li{margin:3px 0}
 @media(max-width:600px){.proto,.nodo{grid-template-columns:1fr 1fr}.proto b,.nodo input{grid-column:1/-1}}
 @media(max-width:600px){.fila4,.fila3{grid-template-columns:1fr 1fr}.fila4 input:first-child,.fila3 input:first-child{grid-column:1/-1}.eva div{padding:8px 0;font-size:12px}.barras div{grid-template-columns:90px 1fr 30px}}
@@ -127,11 +139,13 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
     <button class="tab on" id="tNuevo" onclick="nuevoCaso()">+ Nuevo caso</button>
     <button class="tab" id="tCasos" onclick="vista('casos')">Casos registrados</button>
     <button class="tab" id="tPanel" onclick="vista('panel')">Panel</button>
+    <button class="tab limpia" onclick="pedirLimpiar()">🧹 Limpiar formulario</button>
   </div>
 </header>
 
 <div id="bannerG" class="hide"></div>
-<div class="guiaA" id="guiaA"><span class="mano" onclick="$('guiaA').classList.toggle('min')">👉</span><div class="bur"><span id="guiaATx"></span><br><button id="bVozA" onclick="vozA()">🔊 Escúchame</button><button onclick="$('guiaA').classList.add('min')">Ocultar</button></div></div>
+<div id="manoMov" class="hide"><span>👉</span></div>
+<div class="guiaA" id="guiaA"><span class="mano" onclick="$('guiaA').classList.toggle('min')">👉</span><div class="bur"><span id="guiaATx"></span><br><button id="bVozA" onclick="vozA()">🔊 Escúchame</button><button onclick="llevar(true)">👉 Llévame</button><button onclick="$('guiaA').classList.add('min')">Ocultar</button></div></div>
 <main id="vNuevo">
 
   <!-- BARRA DE EDICIÓN -->
@@ -445,11 +459,11 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
   <div class="card"><h2>Casos registrados</h2><div class="in">
     <div class="grid">
       <div><label>Buscar</label><input id="fCasos" oninput="pintarCasos()" placeholder="Nombre, sucursal, tipo..."></div>
-      <div><label>Estado</label><select id="fEstado" onchange="pintarCasos()"><option value="">Todos</option><option>ABIERTO</option><option>CERRADO</option></select></div>
+      <div><label>Estado</label><select id="fEstado" onchange="pintarCasos()"><option value="">Todos</option><option>ABIERTO</option><option>CERRADO</option><option>ARCHIVADO</option></select></div>
       <div style="align-self:end"><a id="linkRegistro" target="_blank" class="btn sm na hide">Abrir planilla de registro</a></div>
     </div>
     <p style="font-size:12px;color:#666;margin:8px 0 0">Toca un caso para abrirlo y completarlo.</p>
-    <div style="overflow-x:auto;margin-top:6px"><table class="lista"><thead><tr><th>Caso</th><th>Fecha</th><th>Trabajador</th><th>Tipo</th><th>Sucursal</th><th>Declaración</th><th>Med. pend.</th><th>Estado</th></tr></thead><tbody id="tbCasos"></tbody></table></div>
+    <div style="overflow-x:auto;margin-top:6px"><table class="lista"><thead><tr><th>Caso</th><th>Fecha</th><th>Trabajador</th><th>Tipo</th><th>Sucursal</th><th>Declaración</th><th>Med. pend.</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tbCasos"></tbody></table></div>
   </div></div>
 </main>
 
@@ -817,7 +831,7 @@ function pintarInv(l){if(!l||!l.length){$('invLista').innerHTML='';return}
 
 // ---------- BANNER GRAVES ----------
 function cargarBanner(){run().withSuccessHandler(function(r){CASOS=r.casos;MEDS=r.medidas;DOT=r.dotacion;pintarBanner()}).getCasos(TOKEN)}
-function pintarBanner(){var g=CASOS.filter(function(c){return /^PENDIENTE/.test(c['Alerta grave']||'')&&c['Estado']!=='CERRADO'});
+function pintarBanner(){var g=CASOS.filter(function(c){return /^PENDIENTE/.test(c['Alerta grave']||'')&&c['Estado']!=='CERRADO'&&c['Estado']!=='ARCHIVADO'});
   $('bannerG').className=g.length?'':'hide';
   $('bannerG').innerHTML=g.map(function(c){return '<div class="bannerG" onclick="editar(\''+c['ID']+'\')">🚨 ACCIDENTE '+esc(String(c['Gravedad']).toUpperCase())+' — Caso '+esc(c['ID'])+' · '+esc(c['Trabajador'])+' ('+esc(c['Sucursal'])+')<small>'+esc(c['Alerta grave'])+' — toca para registrar los avisos</small></div>'}).join('')}
 
@@ -833,11 +847,64 @@ function textoGuiaA(){
     return MODO_INI==='link'?'Listo. Toca <b>Crear caso y generar link</b> abajo y envíaselo por WhatsApp.':'Completa lo que sepas (usa <b>Pendiente</b> si aún no lo sabes) y toca <b>Guardar</b> abajo.';
   }
   var f=EDIT._faltan||[];return f.length?'Para cerrar este caso falta: <b>'+esc(f[0])+'</b>'+(f.length>1?' (y '+(f.length-1)+' más, arriba)':''):'✔ Este caso tiene todo. Puedes <b>cerrarlo</b>.'}
-function guiaA(){if(!$('guiaATx'))return;$('guiaATx').innerHTML=textoGuiaA();$('bVozA').textContent=VOZA?'🔇 Silenciar':'🔊 Escúchame'}
-function leerA(){if(!window.speechSynthesis)return;try{speechSynthesis.cancel();var d=document.createElement('div');d.innerHTML=textoGuiaA();
-  var u=new SpeechSynthesisUtterance((d.textContent||'').replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF]/gu,''));u.lang='es-CL';u.rate=.95;
-  var vs=speechSynthesis.getVoices().filter(function(x){return /^es/i.test(x.lang)});if(vs.length)u.voice=vs[0];speechSynthesis.speak(u)}catch(e){}}
+// ¿A qué elemento apunta la manito?
+function objetivoA(){
+  if(!$('vCasos').classList.contains('hide'))return document.querySelector('#tbCasos tr.cl');
+  if(!$('vPanel').classList.contains('hide'))return null;
+  if(!EDIT){
+    if(!ST.tipos.length)return $('tipos');
+    if(!$('bGravedad').classList.contains('hide')&&!ST.gravedad)return $('bGravedad');
+    if(!v('t_nombre'))return $('buscar');
+    if(!MODO_INI)return document.querySelector('#cInicio .grande');
+    if(esGrave()&&Object.keys(leerProto()).some(function(k){return leerProto()[k].e==='Pendiente'}))return $('protoFilas');
+    return $('btnGuardar');
+  }
+  var f=(EDIT._faltan||[])[0]||'';
+  var M=[[/Declaraci/,'cInv'],[/DIAT/,'cDocs'],[/alta/,'fechaAlta'],[/Descripci/,'descripcion'],[/rbol/,'arbolEd'],[/Protocolo/,'protoFilas'],[/No sé|Pendiente/,'cDeclaracion'],[/medida/i,'medidas']];
+  for(var i=0;i<M.length;i++)if(M[i][0].test(f)&&$(M[i][1])&&!$(M[i][1]).closest('.hide'))return $(M[i][1]);
+  return f?null:$('edCerrar');
+}
+var OBJ=null,PRIMERA=true;
+function guiaA(){if(!$('guiaATx'))return;$('guiaATx').innerHTML=textoGuiaA();$('bVozA').textContent=VOZA?'🔇 Silenciar':'🔊 Escúchame';
+  var o=objetivoA(),cambio=o!==OBJ;if(OBJ&&cambio)OBJ.classList.remove('foco');OBJ=o;moverMano();
+  if(cambio&&o){o.classList.add('foco');if(!PRIMERA)llevar(false);if(VOZA)leerA()}PRIMERA=false}
+function moverMano(){var m=$('manoMov'),o=OBJ;if(!o||!o.offsetParent||$('app').classList.contains('hide')){m.classList.add('hide');return}
+  var r=o.getBoundingClientRect(),x=r.left+window.scrollX-52,y=r.top+window.scrollY+Math.min(r.height,48)/2-26;
+  if(x<2)x=2;m.style.left=x+'px';m.style.top=y+'px';m.classList.remove('hide')}
+function llevar(siempre){var o=OBJ;if(!o)return;var r=o.getBoundingClientRect();
+  if(siempre||r.top<70||r.bottom>window.innerHeight-90){o.scrollIntoView({behavior:'smooth',block:'center'})}
+  var f=o.matches('input,textarea,select')?o:null;if(siempre&&f)setTimeout(function(){f.focus()},500)}
+window.addEventListener('resize',moverMano);window.addEventListener('scroll',function(){if(OBJ&&getComputedStyle(OBJ.closest('.barra')||document.body).position==='fixed')moverMano()},{passive:true});
+// Voz: espera a que el navegador cargue las voces y elige una en español
+var VOCES=[];
+function vozES(){var vs=window.speechSynthesis?speechSynthesis.getVoices():[];if(vs.length)VOCES=vs;
+  var p=[/Google español de Estados Unidos/i,/es-US/i,/es-MX/i,/es-419/i,/es-CL/i,/Google español/i,/^es/i];
+  for(var i=0;i<p.length;i++){var v=VOCES.find(function(x){return p[i].test(x.name)||p[i].test(x.lang)});if(v)return v}return null}
+if(window.speechSynthesis){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=vozES}
+function hablar(t){
+  if(!window.speechSynthesis){toast('Este navegador no tiene voz');return}
+  var s=speechSynthesis,hecho=false;try{s.cancel()}catch(e){}
+  var go=function(){if(hecho)return;hecho=true;var v=vozES(),u=new SpeechSynthesisUtterance(t);
+    if(v){u.voice=v;u.lang=v.lang}else u.lang='es-ES';u.rate=1;u.volume=1;
+    u.onerror=function(e){if(e.error!=='interrupted'&&e.error!=='canceled')toast('No se pudo reproducir la voz ('+e.error+'). Revisa el volumen.')};
+    s.speak(u);setTimeout(function(){try{s.resume()}catch(e){}},150)};
+  if(vozES())setTimeout(go,150);else{var prev=s.onvoiceschanged;s.onvoiceschanged=function(){vozES();go()};setTimeout(go,900)}}
+function leerA(){var d=document.createElement('div');d.innerHTML=textoGuiaA();hablar((d.textContent||'').replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF\uFE0F]/gu,'').trim())}
 function vozA(){VOZA=!VOZA;if(VOZA)leerA();else try{speechSynthesis.cancel()}catch(e){}guiaA()}
+
+// ---------- CONFIRMACIÓN SÍ / NO ----------
+function confirma(tit,msg,si,cb,rojo){var d=document.createElement('div');d.className='modal';
+  d.innerHTML='<div class="cx"><h3>'+tit+'</h3><p>'+msg+'</p><div class="bt"><button style="background:#e0e4ec;color:#33435c">NO</button><button style="background:'+(rojo?'var(--ro)':'var(--az)')+';color:#fff">'+si+'</button></div></div>';
+  var b=d.querySelectorAll('button');b[0].onclick=function(){d.remove()};b[1].onclick=function(){d.remove();cb()};
+  d.onclick=function(e){if(e.target===d)d.remove()};document.body.appendChild(d)}
+function pedirLimpiar(){confirma('🧹 ¿Seguro que quieres limpiar el formulario?','Se borra todo lo que escribiste y no está guardado. Los casos ya guardados no se tocan.','SÍ, limpiar',function(){nuevoCaso();toast('Formulario limpio')},true)}
+function archivar(id,si){var c=CASOS.find(function(x){return x['ID']===id})||{};
+  confirma(si?'🗄 ¿Archivar el caso '+esc(id)+'?':'↩ ¿Desarchivar el caso '+esc(id)+'?',
+    si?esc(c['Trabajador']||'')+'. El caso sale de la lista y del aviso rojo, pero no se borra nada: lo ves eligiendo Estado = ARCHIVADO y puedes desarchivarlo cuando quieras.':'Vuelve a la lista con el estado que tenía.',
+    si?'SÍ, archivar':'SÍ, desarchivar',function(){run().withSuccessHandler(function(){toast(si?'Caso archivado':'Caso desarchivado');cargarCasos('casos')}).archivarCaso(TOKEN,id,si)})}
+function eliminar(id){var c=CASOS.find(function(x){return x['ID']===id})||{};
+  confirma('🗑 ¿Eliminar el caso '+esc(id)+'?','<b>'+esc(c['Trabajador']||'')+'</b> — '+esc(c['Tipo de evento']||'')+' del '+esc(c['Fecha evento']||'')+'.<br><br>Se borra del registro y su carpeta va a la <b>papelera de Drive</b> (se puede recuperar allí durante 30 días). Los links pendientes dejan de funcionar.',
+    'SÍ, eliminar',function(){run().withSuccessHandler(function(){toast('Caso '+id+' eliminado');if(EDIT&&EDIT.id===id)nuevoCaso();cargarCasos('casos')}).eliminarCaso(TOKEN,id)},true)}
 
 // ---------- LEY KARIN plazo ----------
 function plazoDT(){
@@ -1031,11 +1098,11 @@ function vista(x){
   ['nuevo','casos','panel'].forEach(function(k){
     var K=k.charAt(0).toUpperCase()+k.slice(1);$('v'+K).classList.toggle('hide',x!==k);$('t'+K).classList.toggle('on',x===k);
   });
-  $('barra').classList.toggle('hide',x!=='nuevo');setTimeout(guiaA,50);
+  $('barra').classList.toggle('hide',x!=='nuevo');setTimeout(guiaA,80);
   if(x==='casos'||x==='panel')cargarCasos(x);
 }
 function cargarCasos(x){
-  if(x==='casos')$('tbCasos').innerHTML='<tr><td colspan="8">Cargando...</td></tr>';
+  if(x==='casos')$('tbCasos').innerHTML='<tr><td colspan="9">Cargando...</td></tr>';
   run().withSuccessHandler(function(r){
     CASOS=r.casos;MEDS=r.medidas;DOT=r.dotacion;
     if(r.url){$('linkRegistro').href=r.url;$('linkRegistro').classList.remove('hide')}
@@ -1044,15 +1111,21 @@ function cargarCasos(x){
 }
 function pintarCasos(){
   var q=norm($('fCasos').value),e=$('fEstado').value;
-  var r=CASOS.filter(function(c){return (!e||c['Estado']===e)&&(!q||norm(Object.values(c).join(' ')).indexOf(q)>-1)});
+  var r=CASOS.filter(function(c){return (e?c['Estado']===e:c['Estado']!=='ARCHIVADO')&&(!q||norm(Object.values(c).join(' ')).indexOf(q)>-1)});
+  var adm=USR&&USR.rol==='ADMIN',nArch=CASOS.filter(function(c){return c['Estado']==='ARCHIVADO'}).length;
   $('tbCasos').innerHTML=r.length?r.map(function(c){
     var dec=c['Declaración']||'',dcl=dec.indexOf('FIRMADA')===0?'FIRMADA':dec.indexOf('PENDIENTE')===0?'PENDIENTE':dec?'SIN':'';
     var mp=+c['Medidas pendientes']||0;
     return '<tr class="cl" onclick="editar(\''+c['ID']+'\')"><td><b>'+esc(c['ID'])+'</b></td><td>'+esc(c['Fecha evento'])+'</td><td>'+esc(c['Trabajador'])+'<br><small>'+esc(c['Cargo'])+'</small></td><td>'+esc(c['Tipo de evento'])+(c['Gravedad']?' <small>('+esc(c['Gravedad'])+')</small>':'')+'</td><td>'+esc(c['Sucursal'])+'</td>'+
       '<td>'+(dcl?'<span class="est '+dcl+'">'+esc(dec.split(' — ')[0].split(' · ')[0])+'</span>':'<small>—</small>')+'</td>'+
       '<td style="text-align:center;font-weight:bold;color:'+(mp?'var(--ro)':'var(--ve)')+'">'+(c['Datos']?mp:'—')+'</td>'+
-      '<td><span class="est '+esc(c['Estado'])+'">'+esc(c['Estado'])+'</span>'+(/^PENDIENTE/.test(c['Alerta grave']||'')?'<br><span class="est SIN">🚨 GRAVE</span>':'')+'</td></tr>'}).join('')
-    :'<tr><td colspan="8">Sin casos.</td></tr>';
+      '<td><span class="est '+esc(c['Estado'])+'">'+esc(c['Estado'])+'</span>'+(/^PENDIENTE/.test(c['Alerta grave']||'')?'<br><span class="est SIN">🚨 GRAVE</span>':'')+'</td>'+
+      '<td class="acc" onclick="event.stopPropagation()">'+(adm?(c['Estado']==='ARCHIVADO'?'<button style="background:#e3f0ff;color:#0b3d91" onclick="archivar(\''+c['ID']+'\',false)">↩ Desarchivar</button>'
+        :'<button style="background:#eceff1;color:#37474f" onclick="archivar(\''+c['ID']+'\',true)">🗄 Archivar</button>')+
+        '<button style="background:#ffcdd2;color:#8e0000" onclick="eliminar(\''+c['ID']+'\')">🗑 Eliminar</button>':'<small>—</small>')+'</td></tr>'}).join('')
+    :'<tr><td colspan="9">Sin casos.</td></tr>';
+  setTimeout(guiaA,50);
+  if(!e&&nArch)$('tbCasos').innerHTML+='<tr><td colspan="9" style="color:#607d8b;font-size:12px">'+nArch+' caso(s) archivado(s) ocultos. Elige Estado = ARCHIVADO para verlos.</td></tr>';
 }
 
 // ---------- PANEL ----------
