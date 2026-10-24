@@ -95,6 +95,13 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 .guiaA .bur button{border:0;background:var(--na);color:#fff;border-radius:16px;padding:4px 10px;font-weight:bold;font-size:12px;margin:6px 6px 0 0;cursor:pointer}
 .guiaA .mano{font-size:34px;animation:bote 1s infinite}
 .guiaA.min .bur{display:none}
+.guiaA.min .miniG{display:block}
+.barG{display:flex;align-items:center;gap:6px;margin:-4px -4px 6px;padding-bottom:5px;border-bottom:1px dashed #f5c79b}
+.grip{flex:1;cursor:grab;user-select:none;touch-action:none;font-size:12px;color:#b26a1f;font-weight:bold;padding:4px 2px}
+.grip:active{cursor:grabbing}
+.barG button{margin:0!important;background:#fff3e6!important;color:#b26a1f!important;border:1px solid #f5c79b!important;border-radius:8px!important;padding:2px 9px!important;font-size:14px!important;font-weight:bold;line-height:1.2}
+.miniG{display:none;width:54px;height:54px;border-radius:50%;border:3px solid var(--na);background:#fff;font-size:26px;box-shadow:0 3px 12px rgba(0,0,0,.25);cursor:pointer;touch-action:none;pointer-events:auto;padding:0}
+
 @keyframes bote{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 #manoMov{position:absolute;z-index:8;font-size:44px;pointer-events:none;transition:top .7s ease,left .7s ease,opacity .3s;filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}
 #manoMov span{display:inline-block;animation:empuja .9s infinite}
@@ -145,7 +152,7 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 
 <div id="bannerG" class="hide"></div>
 <div id="manoMov" class="hide"><span>👉</span></div>
-<div class="guiaA" id="guiaA"><span class="mano" onclick="$('guiaA').classList.toggle('min')">👉</span><div class="bur"><span id="guiaATx"></span><br><button id="bVozA" onclick="vozA()">🔊 Escúchame</button><button onclick="llevar(true)">👉 Llévame</button><button onclick="$('guiaA').classList.add('min')">Ocultar</button></div></div>
+<div class="guiaA" id="guiaA"><div class="bur"><div class="barG"><span class="grip" title="Mantén apretado y arrastra">✥ Arrástrame</span><button onclick="centrarG('guiaA','gA')" title="Volver a su lugar">⟲</button><button onclick="minG('guiaA','gA',true)" title="Minimizar">–</button></div><span id="guiaATx"></span><br><button id="bVozA" onclick="vozA()">🔊 Escúchame</button><button onclick="llevar(true)">👉 Llévame</button></div><button class="miniG" onclick="minG('guiaA','gA',false)" title="Mostrar la ayuda (puedes arrastrarla)">👉</button></div>
 <main id="vNuevo">
 
   <!-- BARRA DE EDICIÓN -->
@@ -891,6 +898,27 @@ function hablar(t){
   if(vozES())setTimeout(go,150);else{var prev=s.onvoiceschanged;s.onvoiceschanged=function(){vozES();go()};setTimeout(go,900)}}
 function leerA(){var d=document.createElement('div');d.innerHTML=textoGuiaA();hablar((d.textContent||'').replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF\uFE0F]/gu,'').trim())}
 function vozA(){VOZA=!VOZA;if(VOZA)leerA();else try{speechSynthesis.cancel()}catch(e){}guiaA()}
+
+
+// ---- Globo de ayuda: mover (arrastrar) y minimizar; recuerda la posición ----
+function lsG(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
+function arrastrable(cont,key){
+  var ini=null,mov=false;
+  function pon(x,y){var w=cont.offsetWidth,h=cont.offsetHeight;x=Math.max(4,Math.min(window.innerWidth-w-4,x));y=Math.max(4,Math.min(window.innerHeight-h-4,y));
+    cont.style.left=x+'px';cont.style.top=y+'px';cont.style.right='auto';cont.style.bottom='auto';cont.classList.add('movida')}
+  cont.addEventListener('pointerdown',function(e){if(!e.target.closest('.grip,.miniG'))return;var r=cont.getBoundingClientRect();ini={x:e.clientX,y:e.clientY,l:r.left,t:r.top};mov=false;
+    try{e.target.setPointerCapture(e.pointerId)}catch(_){}});
+  cont.addEventListener('pointermove',function(e){if(!ini)return;var dx=e.clientX-ini.x,dy=e.clientY-ini.y;if(!mov&&Math.abs(dx)+Math.abs(dy)<6)return;mov=true;e.preventDefault();pon(ini.l+dx,ini.t+dy)});
+  cont.addEventListener('pointerup',function(){if(ini&&mov){var r=cont.getBoundingClientRect();lsG(key+'Pos',JSON.stringify([r.left,r.top]))}ini=null;setTimeout(function(){mov=false},0)});
+  cont.addEventListener('click',function(e){if(mov){e.stopPropagation();e.preventDefault()}},true);
+  var p=null;try{p=JSON.parse(lsG(key+'Pos')||'null')}catch(e){}if(p)setTimeout(function(){pon(p[0],p[1])},0);
+  if(lsG(key+'Min')==='1')cont.classList.add('min');
+  window.addEventListener('resize',function(){if(cont.classList.contains('movida')){var r=cont.getBoundingClientRect();pon(r.left,r.top)}});
+}
+function minG(id,key,si){var c=document.getElementById(id);c.classList.toggle('min',si);lsG(key+'Min',si?'1':'0');
+  if(c.classList.contains('movida')){var r=c.getBoundingClientRect();c.style.left=Math.max(4,Math.min(window.innerWidth-c.offsetWidth-4,r.left))+'px';c.style.top=Math.max(4,Math.min(window.innerHeight-c.offsetHeight-4,r.top))+'px'}}
+function centrarG(id,key){var c=document.getElementById(id);c.classList.remove('movida');c.style.left=c.style.top=c.style.right=c.style.bottom='';lsG(key+'Pos','')}
+arrastrable($('guiaA'),'gA');
 
 // ---------- CONFIRMACIÓN SÍ / NO ----------
 function confirma(tit,msg,si,cb,rojo){var d=document.createElement('div');d.className='modal';
