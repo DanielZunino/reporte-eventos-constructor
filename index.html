@@ -100,6 +100,32 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 .proto{display:grid;grid-template-columns:1.6fr 1fr 1.2fr 1.6fr;gap:6px;align-items:center;margin-bottom:6px;font-size:13px}
 .proto.hecho select{background:#e8f5e9;color:var(--ve);font-weight:bold}.proto.pend select{background:#fdecea;color:var(--ro);font-weight:bold}
 .nodo{display:grid;grid-template-columns:110px 1fr 160px 34px;gap:6px;margin-bottom:6px}
+.ipasos{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.ipasos .ip{flex:1;min-width:120px;border:2px solid var(--bo);border-radius:12px;padding:8px;text-align:center;cursor:pointer;background:#fff;font-size:13px;line-height:1.25}
+.ipasos .ip b{display:block;font-size:20px}
+.ipasos .ip.act{border-color:var(--az);background:#eef4ff;box-shadow:0 0 0 3px #c9dafc}
+.ipasos .ip.ok{border-color:var(--ve)}.ipasos .ip.ok b{color:var(--ve)}
+.ipreg{background:#eef4ff;border-left:5px solid var(--az);padding:10px 12px;border-radius:8px;font-size:15px;margin-bottom:8px}
+.inav{display:flex;justify-content:space-between;gap:8px;margin-top:16px;border-top:1px dashed var(--bo);padding-top:12px}
+.acomo{background:#f6f8fc;border:1px solid var(--bo);border-radius:10px;padding:10px;font-size:13.5px;display:grid;gap:5px;margin-bottom:8px}
+.acomo b{color:var(--az)}
+.tv{display:flex;flex-direction:row-reverse;align-items:center}
+.tv>.hijos{display:flex;flex-direction:column;gap:10px;position:relative;padding-right:22px;margin-right:0}
+.tv>.hijos::after{content:'';position:absolute;right:10px;top:18px;bottom:18px;border-right:2px solid #9fb0cc}
+.tv>.hijos>.tv{position:relative}
+.tv>.hijos>.tv::after{content:'';position:absolute;right:-12px;top:50%;width:12px;border-top:2px solid #9fb0cc}
+.tv>.hijos:has(>.tv:only-child)::after{display:none}
+.caja{position:relative;min-width:120px;max-width:210px;padding:8px 10px;border-radius:10px;border:2px solid #607d8b;background:#fff;font-size:13px;cursor:pointer;margin-left:14px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.caja::before{content:'➜';position:absolute;right:-16px;top:50%;transform:translateY(-50%);color:#9fb0cc;font-size:13px}
+.tv.raiz>.caja::before{display:none}
+.caja.F{border-color:var(--ro);background:#fdecea;font-weight:bold}
+.caja.V{border-color:var(--na)}.caja.P{border-style:dashed}
+.caja.espera{background:#fff3c4;animation:latido 1.6s infinite}
+.caja.fondo{background:#fff1e0;border-color:#e65100}
+.caja.sel{outline:3px solid var(--az2)}
+.caja small{display:block;font-weight:normal;color:#8a5a00;margin-top:3px}
+@keyframes latido{0%,100%{box-shadow:0 0 0 0 rgba(242,140,40,.5)}50%{box-shadow:0 0 0 6px rgba(242,140,40,0)}}
+.arbol .lienzo{overflow-x:auto;padding:8px 4px 12px;direction:rtl}.arbol .lienzo>*{direction:ltr}
 .asis{background:linear-gradient(180deg,#fff8ec,#fff);border:2px solid var(--na);border-radius:14px;padding:14px;margin:6px 0 10px}
 .asis .paso{font-size:12px;font-weight:bold;color:var(--na);letter-spacing:.5px}
 .asis h4{margin:4px 0 8px;font-size:17px;color:var(--az)}
@@ -383,54 +409,86 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
   </div></div>
 
   <!-- INVESTIGACIÓN -->
-  <div class="card" id="cInvest"><h2><span class="n">7</span>Investigación <small style="font-weight:normal">(supervisor directo)</small></h2><div class="in">
-    <label>Descripción del evento</label>
-    <textarea id="descripcion" placeholder="Secuencia de hechos: antes, durante y después"></textarea>
+  <div class="card" id="cInvest"><h2><span class="n">7</span>Investigación <small style="font-weight:normal">(supervisor directo) — 4 pasos cortos</small></h2><div class="in">
+    <div class="ipasos" id="ipasos"></div>
 
-    <div class="grupo">Testigos / entrevistados</div>
-    <div id="testigos"></div>
-    <button class="btn sm" onclick="addTestigo()">+ Agregar testigo</button>
-    <details style="margin-top:8px"><summary style="cursor:pointer;color:var(--az);font-weight:bold;font-size:13px">Preguntas guía para la entrevista</summary>
-      <ol style="font-size:13px;color:#33435c">
-        <li>Relate en orden todo lo que recuerda desde que comenzó la actividad.</li>
-        <li>¿Dónde estaba exactamente y qué hacía al momento del hecho?</li>
-        <li>¿Cómo hizo el trabajo, paso a paso?</li>
-        <li>¿Cómo estaba el lugar, el equipo y el clima ese día?</li>
-        <li>¿Cómo se hace normalmente este trabajo? ¿Se hizo igual esta vez?</li>
-        <li>¿Cómo estaban las herramientas y materiales?</li>
-        <li>¿Quién estaba a cargo? ¿Qué instrucciones recibió?</li>
-        <li>¿Ha pasado algo parecido antes?</li>
-        <li>¿Por qué cree que pasó? ¿Qué se pudo hacer para evitarlo?</li>
-      </ol>
-    </details>
+    <!-- PASO 1 -->
+    <div class="ipaso" data-p="1">
+      <div class="ipreg">📝 Cuenta qué pasó, en orden: <b>antes</b>, <b>durante</b> y <b>después</b>.</div>
+      <div class="ej">Escribe como si se lo contaras a alguien que no estaba. Ej: "A las 10:30 Juan bajaba de la rampla con una caja. El piso tenía aceite. Se resbaló y se dobló el tobillo derecho. Lo llevaron a la Mutual."</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin:6px 0">
+        <button class="btn sm gr" type="button" onclick="invPlantilla()">🧩 Ayúdame con el formato (antes / durante / después)</button>
+        <button class="btn sm gr" type="button" id="bUsarDecl" onclick="invUsarDecl()">📋 Partir desde la declaración del trabajador</button>
+      </div>
+      <textarea id="descripcion" placeholder="ANTES: ...&#10;DURANTE: ...&#10;DESPUÉS: ..." style="min-height:130px"></textarea>
+    </div>
 
-    <div class="grupo" style="margin-top:14px">CAUSAS INMEDIATAS — Acciones inseguras <small style="font-weight:normal;color:#666">(toca para agregar)</small></div>
-    <div class="chips" data-append="accInseguras" data-opc="No usar EPP,Operar sin autorización,Posición o postura insegura,Levantar carga en forma incorrecta,Trabajar a velocidad inadecuada,Usar equipo defectuoso,Distracción / uso de celular,No respetar procedimiento,Subirse a racks,Viajar en horquillas,Exceso de confianza"></div>
-    <textarea id="accInseguras" style="margin-top:6px"></textarea>
-    <div class="grupo">CAUSAS INMEDIATAS — Condiciones inseguras</div>
-    <div class="chips" data-append="condInseguras" data-opc="Piso resbaladizo o irregular,Orden y aseo deficiente,Iluminación insuficiente,Equipo o herramienta en mal estado,Bordes cortantes sin protección,Carga mal estibada,Falta de señalización,Espacio reducido,Protecciones ausentes,Condiciones climáticas"></div>
-    <textarea id="condInseguras" style="margin-top:6px"></textarea>
-    <div class="grupo">CAUSAS BÁSICAS — Factores personales</div>
-    <div class="chips" data-append="factPersonales" data-opc="Falta de conocimiento,Falta de habilidad / experiencia,Fatiga / cansancio,Motivación inadecuada,Capacidad física inadecuada,Estrés"></div>
-    <textarea id="factPersonales" style="margin-top:6px"></textarea>
-    <div class="grupo">CAUSAS BÁSICAS — Factores del trabajo</div>
-    <div class="chips" data-append="factTrabajo" data-opc="Supervisión insuficiente,Procedimiento inexistente o inadecuado,Mantención deficiente,Herramientas / equipos inadecuados,Capacitación insuficiente,Planificación deficiente,Compras / estándares inadecuados"></div>
-    <textarea id="factTrabajo" style="margin-top:6px"></textarea>
+    <!-- PASO 2 -->
+    <div class="ipaso hide" data-p="2">
+      <div class="ipreg">👀 ¿Quién vio lo que pasó o sabe algo? Agrégalos aquí. <small>(si nadie vio, pasa al siguiente paso)</small></div>
+      <div id="testigos"></div>
+      <button class="btn sm" onclick="addTestigo()">+ Agregar testigo</button>
+      <details style="margin-top:8px"><summary style="cursor:pointer;color:var(--az);font-weight:bold;font-size:13px">❓ Preguntas para hacerle al testigo</summary>
+        <ol style="font-size:13px;color:#33435c">
+          <li>Relate en orden todo lo que recuerda desde que comenzó la actividad.</li>
+          <li>¿Dónde estaba exactamente y qué hacía al momento del hecho?</li>
+          <li>¿Cómo hizo el trabajo, paso a paso?</li>
+          <li>¿Cómo estaba el lugar, el equipo y el clima ese día?</li>
+          <li>¿Cómo se hace normalmente este trabajo? ¿Se hizo igual esta vez?</li>
+          <li>¿Cómo estaban las herramientas y materiales?</li>
+          <li>¿Quién estaba a cargo? ¿Qué instrucciones recibió?</li>
+          <li>¿Ha pasado algo parecido antes?</li>
+          <li>¿Por qué cree que pasó? ¿Qué se pudo hacer para evitarlo?</li>
+        </ol>
+      </details>
+    </div>
 
-    <div class="grupo" style="margin-top:16px">🌳 ÁRBOL DE CAUSAS <small style="font-weight:normal;color:#666">— te voy guiando pregunta por pregunta</small></div>
-    <div class="asis" id="arbAsis"></div>
-    <div class="arbol" id="arbolVis"></div>
-    <details style="margin-top:8px;font-size:13px"><summary style="cursor:pointer;color:#5a6780">✏️ Edición manual (solo si sabes lo que haces)</summary>
-      <div id="arbolEd"></div>
-      <button class="btn sm gr" onclick="addNodo()">+ Agregar hecho a mano</button></details>
+    <!-- PASO 3 -->
+    <div class="ipaso hide" data-p="3">
+      <div class="ipreg">🔎 ¿Por qué pasó? Primero marca lo que aplique (toca los botones). Después armamos el árbol juntos.</div>
+      <div class="grupo">1) ¿Qué hizo la persona que no debía hacer? <small style="font-weight:normal;color:#666">(acciones inseguras)</small></div>
+      <div class="chips" data-append="accInseguras" data-opc="No usar EPP,Operar sin autorización,Posición o postura insegura,Levantar carga en forma incorrecta,Trabajar a velocidad inadecuada,Usar equipo defectuoso,Distracción / uso de celular,No respetar procedimiento,Subirse a racks,Viajar en horquillas,Exceso de confianza"></div>
+      <textarea id="accInseguras" style="margin-top:6px" placeholder="Lo que toques arriba aparece aquí. También puedes escribir."></textarea>
+      <div class="grupo">2) ¿Qué estaba mal en el lugar, el equipo o el material? <small style="font-weight:normal;color:#666">(condiciones inseguras)</small></div>
+      <div class="chips" data-append="condInseguras" data-opc="Piso resbaladizo o irregular,Orden y aseo deficiente,Iluminación insuficiente,Equipo o herramienta en mal estado,Bordes cortantes sin protección,Carga mal estibada,Falta de señalización,Espacio reducido,Protecciones ausentes,Condiciones climáticas"></div>
+      <textarea id="condInseguras" style="margin-top:6px"></textarea>
+      <div class="grupo">3) ¿Qué le pasaba a la persona? <small style="font-weight:normal;color:#666">(factores personales)</small></div>
+      <div class="chips" data-append="factPersonales" data-opc="Falta de conocimiento,Falta de habilidad / experiencia,Fatiga / cansancio,Motivación inadecuada,Capacidad física inadecuada,Estrés"></div>
+      <textarea id="factPersonales" style="margin-top:6px"></textarea>
+      <div class="grupo">4) ¿Qué falló en la organización del trabajo? <small style="font-weight:normal;color:#666">(factores del trabajo)</small></div>
+      <div class="chips" data-append="factTrabajo" data-opc="Supervisión insuficiente,Procedimiento inexistente o inadecuado,Mantención deficiente,Herramientas / equipos inadecuados,Capacitación insuficiente,Planificación deficiente,Compras / estándares inadecuados"></div>
+      <textarea id="factTrabajo" style="margin-top:6px"></textarea>
 
-    <div class="grupo" style="margin-top:14px">Medidas correctivas a implementar <small style="font-weight:normal;color:#666">(marca "Cumplida" cuando se ejecute)</small></div>
-    <div id="medidas"></div>
-    <button class="btn sm" onclick="addMedida('medidas')">+ Agregar medida</button>
+      <div class="grupo" style="margin-top:18px">🌳 ÁRBOL DE CAUSAS <small style="font-weight:normal;color:#666">— solo responde "¿por qué?" hasta que no haya más</small></div>
+      <div class="acomo">
+        <div><b>1</b> A la derecha va <b>lo que pasó</b> (la lesión o el daño).</div>
+        <div><b>2</b> Tocas una caja y respondes <b>¿por qué pasó esto?</b> Cada respuesta es una caja nueva a la izquierda.</div>
+        <div><b>3</b> Las cajas <span style="background:#fff3c4;padding:0 4px;border-radius:4px">amarillas ❓</span> todavía esperan su "¿por qué?". Cuando ya no hay más, es <b>causa de fondo 🧱</b> y le pones una medida.</div>
+        <button class="btn sm gr" type="button" onclick="arbEjemplo()">👀 Ver un ejemplo armado</button>
+      </div>
+      <div class="asis" id="arbAsis"></div>
+      <div class="arbol" id="arbolVis"></div>
+      <details style="margin-top:8px;font-size:13px"><summary style="cursor:pointer;color:#5a6780">✏️ Edición manual (solo si sabes lo que haces)</summary>
+        <div id="arbolEd"></div>
+        <button class="btn sm gr" onclick="addNodo()">+ Agregar hecho a mano</button></details>
+    </div>
 
-    <div class="grupo" style="margin-top:14px">Participantes de la investigación</div>
-    <div id="participantes"></div>
-    <button class="btn sm" onclick="addParticipante()">+ Agregar participante</button>
+    <!-- PASO 4 -->
+    <div class="ipaso hide" data-p="4">
+      <div class="ipreg">🛠 ¿Qué vamos a hacer para que no vuelva a pasar? Cada causa de fondo necesita una medida con <b>responsable</b> y <b>plazo</b>.</div>
+      <div id="medSug"></div>
+      <div class="grupo" style="margin-top:8px">Medidas correctivas <small style="font-weight:normal;color:#666">(marca "Cumplida" cuando se ejecute)</small></div>
+      <div id="medidas"></div>
+      <button class="btn sm" onclick="addMedida('medidas')">+ Agregar medida</button>
+      <div class="grupo" style="margin-top:14px">¿Quiénes participaron en la investigación?</div>
+      <div id="participantes"></div>
+      <button class="btn sm" onclick="addParticipante()">+ Agregar participante</button>
+    </div>
+
+    <div class="inav">
+      <button class="btn gr" id="iAtras" onclick="invPaso(IPASO-1)">⬅ Atrás</button>
+      <button class="btn" id="iSig" onclick="invPaso(IPASO+1)">Siguiente ➡</button>
+    </div>
   </div></div>
 
   <!-- FOTOS -->
@@ -711,7 +769,7 @@ function limpiar(){
   $('avisos').innerHTML='Elige al trabajador para ver la lista.';$('dotInfo').textContent='';$('cFalta').classList.add('hide');$('cInv').classList.add('hide');
   $('trab').classList.add('hide');$('sug').classList.add('hide');
   MULTI.forEach(function(k){if(document.querySelector('[data-multi="'+k+'"]'))pintarMulti(k)});$('tipoLesionOtro').classList.add('hide');pintarPartes();
-  aplicarTipos();rolDecl();modoDecl();pintaProto();ASIS={foco:null,tipo:'',txt:'',aviso:''};pintaArbol();
+  aplicarTipos();rolDecl();modoDecl();pintaProto();ASIS={foco:null,tipo:'',txt:'',aviso:''};IVISTO={};IPASO=1;document.querySelectorAll('#cInvest .ipaso').forEach(function(d){d.classList.toggle('hide',d.dataset.p!=='1')});pintaArbol();
 }
 function nuevoCaso(){
   limpiar();EDIT=null;
@@ -902,8 +960,33 @@ function filas(cont,sel){
     var o={};r.querySelectorAll('[data-k]').forEach(function(e){o[e.dataset.k]=e.value.trim()});return o});
 }
 
-// ---------- ÁRBOL DE CAUSAS (asistente paso a paso) ----------
-var NID=0, ASIS={foco:null,tipo:'',txt:'',aviso:'',final:false};
+// ---------- INVESTIGACIÓN EN 4 PASOS ----------
+var IPASO=1, IPASOS=[['1','📝','Qué pasó'],['2','👀','Quién lo vio'],['3','🔎','Por qué pasó'],['4','🛠','Qué haremos']];
+function invOk(n){var ns=leerArbol().filter(function(x){return x.txt});
+  if(n===1)return v('descripcion').length>30;
+  if(n===2)return $('testigos').children.length>0||IVISTO[2];
+  if(n===3)return ns.length>1&&!ns.some(function(x){return !x.fondo&&!hijosDe(ns,x.id).length});
+  if(n===4)return filas('medidas','.fila4').some(function(m){return m.medida&&m.responsable&&m.plazo});return false}
+var IVISTO={};
+function pintaPasos(){var c=$('ipasos');if(!c)return;
+  c.innerHTML=IPASOS.map(function(p){var n=+p[0],ok=invOk(n);return '<div class="ip'+(n===IPASO?' act':'')+(ok?' ok':'')+'" data-p="'+n+'" onclick="invPaso('+n+')"><b>'+(ok?'✔':p[1])+'</b>Paso '+n+'<br>'+p[2]+'</div>'}).join('');
+  $('iAtras').style.visibility=IPASO>1?'visible':'hidden';
+  $('iSig').textContent=IPASO<4?'Siguiente: '+IPASOS[IPASO][2]+' ➡':'✔ Listo, revisar y guardar abajo'}
+function invPaso(n){if(n<1)n=1;if(n>4){var g=$('btnGuardar');if(g)g.scrollIntoView({behavior:'smooth',block:'center'});return}
+  IVISTO[IPASO]=1;IPASO=n;document.querySelectorAll('#cInvest .ipaso').forEach(function(d){d.classList.toggle('hide',+d.dataset.p!==n)});
+  pintaPasos();if(n===3)pintaArbol();if(n===4)pintaMedSug();
+  var y=$('cInvest').getBoundingClientRect().top+window.scrollY-110;window.scrollTo({top:y,behavior:'smooth'});
+  if(typeof VOZA!=='undefined'&&VOZA){var t={1:'Paso 1. Cuenta qué pasó, en orden: antes, durante y después.',2:'Paso 2. Agrega a las personas que vieron lo que pasó.',3:'Paso 3. Vamos a buscar por qué pasó. Toca los botones que apliquen y después armamos el árbol.',4:'Paso 4. Pon una medida para cada causa de fondo, con responsable y plazo.'}[n];hablar(t,1)}
+  try{guiaA()}catch(e){}}
+function invPlantilla(){var d=$('descripcion');if(d.value.trim()){toast('Ya tienes texto escrito; agrégale ANTES / DURANTE / DESPUÉS donde corresponda');d.focus();return}
+  d.value='ANTES (qué estaba haciendo, dónde, con qué): \n\nDURANTE (qué pasó exactamente): \n\nDESPUÉS (qué se hizo, a dónde lo llevaron): ';d.focus();d.setSelectionRange(d.value.indexOf(':')+2,d.value.indexOf(':')+2);pintaPasos()}
+function invUsarDecl(){var t=$('declaracion')?$('declaracion').value.trim():'';if(!t)return toast('Todavía no hay declaración del trabajador escrita');
+  var d=$('descripcion');if(d.value.trim()){confirma('📋 ¿Agregar la declaración?','Se agrega al final de lo que ya escribiste.','SÍ, agregar',function(){d.value+='\n\nSegún la declaración del trabajador: '+t;pintaPasos()});return}
+  d.value='Según la declaración del trabajador: '+t;pintaPasos()}
+document.addEventListener('input',function(e){if(e.target&&e.target.id==='descripcion')pintaPasos()});
+
+// ---------- ÁRBOL DE CAUSAS (asistente + dibujo) ----------
+var NID=0, ASIS={foco:null,tipo:'',txt:'',aviso:''};
 function addNodo(n){n=n||{};var d=document.createElement('div');d.className='nodo';d.dataset.id=n.id||('n'+Date.now().toString(36)+(NID++));d.dataset.fondo=n.fondo?'1':'';
   d.innerHTML='<select data-k="tipo" onchange="pintaArbol()"><option value="V">Variación</option><option value="P">Permanente</option></select>'+
     '<input data-k="txt" placeholder="Hecho (ej: el trabajador subió al rack)" oninput="pintaArbol()"><select data-k="padre" onchange="pintaArbol()"></select>'+
@@ -914,22 +997,26 @@ function leerArbol(){return [].map.call($('arbolEd').querySelectorAll('.nodo'),f
   return {id:r.dataset.id,tipo:r.querySelector('[data-k="tipo"]').value,txt:r.querySelector('[data-k="txt"]').value.trim(),padre:p.value||r.dataset.padre||'',fondo:r.dataset.fondo==='1'}})}
 function filaNodo(id){return $('arbolEd').querySelector('.nodo[data-id="'+id+'"]')}
 function hijosDe(ns,pid){return ns.filter(function(n){return n.txt&&(n.padre||'')===pid})}
+// dibuja el árbol: lo que pasó a la derecha, las causas hacia la izquierda
+function dibujoArbol(ns,activo,ejemplo){
+  var caja=function(n,nivel,visto){if(visto[n.id])return '';visto[n.id]=1;var hs=hijosDe(ns,n.id),pend=!n.fondo&&!hs.length&&nivel>=0;
+    var cls='caja '+(nivel?n.tipo:'F')+(n.fondo?' fondo':pend?' espera':'')+(activo===n.id?' sel':'');
+    var et=nivel===0?'<small>⚠ lo que pasó</small>':n.fondo?'<small>🧱 causa de fondo</small>':pend?'<small>❓ toca: ¿por qué pasó esto?</small>':'';
+    var acc=ejemplo?'':'<span class="cacc" style="float:right;margin-left:4px"><span title="Corregir" onclick="event.stopPropagation();arbEditar(\''+n.id+'\')">✏️</span> <span title="Borrar" onclick="event.stopPropagation();arbBorrar(\''+n.id+'\')">🗑</span></span>';
+    var h='<div class="'+cls+'"'+(ejemplo?'':' onclick="arbFoco(\''+n.id+'\')"')+'>'+acc+esc(n.txt)+et+'</div>';
+    var sub=hs.map(function(x){return caja(x,nivel+1,visto)}).join('');
+    return '<div class="tv'+(nivel===0?' raiz':'')+'">'+h+(sub?'<div class="hijos">'+sub+'</div>':'')+'</div>'};
+  var vis={};return hijosDe(ns,'').map(function(r){return caja(r,0,vis)}).join('<div style="height:14px"></div>')}
 function pintaArbol(){
   var ns=leerArbol(),ids={};ns.forEach(function(n){ids[n.id]=n});
   $('arbolEd').querySelectorAll('.nodo').forEach(function(r){var sel=r.querySelector('[data-k="padre"]'),act=sel.value||r.dataset.padre||'';
     sel.innerHTML='<option value="">⬆ Hecho final (arriba)</option>'+ns.filter(function(n){return n.id!==r.dataset.id&&n.txt}).map(function(n){return '<option value="'+n.id+'">explica a: '+esc(n.txt.slice(0,40))+'</option>'}).join('');
     sel.value=ids[act]?act:'';r.dataset.padre=sel.value});
   ns=leerArbol();
-  var pinta=function(lista,nivel,visto){return lista.length?'<ul>'+lista.map(function(n){if(visto[n.id])return '';visto[n.id]=1;
-    var cls=(nivel?n.tipo:'F')+(n.fondo?' fondo':'')+(ASIS.foco===n.id?' sel':'');
-    return '<li><span class="cx '+cls+'">'+(nivel?(n.tipo==='P'?'▭ ':'◆ '):'⚠ ')+esc(n.txt)+(n.fondo?' <small style="color:#e65100">🧱 causa de fondo</small>':'')+'</span>'+
-      ' <button class="nb" title="Agregar una causa a este hecho" onclick="arbFoco(\''+n.id+'\')">➕ causa</button>'+
-      '<button class="nb" title="Corregir el texto" onclick="arbEditar(\''+n.id+'\')">✏️</button>'+
-      '<button class="nb" title="Borrar" onclick="arbBorrar(\''+n.id+'\')">🗑</button>'+pinta(hijosDe(ns,n.id),nivel+1,visto)+'</li>'}).join('')+'</ul>':''};
-  var h=pinta(hijosDe(ns,''),0,{});
-  $('arbolVis').innerHTML=h?'<div style="margin-bottom:6px;color:#5a6780"><b style="color:var(--ro)">⚠ resultado final</b> · <b style="color:var(--na)">◆ variación (fue distinto ese día)</b> · <b style="color:#607d8b">▭ permanente (siempre es así)</b> · 🧱 causa de fondo — se lee de arriba (lo que pasó) hacia abajo (por qué pasó)</div>'+h
+  var h=dibujoArbol(ns,ASIS.foco,false);
+  $('arbolVis').innerHTML=h?'<div style="margin-bottom:4px;color:#5a6780;font-size:12.5px">👉 Toca cualquier caja para decir <b>por qué pasó</b>. Se lee de derecha (lo que pasó) a izquierda (por qué). ◆ borde naranjo = fue distinto ese día · borde punteado = siempre es así.</div><div class="lienzo">'+h+'</div>'
     :'<small style="color:#666">El dibujo del árbol aparece aquí a medida que respondes las preguntas de arriba.</small>';
-  pintaAsis()}
+  pintaAsis();pintaPasos()}
 
 // texto sugerido para el resultado final, con lo que ya se llenó en el caso
 function arbFinalSugerido(){var n=(v('t_nombre')||'El trabajador').split(' ').slice(0,2).join(' ');
@@ -938,73 +1025,82 @@ function arbFinalSugerido(){var n=(v('t_nombre')||'El trabajador').split(' ').sl
   if(les||pt)return n+' sufre '+(les||'una lesión')+(pt?' en '+pt:'');
   if((ST.tipos||[]).indexOf('Daño material')>-1)return 'Se produce daño en (equipo / material / instalación)';
   return n+' sufre una lesión'}
-// ideas de causas sacadas de lo que ya se escribió (causas inmediatas/básicas, descripción y declaraciones)
+// ideas de causas sacadas de lo que ya se escribió
 function arbIdeas(){var usados={};leerArbol().forEach(function(n){usados[norm(n.txt)]=1});var out=[],vis={};
-  function add(t){t=String(t||'').replace(/\s+/g,' ').trim().replace(/^[-•\d.)\s]+/,'');var k=norm(t);if(t.length<6||t.length>140||vis[k]||usados[k])return;vis[k]=1;out.push(t)}
+  function add(t){t=String(t||'').replace(/\s+/g,' ').trim().replace(/^(ANTES|DURANTE|DESPUÉS|DESPUES)[^:]*:\s*/i,'').replace(/^[-•\d.)\s]+/,'');var k=norm(t);if(t.length<6||t.length>140||vis[k]||usados[k])return;vis[k]=1;out.push(t)}
   ['accInseguras','condInseguras','factPersonales','factTrabajo'].forEach(function(id){if($(id))$(id).value.split(/\n|;/).forEach(add)});
-  ['descripcion','declaracion'].forEach(function(id){if($(id))$(id).value.split(/(?<=[.!?])\s+|\n/).slice(0,8).forEach(add)});
+  ['descripcion','declaracion'].forEach(function(id){if($(id))$(id).value.split(/(?<=[.!?])\s+|\n/).slice(0,10).forEach(add)});
   return out.slice(0,14)}
 var CULPA=/(descuid|no tuvo cuidado|falta de atenci|poca atenci|negligen|irresponsab|flojer|culpa|no se fij|imprudent|torpe|tonto|porfiad|mala suerte|accidente fortuito)/i;
-function arbHablar(t){if(VOZA)hablar(t.replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF\uFE0F«»]/gu,''),1)}
+function arbHablar(t){if(VOZA)hablar(t.replace(/[«»]/g,''),1)}
 function pintaAsis(){var c=$('arbAsis');if(!c)return;var ns=leerArbol().filter(function(n){return n.txt}),h='';
-  var finales=hijosDe(ns,'');
-  if(!finales.length){
-    h='<div class="paso">PASO 1 DE 3</div><h4>¿Cuál fue el resultado final?</h4><div class="preg">Escribe lo que pasó al final: la lesión o el daño. Ya te dejé una propuesta con los datos del caso, corrígela si hace falta.</div>'+
+  if(!hijosDe(ns,'').length){
+    h='<div class="paso">EMPECEMOS</div><h4>¿Qué fue lo que pasó al final?</h4><div class="preg">Ya te dejé escrita una propuesta con los datos del caso. Si está bien, solo toca el botón verde.</div>'+
       '<input class="grande" id="asTxt" value="'+esc(ASIS.txt||arbFinalSugerido())+'" oninput="ASIS.txt=this.value">'+
-      '<div class="acc"><button class="btn ve" onclick="arbCrearFinal()">✅ Sí, ese es el resultado final</button></div>';
+      '<div class="acc"><button class="btn ve" onclick="arbCrearFinal()">✅ Sí, eso fue lo que pasó</button></div>';
     c.innerHTML=h;return}
   var pend=ns.filter(function(n){return !n.fondo&&!hijosDe(ns,n.id).length});
   if(!ASIS.foco||!ns.some(function(n){return n.id===ASIS.foco}))ASIS.foco=pend.length?pend[0].id:null;
   var f=ns.find(function(n){return n.id===ASIS.foco});
   if(!f){ // terminado
-    var hojas=ns.filter(function(n){return !hijosDe(ns,n.id).length&&n.padre});
-    var meds=filas('medidas','.fila4').map(function(m){return norm(m.medida)}).join(' | ');
-    h='<div class="paso">PASO 3 DE 3</div><h4>🎉 ¡Árbol listo! Ahora las medidas</h4><div class="preg">Estas son las <b>causas de fondo</b>. Cada una necesita su medida correctiva, si no el accidente se puede repetir.</div><ul class="lista">'+
-      hojas.map(function(n){var tiene=meds.indexOf(norm(n.txt).slice(0,25))>-1;
-        return '<li>'+esc(n.txt)+' '+(tiene?'<b style="color:var(--ve)">✔ con medida</b>':'<button class="btn sm na" onclick="arbMedida(\''+n.id+'\')">➕ Crear medida</button>')+'</li>'}).join('')+'</ul>'+
-      (ns.length<4?'<div class="alerta">⚠️ El árbol tiene muy pocos hechos. Normalmente un accidente tiene 4 o más. Toca <b>➕ causa</b> en algún hecho del dibujo para seguir preguntando.</div>':'')+
-      '<div class="acc"><button class="btn sm gr" onclick="arbReabrir()">↩ Quiero seguir agregando causas</button></div>';
+    h='<div class="paso">¡ÁRBOL TERMINADO!</div><h4>🎉 Listo. Ahora pasa al paso 4 para poner las medidas</h4>'+
+      (ns.length<4?'<div class="alerta">⚠️ El árbol quedó con muy pocas cajas. Casi siempre hay 4 o más. Toca una caja del dibujo para agregar otro "¿por qué?".</div>':'')+
+      '<div class="acc"><button class="btn ve" onclick="invPaso(4)">Ir al paso 4: medidas ➡</button><button class="btn sm gr" onclick="arbReabrir()">↩ Quiero agregar más causas</button></div>';
     c.innerHTML=h;return}
   var hs=hijosDe(ns,f.id),ideas=arbIdeas();
-  h='<div class="paso">PASO 2 DE 3 · quedan '+pend.length+' hecho(s) por revisar</div>'+
-    '<h4>¿Por qué pasó esto?</h4><div class="preg">Mira este hecho: <b>«'+esc(f.txt)+'»</b><br>¿Qué <b>tuvo que pasar</b> para que ocurriera?</div>'+
-    '<div class="ej">💡 Escribe <b>hechos concretos</b>, no culpas. ✔ "el piso estaba mojado" · ✔ "llevaba la caja sobre el hombro" · ✘ "descuido del trabajador"</div>'+
-    (hs.length?'<div class="ok">Ya anotaste como causas: '+hs.map(function(x){return '«'+esc(x.txt)+'»'}).join(', ')+'</div>':'')+
-    (ideas.length?'<div style="font-size:12.5px;color:#5a6780">Ideas sacadas de lo que ya escribiste (toca una para usarla):</div><div class="sug">'+ideas.map(function(t,i){return '<span class="chip" onclick="arbIdea('+i+')">'+esc(t)+'</span>'}).join('')+'</div>':'')+
-    '<input class="grande" id="asTxt" placeholder="Escribe aquí la causa..." value="'+esc(ASIS.txt)+'" oninput="ASIS.txt=this.value">'+
-    '<div style="font-size:13px;margin-top:8px"><b>¿Esto fue distinto a lo normal ese día?</b></div><div class="vp">'+
-    '<span class="chip'+(ASIS.tipo==='V'?' on':'')+'" onclick="ASIS.tipo=\'V\';pintaAsis()">◆ Sí, ese día fue distinto<br><small>(variación)</small></span>'+
-    '<span class="chip'+(ASIS.tipo==='P'?' on':'')+'" onclick="ASIS.tipo=\'P\';pintaAsis()">▭ No, siempre es así<br><small>(permanente)</small></span></div>'+
+  h='<div class="paso">FALTAN '+pend.length+' CAJA(S) AMARILLA(S) POR RESPONDER</div>'+
+    '<div class="preg" style="font-size:16px">¿Por qué pasó esto?<br><b>«'+esc(f.txt)+'»</b></div>'+
+    '<div class="ej">💡 Responde con <b>hechos</b> que se puedan ver, no con culpas. ✔ "el piso tenía aceite" · ✔ "llevaba una caja que le tapaba la vista" · ✘ "descuido del trabajador"</div>'+
+    (hs.length?'<div class="ok">Ya dijiste que pasó porque: '+hs.map(function(x){return '«'+esc(x.txt)+'»'}).join(' y ')+'.<br>¿Hay <b>otra razón más</b>? Si no, toca el botón verde.</div>':'')+
+    (ideas.length?'<div style="font-size:12.5px;color:#5a6780">Ideas de lo que ya escribiste (toca una):</div><div class="sug">'+ideas.map(function(t,i){return '<span class="chip" onclick="arbIdea('+i+')">'+esc(t)+'</span>'}).join('')+'</div>':'')+
+    '<input class="grande" id="asTxt" placeholder="Porque..." value="'+esc(ASIS.txt)+'" oninput="ASIS.txt=this.value" onkeydown="if(event.key===\'Enter\')arbAgregar()">'+
+    '<div style="font-size:13px;margin-top:8px">¿Eso pasa siempre? <small style="color:#666">(si no sabes, déjalo así)</small></div><div class="vp">'+
+    '<span class="chip'+(ASIS.tipo!=='P'?' on':'')+'" onclick="ASIS.tipo=\'V\';pintaAsis()">No, ese día fue distinto</span>'+
+    '<span class="chip'+(ASIS.tipo==='P'?' on':'')+'" onclick="ASIS.tipo=\'P\';pintaAsis()">Sí, siempre es así</span></div>'+
     (ASIS.aviso?'<div class="alerta">'+ASIS.aviso+'</div>':'')+
-    '<div class="acc"><button class="btn" onclick="arbAgregar()">➕ Agregar esta causa</button>'+
-    (hs.length?'<button class="btn ve" onclick="arbSiguiente()">✔ Ya están todas, siguiente hecho</button>':'<button class="btn sm na" onclick="arbFondo()">🧱 No hay nada más atrás (es causa de fondo)</button>')+'</div>';
+    '<div class="acc"><button class="btn" onclick="arbAgregar()">➕ Agregar esta razón</button>'+
+    (hs.length?'<button class="btn ve" onclick="arbSiguiente()">✔ No hay otra razón, sigamos</button>':'<button class="btn sm na" onclick="arbFondo()">🧱 Aquí ya no hay más "por qué" (causa de fondo)</button>')+'</div>';
   c.innerHTML=h;ASIS._ideas=ideas}
-function arbCrearFinal(){var t=(v('asTxt')||'').trim();if(t.length<8)return toast('Escribe un poco más el resultado final');
-  ASIS.txt='';ASIS.foco=addNodo({txt:t,padre:'',tipo:'V'});var r=filaNodo(ASIS.foco);r.querySelector('[data-k="txt"]').value=t;pintaArbol();
-  arbHablar('Bien. Ahora pregúntate: qué tuvo que pasar para que '+t)}
+function arbCrearFinal(){var t=(v('asTxt')||'').trim();if(t.length<8)return toast('Escribe un poco más lo que pasó');
+  ASIS.txt='';ASIS.foco=addNodo({txt:t,padre:'',tipo:'V'});pintaArbol();
+  arbHablar('Bien. Ahora dime: por qué pasó esto: '+t)}
 function arbIdea(i){ASIS.txt=ASIS._ideas[i];pintaAsis();$('asTxt').focus()}
-function arbAgregar(forzar){var t=(v('asTxt')||'').trim();ASIS.txt=t;
-  if(t.length<6){ASIS.aviso='✏️ Escribe la causa con un poco más de detalle.';return pintaAsis()}
-  if(!ASIS.tipo){ASIS.aviso='👆 Elige si ese día fue distinto (variación) o si siempre es así (permanente).';return pintaAsis()}
-  if(!forzar&&CULPA.test(t)){ASIS.aviso='🤔 «'+esc(t)+'» suena a <b>culpa</b>, no a un hecho. ¿Qué pasó concretamente? Ej: en vez de "descuido" escribe "caminaba mirando el celular". <button class="btn sm gr" onclick="arbAgregar(true)">Dejarlo igual</button>';return pintaAsis()}
-  var ns=leerArbol();if(ns.some(function(n){return norm(n.txt)===norm(t)})){ASIS.aviso='Ese hecho ya está en el árbol.';return pintaAsis()}
-  addNodo({txt:t,tipo:ASIS.tipo,padre:ASIS.foco});var r=$('arbolEd').lastChild;r.dataset.padre=ASIS.foco;pintaArbol();
+function arbAgregar(forzar){var t=(v('asTxt')||'').trim().replace(/^porque\s+/i,'');ASIS.txt=t;
+  if(t.length<6){ASIS.aviso='✏️ Escribe la razón con un poco más de detalle.';return pintaAsis()}
+  if(!forzar&&CULPA.test(t)){ASIS.aviso='🤔 «'+esc(t)+'» suena a <b>culpa</b>, no a un hecho. ¿Qué se vio pasar? Ej: en vez de "descuido" escribe "caminaba mirando el celular". <button class="btn sm gr" onclick="arbAgregar(true)">Dejarlo igual</button>';return pintaAsis()}
+  var ns=leerArbol();if(ns.some(function(n){return norm(n.txt)===norm(t)})){ASIS.aviso='Esa razón ya está en el árbol.';return pintaAsis()}
+  addNodo({txt:t,tipo:ASIS.tipo==='P'?'P':'V',padre:ASIS.foco});
   var f=leerArbol().find(function(n){return n.id===ASIS.foco});
-  ASIS.txt='';ASIS.tipo='';ASIS.aviso='';pintaArbol();toast('✔ Causa agregada');
-  arbHablar('Anotado. Hay otra cosa que también fue necesaria para que '+(f?f.txt:'')+'? Si no, toca ya están todas.')}
+  ASIS.txt='';ASIS.tipo='';ASIS.aviso='';pintaArbol();toast('✔ Agregado');
+  setTimeout(function(){if($('asTxt'))$('asTxt').focus()},100);
+  arbHablar('Anotado. Hay otra razón más para '+(f?f.txt:'')+'? Si no, toca el botón verde.')}
 function arbSiguiente(){var ns=leerArbol().filter(function(n){return n.txt});
   var pend=ns.filter(function(n){return !n.fondo&&!hijosDe(ns,n.id).length});ASIS.foco=pend.length?pend[0].id:null;ASIS.txt='';ASIS.tipo='';ASIS.aviso='';pintaArbol();
-  var f=ns.find(function(n){return n.id===ASIS.foco});arbHablar(f?'Siguiente hecho: '+f.txt+'. Qué tuvo que pasar para que ocurriera?':'Listo el árbol. Ahora crea una medida para cada causa de fondo.');
+  var f=ns.find(function(n){return n.id===ASIS.foco});arbHablar(f?'Ahora: por qué pasó esto: '+f.txt+'?':'Listo el árbol. Pasa al paso 4 para poner las medidas.');
   $('arbAsis').scrollIntoView({behavior:'smooth',block:'center'})}
 function arbFondo(){var r=filaNodo(ASIS.foco);if(r)r.dataset.fondo='1';arbSiguiente()}
 function arbFoco(id){var r=filaNodo(id);if(r)r.dataset.fondo='';ASIS.foco=id;ASIS.txt='';ASIS.tipo='';ASIS.aviso='';pintaArbol();$('arbAsis').scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){if($('asTxt'))$('asTxt').focus()},400)}
 function arbReabrir(){var ns=leerArbol().filter(function(n){return n.txt});var h=ns.filter(function(n){return n.fondo})[0]||ns[0];if(h)arbFoco(h.id)}
-function arbEditar(id){var r=filaNodo(id);if(!r)return;var i=r.querySelector('[data-k="txt"]');var t=prompt('Corrige el hecho:',i.value);if(t&&t.trim()){i.value=t.trim();pintaArbol()}}
+function arbEditar(id){var r=filaNodo(id);if(!r)return;var i=r.querySelector('[data-k="txt"]');var t=prompt('Corrige el texto:',i.value);if(t&&t.trim()){i.value=t.trim();pintaArbol()}}
 function arbBorrar(id){var ns=leerArbol(),borrar=[id],k=0;while(k<borrar.length){hijosDe(ns,borrar[k]).forEach(function(h){borrar.push(h.id)});k++}
   var n=ns.find(function(x){return x.id===id})||{};
-  confirma('🗑 ¿Borrar este hecho?','«'+esc(n.txt||'')+'»'+(borrar.length>1?' y las '+(borrar.length-1)+' causa(s) que cuelgan de él':''),'SÍ, borrar',function(){borrar.forEach(function(b){var r=filaNodo(b);if(r)r.remove()});if(borrar.indexOf(ASIS.foco)>-1)ASIS.foco=null;pintaArbol()},true)}
-function arbMedida(id){var n=leerArbol().find(function(x){return x.id===id});if(!n)return;addMedida('medidas',{medida:'Corregir: '+n.txt,estado:'Pendiente'});pintaArbol();toast('Medida creada: ponle responsable y plazo');
+  confirma('🗑 ¿Borrar esta caja?','«'+esc(n.txt||'')+'»'+(borrar.length>1?' y las '+(borrar.length-1)+' caja(s) que salen de ella':''),'SÍ, borrar',function(){borrar.forEach(function(b){var r=filaNodo(b);if(r)r.remove()});if(borrar.indexOf(ASIS.foco)>-1)ASIS.foco=null;pintaArbol()},true)}
+function causasFondo(){var ns=leerArbol().filter(function(n){return n.txt});return ns.filter(function(n){return n.padre&&!hijosDe(ns,n.id).length})}
+function pintaMedSug(){var c=$('medSug');if(!c)return;var hojas=causasFondo();
+  if(!hojas.length){c.innerHTML='<div class="alerta">Primero arma el árbol en el paso 3; aquí aparecerán las causas de fondo para ponerles medida. <button class="btn sm" onclick="invPaso(3)">Ir al paso 3</button></div>';return}
+  var meds=filas('medidas','.fila4').map(function(m){return norm(m.medida)}).join(' | ');
+  c.innerHTML='<div class="asis" style="margin:0"><div class="paso">CAUSAS DE FONDO DEL ÁRBOL</div><ul class="lista">'+hojas.map(function(n){var tiene=meds.indexOf(norm(n.txt).slice(0,25))>-1;
+    return '<li style="margin:4px 0">'+esc(n.txt)+' '+(tiene?'<b style="color:var(--ve)">✔ tiene medida</b>':'<button class="btn sm na" onclick="arbMedida(\''+n.id+'\')">➕ Ponerle medida</button>')+'</li>'}).join('')+'</ul></div>'}
+function arbMedida(id){var n=leerArbol().find(function(x){return x.id===id});if(!n)return;addMedida('medidas',{medida:'Corregir: '+n.txt,estado:'Pendiente'});pintaMedSug();pintaPasos();toast('Medida creada: ahora ponle responsable y plazo');
   var u=$('medidas').lastChild;if(u){u.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){var e=u.querySelector('[data-k="responsable"]');if(e)e.focus()},500)}}
+document.addEventListener('input',function(e){if(e.target&&e.target.closest&&e.target.closest('#medidas')){pintaPasos();pintaMedSug()}});
+function arbEjemplo(){var ns=[{id:'a',txt:'Juan se esguinza el tobillo derecho',padre:'',tipo:'V'},{id:'b',txt:'Se resbaló al bajar de la rampla',padre:'a',tipo:'V'},{id:'c',txt:'Llevaba una caja que le tapaba la vista',padre:'a',tipo:'V'},
+  {id:'d',txt:'Había aceite en la rampla',padre:'b',tipo:'V'},{id:'e',txt:'El camión tenía una fuga de aceite',padre:'d',tipo:'P',fondo:true},{id:'f',txt:'No se revisan los camiones antes de descargar',padre:'e',tipo:'P',fondo:true},
+  {id:'g',txt:'No había carro para mover cajas grandes',padre:'c',tipo:'P',fondo:true}];
+  ns=ns.filter(function(n){return n.id!=='e'}).concat([{id:'e',txt:'El camión tenía una fuga de aceite',padre:'d',tipo:'P'}]);
+  var d=document.createElement('div');d.className='modal';
+  d.innerHTML='<div class="cx" style="max-width:900px;width:96%"><h3>👀 Ejemplo de árbol de causas</h3><p style="font-size:13.5px">Se lee de <b>derecha a izquierda</b>: a la derecha lo que pasó, y cada caja a la izquierda responde <b>¿por qué?</b> a la caja de su derecha. Las cajas del borde izquierdo son las <b>causas de fondo</b>: cada una lleva su medida (ej: "revisar fugas antes de descargar", "comprar carro de arrastre").</p><div class="arbol"><div class="lienzo">'+dibujoArbol(ns,null,true)+'</div></div><div class="bt"><button style="background:var(--az);color:#fff">Entendido</button></div></div>';
+  d.querySelector('button').onclick=function(){d.remove()};d.onclick=function(e){if(e.target===d)d.remove()};document.body.appendChild(d)}
 
 // ---------- INVITACIONES ----------
 function autoInv(){var q=$('invNombre').value,qn=norm(q);var w=NOMINA.find(function(x){return x.nombre===q})||NOMINA.find(function(x){return qn.length>6&&norm(x.run)===qn});
@@ -1066,12 +1162,12 @@ function objetivoA(){
 }
 var OBJ=null,PRIMERA=true;
 function guiaA(){if(!$('guiaATx'))return;$('guiaATx').innerHTML=textoGuiaA();$('bVozA').textContent=VOZA?'🔇 Silenciar':'🔊 Escúchame';
-  var o=objetivoA(),cambio=o!==OBJ;if(OBJ&&cambio)OBJ.classList.remove('foco');OBJ=o;moverMano();
+  var o=objetivoA();if(o&&o.closest&&o.closest('.ipaso.hide')){var pc=document.querySelector('#ipasos .ip[data-p="'+o.closest('.ipaso').dataset.p+'"]');if(pc)o=pc}var cambio=o!==OBJ;if(OBJ&&cambio)OBJ.classList.remove('foco');OBJ=o;moverMano();
   if(cambio&&o){o.classList.add('foco');if(!PRIMERA)llevar(false);if(VOZA)leerA()}PRIMERA=false}
 function moverMano(){var m=$('manoMov'),o=OBJ;if(!o||!o.offsetParent||$('app').classList.contains('hide')){m.classList.add('hide');return}
   var r=o.getBoundingClientRect(),x=r.left+window.scrollX-52,y=r.top+window.scrollY+Math.min(r.height,48)/2-26;
   if(x<2)x=2;m.style.left=x+'px';m.style.top=y+'px';m.classList.remove('hide')}
-function llevar(siempre){var o=OBJ;if(!o)return;var r=o.getBoundingClientRect();
+function llevar(siempre){var o=OBJ;if(!o)return;var ip=o.closest&&o.closest('.ipaso.hide');if(ip){invPaso(+ip.dataset.p);setTimeout(function(){llevar(siempre)},400);return}var r=o.getBoundingClientRect();
   if(siempre||r.top<70||r.bottom>window.innerHeight-90){o.scrollIntoView({behavior:'smooth',block:'center'})}
   var f=o.matches('input,textarea,select')?o:null;if(siempre&&f)setTimeout(function(){f.focus()},500)}
 window.addEventListener('resize',moverMano);window.addEventListener('scroll',function(){if(OBJ&&getComputedStyle(OBJ.closest('.barra')||document.body).position==='fixed')moverMano()},{passive:true});
