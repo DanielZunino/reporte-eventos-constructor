@@ -486,12 +486,21 @@ function guia(){var g=$('guia');if(!g)return;var p=PASOS[ACT],nav=p.nav!==0;
   g.classList.remove('hide');g.classList.toggle('sinnav',!nav);$('mano').textContent=nav?'👇':'👆';$('guiaTx').innerHTML=textoGuia();
   $('bVoz').textContent=VOZ?'🔇 Silenciar':'🔊 Escúchame';$('bVoz').classList.toggle('on',VOZ);}
 function plano(h){var d=document.createElement('div');d.innerHTML=h;return (d.textContent||'').replace(/\s+/g,' ').trim()}
-function leer(){if(!window.speechSynthesis)return;try{speechSynthesis.cancel();
-  var h1=document.querySelector('#m h1'),sb=document.querySelector('#m .sub');
-  var t=[h1?h1.textContent:'',sb?sb.textContent:'',plano(textoGuia())].filter(Boolean).join('. ').replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF]/gu,'');
-  var u=new SpeechSynthesisUtterance(t);u.lang='es-CL';u.rate=.95;
-  var v=speechSynthesis.getVoices().filter(function(x){return /^es/i.test(x.lang)});if(v.length)u.voice=v.filter(function(x){return /CL|419|MX|US/.test(x.lang)})[0]||v[0];
-  speechSynthesis.speak(u)}catch(e){}}
+var VOCES=[];
+function vozES(){var vs=window.speechSynthesis?speechSynthesis.getVoices():[];if(vs.length)VOCES=vs;
+  var p=[/Google español de Estados Unidos/i,/es-US/i,/es-MX/i,/es-419/i,/es-CL/i,/Google español/i,/^es/i];
+  for(var i=0;i<p.length;i++){var v=VOCES.find(function(x){return p[i].test(x.name)||p[i].test(x.lang)});if(v)return v}return null}
+if(window.speechSynthesis){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=vozES}
+function hablar(t){
+  if(!window.speechSynthesis){aviso('Este celular no tiene voz disponible');return}
+  var s=speechSynthesis,hecho=false;try{s.cancel()}catch(e){}
+  var go=function(){if(hecho)return;hecho=true;var v=vozES(),u=new SpeechSynthesisUtterance(t);
+    if(v){u.voice=v;u.lang=v.lang}else u.lang='es-ES';u.rate=1;u.volume=1;
+    u.onerror=function(e){if(e.error!=='interrupted'&&e.error!=='canceled')aviso('No se pudo reproducir la voz. Sube el volumen.')};
+    s.speak(u);setTimeout(function(){try{s.resume()}catch(e){}},150)};
+  if(vozES())setTimeout(go,150);else{s.onvoiceschanged=function(){vozES();go()};setTimeout(go,900)}}
+function leer(){var h1=document.querySelector('#m h1'),sb=document.querySelector('#m .sub');
+  hablar([h1?h1.textContent:'',sb?sb.textContent:'',plano(textoGuia())].filter(Boolean).join('. ').replace(/[\u{1F300}-\u{1FAFF}☀-➿️]/gu,''))}
 function voz(){VOZ=!VOZ;if(VOZ)leer();else try{speechSynthesis.cancel()}catch(e){}guia()}
 function siguiente(){
   if(REC){REC.stop();REC=null}
@@ -502,7 +511,7 @@ function siguiente(){
   for(var j=i+1;j<O.length;j++)if(visible(O[j])){ir(O[j]);return}
 }
 function ir(id,sinPila){if(!sinPila&&ACT!==id&&ACT!=='noinscrito')PILA.push(ACT);ACT=id;R._err='';pintar();window.scrollTo(0,0)}
-function atras(){if(REC){REC.stop();REC=null}try{speechSynthesis.cancel()}catch(e){}if(!PILA.length)return;ACT=PILA.pop();pintar();window.scrollTo(0,0)}
+function atras(){if(REC){REC.stop();REC=null}if(!PILA.length)return;ACT=PILA.pop();pintar();window.scrollTo(0,0)}
 function aviso(t){var d=document.createElement('div');d.className='caja ro';d.style.cssText='position:fixed;left:12px;right:12px;top:96px;z-index:9;box-shadow:0 2px 10px rgba(0,0,0,.25)';d.innerHTML='⚠ '+t;document.body.appendChild(d);setTimeout(function(){d.remove()},3000)}
 
 function eligeTipo(t){R.tipo=t;R.extras=(R.extras||[]).filter(function(x){return x!==t});actualizaTipos();pintar();setTimeout(siguiente,250)}
