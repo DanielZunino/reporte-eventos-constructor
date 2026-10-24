@@ -789,7 +789,7 @@ function limpiar(){
   $('avisos').innerHTML='Elige al trabajador para ver la lista.';$('dotInfo').textContent='';$('cFalta').classList.add('hide');$('cInv').classList.add('hide');
   $('trab').classList.add('hide');$('sug').classList.add('hide');
   MULTI.forEach(function(k){if(document.querySelector('[data-multi="'+k+'"]'))pintarMulti(k)});$('tipoLesionOtro').classList.add('hide');pintarPartes();
-  aplicarTipos();rolDecl();modoDecl();pintaProto();ASIS={foco:null,tipo:'',txt:'',aviso:''};IVISTO={};IPASO=1;document.querySelectorAll('#cInvest .ipaso').forEach(function(d){d.classList.toggle('hide',d.dataset.p!=='1')});pintaArbol();
+  aplicarTipos();rolDecl();modoDecl();pintaProto();ASIS={foco:null,tipo:'',txt:'',aviso:''};IVISTO={};IPASO=1;GUARDAR_YA=false;document.querySelectorAll('#cInvest .ipaso').forEach(function(d){d.classList.toggle('hide',d.dataset.p!=='1')});pintaArbol();
 }
 function nuevoCaso(){
   limpiar();EDIT=null;
@@ -1233,13 +1233,15 @@ function pintarBanner(){var g=CASOS.filter(function(c){return /^PENDIENTE/.test(
   $('bannerG').innerHTML=g.map(function(c){return '<div class="bannerG" onclick="editar(\''+c['ID']+'\')">🚨 ACCIDENTE '+esc(String(c['Gravedad']).toUpperCase())+' — Caso '+esc(c['ID'])+' · '+esc(c['Trabajador'])+' ('+esc(c['Sucursal'])+')<small>'+esc(c['Alerta grave'])+' — toca para registrar los avisos</small></div>'}).join('')}
 
 // ---------- GUÍA (manito + voz) ----------
-var ULT_TECLA=0;document.addEventListener('input',function(){ULT_TECLA=Date.now()},true);
+var ULT_TECLA=0,ULT_MOV=0,GUARDAR_YA=false;['wheel','touchmove'].forEach(function(ev){window.addEventListener(ev,function(){ULT_MOV=Date.now()},{passive:true})});document.addEventListener('input',function(){ULT_TECLA=Date.now()},true);
 function escribiendo(){var a=document.activeElement;return (a&&a.matches&&a.matches('textarea,input:not([type=button]):not([type=checkbox]):not([type=radio]):not([type=date]):not([type=time])'))||Date.now()-ULT_TECLA<2500}
 // En modo "La lleno yo ahora": guía campo por campo por la DIAT y la declaración
 var CAMPOS_YO=[['fecha','📅 la <b>fecha</b> en que pasó'],['hora','🕐 la <b>hora</b> aproximada'],['area','📍 el <b>lugar exacto</b> (ej: bodega 2, patio de carga)'],
   ['lugarDireccion','🏠 la <b>dirección</b> donde ocurrió (calle, número, comuna)'],['labor','🔧 <b>qué estaba haciendo</b> el trabajador'],['#habitual','✅ si era su <b>trabajo habitual</b> (toca SÍ o NO)'],
   ['declaracion','✍ el <b>relato del trabajador</b>, con sus palabras: qué hacía, cómo pasó y qué pasó después'],['#partes','🧍 la <b>parte del cuerpo</b> lesionada (toca el monito)'],
   ['tipoLesion','🩹 el <b>tipo de lesión</b>'],['centro','🏥 <b>dónde lo atendieron</b> (ej: Mutual Los Ángeles)']];
+function invPendiente(){var c=$('cInvest');if(!c||c.classList.contains('hide'))return 0;for(var n=1;n<=4;n++)if(!invOk(n))return n;return 0}
+function inmPendiente(){var c=$('cInmediatas');return c&&!c.classList.contains('hide')&&!$('inmediatas').children.length}
 function pasoYo(){for(var i=0;i<CAMPOS_YO.length;i++){var k=CAMPOS_YO[i][0],el,ok;
     if(k==='#habitual'){el=document.querySelector('.si-no[data-campo="habitual"]');ok=!!ST.habitual}
     else if(k==='#partes'){el=$('partes');ok=(ST.partes||[]).length>0}
@@ -1257,7 +1259,10 @@ function textoGuiaA(){
     if(!MODO_INI)return 'Elige cómo tomar la <b>declaración del trabajador</b>: la llenas tú ahora o le envías un link.';
     if(esGrave()&&Object.keys(leerProto()).some(function(k){return leerProto()[k].e==='Pendiente'}))return '🚨 Es <b>grave</b>: registra los avisos a Inspección, SEREMI y Mutual en la tarjeta roja.';
     if(MODO_INI==='yo'){var py=pasoYo();if(py)return '✍ <b>Llenando la declaración con el trabajador</b> (paso '+(py[2]+1)+' de '+CAMPOS_YO.length+'): ahora completa '+py[1]+'.<br><small>Si no lo sabes todavía, toca <b>Pendiente</b> o <b>No sé</b> debajo del campo y sigue.</small>';
-      return '🎉 Declaración lista. Revisa que esté todo y toca <b>💾 Guardar caso y generar PDF</b> abajo. Después sigues con la investigación.'}
+      var salto=' <br><a href="#" onclick="GUARDAR_YA=true;guiaA();llevar(true);return false" style="font-size:12px">💾 Prefiero guardar ya y terminar después</a>';
+      if(!GUARDAR_YA&&inmPendiente())return '✅ Declaración lista. Ahora las <b>medidas inmediatas</b>: ¿qué se hizo apenas pasó? (ej: se limpió el aceite, se señalizó). Toca <b>+ Agregar medida</b>.'+salto;
+      if(!GUARDAR_YA&&invPendiente())return '🔎 Ahora la <b>investigación</b> (paso '+invPendiente()+' de 4). Te guía el asistente azul que está en la investigación.'+salto;
+      return '🎉 ¡Todo listo! Revisa y toca <b>💾 Guardar caso y generar PDF</b> abajo.'}
     return 'Listo. Toca <b>Crear caso y generar link</b> abajo y envíaselo por WhatsApp.';
   }
   var f=EDIT._faltan||[];return f.length?'Para cerrar este caso falta: <b>'+esc(f[0])+'</b>'+(f.length>1?' (y '+(f.length-1)+' más, arriba)':''):'✔ Este caso tiene todo. Puedes <b>cerrarlo</b>.'}
@@ -1271,7 +1276,9 @@ function objetivoA(){
     if(!v('t_nombre'))return $('buscar');
     if(!MODO_INI)return document.querySelector('#cInicio .grande');
     if(esGrave()&&Object.keys(leerProto()).some(function(k){return leerProto()[k].e==='Pendiente'}))return $('protoFilas');
-    if(MODO_INI==='yo'){var py=pasoYo();if(py)return py[0]}
+    if(MODO_INI==='yo'){var py=pasoYo();if(py)return py[0];
+      if(!GUARDAR_YA&&inmPendiente())return document.querySelector('#cInmediatas .btn');
+      if(!GUARDAR_YA&&invPendiente())return $('coachInv')}
     return $('btnGuardar');
   }
   var f=(EDIT._faltan||[])[0]||'';
@@ -1282,7 +1289,7 @@ function objetivoA(){
 var OBJ=null,PRIMERA=true;
 function guiaA(){if(!$('guiaATx'))return;$('guiaATx').innerHTML=textoGuiaA();$('bVozA').textContent=VOZA?'🔇 Silenciar':'🔊 Escúchame';
   var o=objetivoA();if(o&&o.closest&&o.closest('.ipaso.hide')){var pc=document.querySelector('#ipasos .ip[data-p="'+o.closest('.ipaso').dataset.p+'"]');if(pc)o=pc}var cambio=o!==OBJ;if(OBJ&&cambio)OBJ.classList.remove('foco');OBJ=o;moverMano();
-  if(cambio&&o){o.classList.add('foco');if(!PRIMERA&&!escribiendo())llevar(false);if(VOZA&&!escribiendo()&&!(o.closest&&o.closest('#cInvest')))leerA()}PRIMERA=false}
+  if(cambio&&o){o.classList.add('foco');if(!PRIMERA&&!escribiendo()&&Date.now()-ULT_MOV>4000)llevar(false);if(VOZA&&!escribiendo()&&!(o.closest&&o.closest('#cInvest')))leerA()}PRIMERA=false}
 function moverMano(){var m=$('manoMov'),o=OBJ;if(!o||!o.offsetParent||$('app').classList.contains('hide')||(o.closest&&o.closest('#cInvest'))){m.classList.add('hide');return}
   var r=o.getBoundingClientRect(),x=r.left+window.scrollX-52,y=r.top+window.scrollY+Math.min(r.height,48)/2-26;
   if(x<2)x=2;m.style.left=x+'px';m.style.top=y+'px';m.classList.remove('hide')}
