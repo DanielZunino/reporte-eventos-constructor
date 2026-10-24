@@ -132,7 +132,7 @@ main{padding-bottom:240px!important}
 // ================== DATOS ==================
 var INFO={cliente:'',oal:'tu mutualidad',fonoOal:'',inscripcion:'',lugares:[],actividades:[]};
 var R={}, YO=null, PILA=[], ACT='inicio', FIRMA=null, ENVIANDO=false, SES='', SESNOM='';
-var MODO='qr', TK='', INV=null, CASO=null, VOZ=false; // MODO: qr (QR/portal) · trab (link al trabajador) · aporte (testigos, jefatura, otros)
+var MODO='qr', TK='', INV=null, CASO=null, VOZ=true; // la voz parte siempre encendida // MODO: qr (QR/portal) · trab (link al trabajador) · aporte (testigos, jefatura, otros)
 var CALIDAD={directo:'testigo directo',indirecto:'testigo indirecto',jefatura:'jefatura directa',otro:'persona que aporta información'};
 var ARR=['forma','formaInc','potencial','epSintomas','epAgente','queVio','trayectoPrueba','lkConducta'];
 function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){return null}}
@@ -596,7 +596,10 @@ function vozES(){var vs=window.speechSynthesis?speechSynthesis.getVoices():[];if
   var p=[/Google español de Estados Unidos/i,/es-US/i,/es-MX/i,/es-419/i,/es-CL/i,/Google español/i,/^es/i];
   for(var i=0;i<p.length;i++){var v=VOCES.find(function(x){return p[i].test(x.name)||p[i].test(x.lang)});if(v)return v}return null}
 if(window.speechSynthesis){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=vozES}
+var VOZ_PEND=null;function vozLista(){return !navigator.userActivation||navigator.userActivation.hasBeenActive}
+['pointerdown','keydown','touchstart'].forEach(function(ev){document.addEventListener(ev,function(){if(VOZ_PEND&&VOZ){var t=VOZ_PEND;VOZ_PEND=null;setTimeout(function(){hablar(t,1)},120)}},true)});
 function hablar(t,mudo){
+  if(!vozLista()){VOZ_PEND=t;return}
   if(!window.speechSynthesis){aviso('Este celular no tiene voz disponible');return}
   var s=speechSynthesis,hecho=false;try{s.cancel()}catch(e){}
   var go=function(){if(hecho)return;hecho=true;var v=vozES(),u=new SpeechSynthesisUtterance(t);

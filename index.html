@@ -227,7 +227,7 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 
 <div id="bannerG" class="hide"></div>
 <div id="manoMov" class="hide"><span>👉</span></div><div id="manoInv" class="hide"><span>👉</span><i id="manoInvTx">aquí</i></div>
-<div class="guiaA" id="guiaA"><div class="bur"><div class="barG"><span class="grip" title="Mantén apretado y arrastra">✥ Arrástrame</span><button onclick="centrarG('guiaA','gA')" title="Volver a su lugar">⟲</button><button onclick="minG('guiaA','gA',true)" title="Minimizar">–</button></div><span id="guiaATx"></span><br><button id="bVozA" onclick="vozA()">🔊 Escúchame</button><button onclick="llevar(true)">👉 Llévame</button></div><button class="miniG" onclick="minG('guiaA','gA',false)" title="Mostrar la ayuda (puedes arrastrarla)">👉</button></div>
+<div class="guiaA" id="guiaA"><div class="bur"><div class="barG"><span class="grip" title="Mantén apretado y arrastra">✥ Arrástrame</span><button onclick="centrarG('guiaA','gA')" title="Volver a su lugar">⟲</button><button onclick="minG('guiaA','gA',true)" title="Minimizar">–</button></div><span id="guiaATx"></span><br><button id="bVozA" onclick="vozA()">🔇 Silenciar</button><button onclick="llevar(true)">👉 Llévame</button></div><button class="miniG" onclick="minG('guiaA','gA',false)" title="Mostrar la ayuda (puedes arrastrarla)">👉</button></div>
 <main id="vNuevo">
 
   <!-- BARRA DE EDICIÓN -->
@@ -427,7 +427,7 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 
   <!-- INVESTIGACIÓN -->
   <div class="card" id="cInvest"><h2><span class="n">7</span>Investigación <small style="font-weight:normal">(supervisor directo) — 4 pasos cortos</small></h2><div class="in">
-    <div id="coachInv"><div class="av">🧑‍🏫</div><div class="tx" id="coachTx">Te voy guiando.</div><div style="display:flex;flex-direction:column;gap:4px"><button type="button" id="coachVoz" onclick="coachVozT()">🔊 Háblame</button><button type="button" onclick="coachLlevar()">👉 Llévame</button></div></div>
+    <div id="coachInv"><div class="av">🧑‍🏫</div><div class="tx" id="coachTx">Te voy guiando.</div><div style="display:flex;flex-direction:column;gap:4px"><button type="button" id="coachVoz" onclick="coachVozT()">🔇 Callar</button><button type="button" onclick="coachLlevar()">👉 Llévame</button></div></div>
     <div class="ipasos" id="ipasos"></div>
 
     <!-- PASO 1 -->
@@ -638,7 +638,7 @@ var PENDS=['Pendiente','No aplica','No sé'];
 var PEND_F=['hora','area','lugarDireccion','oficio','horaEntrada','horaSalida','contrato','estatura','peso','labor','deporte','tipoLesion','centro','folioDiat','motivoNegativa',
   'trayectoOrigen','trayectoDestino','trayectoMedio','trayectoPrueba','danoBien','danoCodigo','danoCosto','epInicio','epExposicion','lkDenunciado','t_direccion','t_comuna','t_telefono','t_salud','t_emergencia','t_jefatura','t_nacionalidad'];
 var PROTO=[['suspension','Suspender faenas afectadas'],['inspeccion','Aviso a la Inspección del Trabajo'],['seremi','Aviso a la SEREMI de Salud'],['mutual','Aviso a la Mutual']];
-var MODO_INI='', AVISOS=null, VOZA=false;
+var MODO_INI='', AVISOS=null, VOZA=true;   // la voz parte SIEMPRE encendida; se puede callar con el botón
 
 function $(i){return document.getElementById(i)}
 function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){return null}}
@@ -1124,7 +1124,7 @@ function arbEjemplo(){var ns=[{id:'a',txt:'Juan se esguinza el tobillo derecho',
   d.querySelector('button').onclick=function(){d.remove()};d.onclick=function(e){if(e.target===d)d.remove()};document.body.appendChild(d)}
 
 // ---------- ASISTENTE EXPERTO DE LA INVESTIGACIÓN (habla y apunta con la mano) ----------
-var COACH={el:null,msg:'',voz:false};
+var COACH={el:null,msg:''};
 function chipsMarcados(){return ['accInseguras','condInseguras','factPersonales','factTrabajo'].some(function(id){return $(id)&&$(id).value.trim()})}
 function coachEstado(){var q=function(s){return document.querySelector(s)};
   if(IPASO===1){var d=v('descripcion');
@@ -1161,14 +1161,16 @@ function coach(){var c=$('coachTx');if(!c||$('cInvest').closest('.hide'))return;
   if(a&&a.closest&&a.closest('#cInvest')&&a.id!=='asTxt'&&a.matches('textarea,input:not([type=date]):not([type=button])')&&escribiendo()&&COACH.el)e=[a,'Sigue escribiendo','✍️ Tómate tu tiempo, sigue escribiendo. Cuando termines, toca fuera del cuadro y te digo qué sigue.',''];
   else e=coachEstado();
   var el=e[0],m=e[2];
-  if(m!==COACH.msg){c.innerHTML=m;COACH.msg=m;if(COACH.voz&&e[3])hablar(e[3],1)}
+  if(m!==COACH.msg){c.innerHTML=m;COACH.msg=m;if(VOZA&&e[3]&&invEnPantalla())hablar(e[3],1)}
+  $('coachVoz').textContent=VOZA?'🔇 Callar':'🔊 Háblame';
   if(COACH.el!==el){if(COACH.el)COACH.el.classList.remove('cfoco');COACH.el=el;if(el)el.classList.add('cfoco')}
   $('manoInvTx').textContent=e[1]||'aquí';manoInv()}
 function manoInv(){var m=$('manoInv'),o=COACH.el;if(!o||!o.offsetParent||$('cInvest').closest('.hide')){m.classList.add('hide');return}
   var r=o.getBoundingClientRect(),x=r.left+window.scrollX-48,y=r.top+window.scrollY+Math.min(r.height,44)/2-24;if(x<2)x=2;
   m.style.left=x+'px';m.style.top=y+'px';m.classList.remove('hide')}
 function coachLlevar(){var o=COACH.el;if(!o)return;o.scrollIntoView({behavior:'smooth',block:'center'});if(o.matches('input,textarea'))setTimeout(function(){o.focus()},450)}
-function coachVozT(){COACH.voz=!COACH.voz;$('coachVoz').textContent=COACH.voz?'🔇 Callar':'🔊 Háblame';if(COACH.voz){var e=coachEstado();hablar(e[3],1)}else try{speechSynthesis.cancel()}catch(e){}}
+function coachVozT(){VOZA=!VOZA;$('coachVoz').textContent=VOZA?'🔇 Callar':'🔊 Háblame';if(VOZA){var e=coachEstado();hablar(e[3],1)}else try{speechSynthesis.cancel()}catch(e){}try{guiaA()}catch(e){}}
+function invEnPantalla(){var c=$('cInvest');if(!c||c.closest('.hide'))return false;var r=c.getBoundingClientRect();return r.top<window.innerHeight*0.6&&r.bottom>140}
 setInterval(function(){try{coach()}catch(e){}},700);
 window.addEventListener('scroll',function(){try{manoInv()}catch(e){}},{passive:true});window.addEventListener('resize',function(){try{manoInv()}catch(e){}});
 
@@ -1280,7 +1282,7 @@ function objetivoA(){
 var OBJ=null,PRIMERA=true;
 function guiaA(){if(!$('guiaATx'))return;$('guiaATx').innerHTML=textoGuiaA();$('bVozA').textContent=VOZA?'🔇 Silenciar':'🔊 Escúchame';
   var o=objetivoA();if(o&&o.closest&&o.closest('.ipaso.hide')){var pc=document.querySelector('#ipasos .ip[data-p="'+o.closest('.ipaso').dataset.p+'"]');if(pc)o=pc}var cambio=o!==OBJ;if(OBJ&&cambio)OBJ.classList.remove('foco');OBJ=o;moverMano();
-  if(cambio&&o){o.classList.add('foco');if(!PRIMERA&&!escribiendo())llevar(false);if(VOZA&&!escribiendo())leerA()}PRIMERA=false}
+  if(cambio&&o){o.classList.add('foco');if(!PRIMERA&&!escribiendo())llevar(false);if(VOZA&&!escribiendo()&&!(o.closest&&o.closest('#cInvest')))leerA()}PRIMERA=false}
 function moverMano(){var m=$('manoMov'),o=OBJ;if(!o||!o.offsetParent||$('app').classList.contains('hide')||(o.closest&&o.closest('#cInvest'))){m.classList.add('hide');return}
   var r=o.getBoundingClientRect(),x=r.left+window.scrollX-52,y=r.top+window.scrollY+Math.min(r.height,48)/2-26;
   if(x<2)x=2;m.style.left=x+'px';m.style.top=y+'px';m.classList.remove('hide')}
@@ -1294,7 +1296,10 @@ function vozES(){var vs=window.speechSynthesis?speechSynthesis.getVoices():[];if
   var p=[/Google español de Estados Unidos/i,/es-US/i,/es-MX/i,/es-419/i,/es-CL/i,/Google español/i,/^es/i];
   for(var i=0;i<p.length;i++){var v=VOCES.find(function(x){return p[i].test(x.name)||p[i].test(x.lang)});if(v)return v}return null}
 if(window.speechSynthesis){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=vozES}
+var VOZ_PEND=null;function vozLista(){return !navigator.userActivation||navigator.userActivation.hasBeenActive}
+['pointerdown','keydown','touchstart'].forEach(function(ev){document.addEventListener(ev,function(){if(VOZ_PEND&&VOZA){var t=VOZ_PEND;VOZ_PEND=null;setTimeout(function(){hablar(t,1)},120)}},true)});
 function hablar(t,mudo){
+  if(!vozLista()){VOZ_PEND=t;return}
   if(!window.speechSynthesis){toast('Este navegador no tiene voz');return}
   var s=speechSynthesis,hecho=false;try{s.cancel()}catch(e){}
   var go=function(){if(hecho)return;hecho=true;var v=vozES(),u=new SpeechSynthesisUtterance(t);
@@ -1303,7 +1308,7 @@ function hablar(t,mudo){
     s.speak(u);setTimeout(function(){try{s.resume()}catch(e){}},150)};
   if(vozES())setTimeout(go,150);else{var prev=s.onvoiceschanged;s.onvoiceschanged=function(){vozES();go()};setTimeout(go,900)}}
 function leerA(){var d=document.createElement('div');d.innerHTML=textoGuiaA();hablar((d.textContent||'').replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF\uFE0F]/gu,'').trim())}
-function vozA(){VOZA=!VOZA;if(VOZA)leerA();else try{speechSynthesis.cancel()}catch(e){}guiaA()}
+function vozA(){VOZA=!VOZA;if(VOZA)leerA();else try{speechSynthesis.cancel()}catch(e){}guiaA();if($('coachVoz'))$('coachVoz').textContent=VOZA?'🔇 Callar':'🔊 Háblame'}
 
 
 // ---- Globo de ayuda: mover (arrastrar) y minimizar; recuerda la posición ----
