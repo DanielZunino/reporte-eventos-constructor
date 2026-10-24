@@ -907,7 +907,8 @@ function modoInicio(m){MODO_INI=m;$('opYo').classList.toggle('on',m==='yo');$('o
   ['cDeclaracion','cLesion','cTrayecto','cDano','cEP','cKarin'].forEach(function(i){$(i).dataset.link=soloLink?'1':''});
   aplicarTipos();
   document.querySelectorAll('#vNuevo>.card').forEach(function(c){if(['cInmediatas','cInvest','cFotos','cDecl','cCharla'].indexOf(c.id)>-1)c.classList.toggle('hide',soloLink)});
-  if(!EDIT)$('btnGuardar').textContent=m==='link'?'📲 Crear caso y generar link para el trabajador':'💾 Guardar caso y generar PDF';}
+  if(!EDIT)$('btnGuardar').textContent=m==='link'?'📲 Crear caso y generar link para el trabajador':'💾 Guardar caso y generar PDF';
+  if(m==='yo'){setTimeout(function(){try{guiaA();var py=pasoYo();if(py){py[0].scrollIntoView({behavior:'smooth',block:'center'});if(py[0].matches('input,textarea'))setTimeout(function(){py[0].focus()},500)}toast('✍ Vamos campo por campo: sigue la manito')}catch(e){}},150)}}
 function dma(s){var m=String(s||'').match(/^(\d{1,2})-(\d{1,2})-(\d{4})/);return m?new Date(+m[3],+m[2]-1,+m[1]):null}
 function calc(){
   var f=$('fecha').value?new Date($('fecha').value+'T12:00'):new Date();
@@ -1227,6 +1228,19 @@ function pintarBanner(){var g=CASOS.filter(function(c){return /^PENDIENTE/.test(
   $('bannerG').innerHTML=g.map(function(c){return '<div class="bannerG" onclick="editar(\''+c['ID']+'\')">🚨 ACCIDENTE '+esc(String(c['Gravedad']).toUpperCase())+' — Caso '+esc(c['ID'])+' · '+esc(c['Trabajador'])+' ('+esc(c['Sucursal'])+')<small>'+esc(c['Alerta grave'])+' — toca para registrar los avisos</small></div>'}).join('')}
 
 // ---------- GUÍA (manito + voz) ----------
+// En modo "La lleno yo ahora": guía campo por campo por la DIAT y la declaración
+var CAMPOS_YO=[['fecha','📅 la <b>fecha</b> en que pasó'],['hora','🕐 la <b>hora</b> aproximada'],['area','📍 el <b>lugar exacto</b> (ej: bodega 2, patio de carga)'],
+  ['lugarDireccion','🏠 la <b>dirección</b> donde ocurrió (calle, número, comuna)'],['labor','🔧 <b>qué estaba haciendo</b> el trabajador'],['#habitual','✅ si era su <b>trabajo habitual</b> (toca SÍ o NO)'],
+  ['declaracion','✍ el <b>relato del trabajador</b>, con sus palabras: qué hacía, cómo pasó y qué pasó después'],['#partes','🧍 la <b>parte del cuerpo</b> lesionada (toca el monito)'],
+  ['tipoLesion','🩹 el <b>tipo de lesión</b>'],['centro','🏥 <b>dónde lo atendieron</b> (ej: Mutual Los Ángeles)']];
+function pasoYo(){for(var i=0;i<CAMPOS_YO.length;i++){var k=CAMPOS_YO[i][0],el,ok;
+    if(k==='#habitual'){el=document.querySelector('.si-no[data-campo="habitual"]');ok=!!ST.habitual}
+    else if(k==='#partes'){el=$('partes');ok=(ST.partes||[]).length>0}
+    else{el=$(k);ok=el&&String(el.value||'').trim()}
+    if(!el||!el.offsetParent||el.closest('.hide'))continue;
+    if(!ok)return [el,CAMPOS_YO[i][1],i]}
+  return null}
+
 function textoGuiaA(){
   if($('vNuevo').classList.contains('hide'))return 'Toca un caso para abrirlo y completarlo.';
   if(!EDIT){
@@ -1235,7 +1249,9 @@ function textoGuiaA(){
     if(!v('t_nombre'))return 'Busca al <b>trabajador</b> por nombre o RUT en la tarjeta 2.';
     if(!MODO_INI)return 'Elige cómo tomar la <b>declaración del trabajador</b>: la llenas tú ahora o le envías un link.';
     if(esGrave()&&Object.keys(leerProto()).some(function(k){return leerProto()[k].e==='Pendiente'}))return '🚨 Es <b>grave</b>: registra los avisos a Inspección, SEREMI y Mutual en la tarjeta roja.';
-    return MODO_INI==='link'?'Listo. Toca <b>Crear caso y generar link</b> abajo y envíaselo por WhatsApp.':'Completa lo que sepas (usa <b>Pendiente</b> si aún no lo sabes) y toca <b>Guardar</b> abajo.';
+    if(MODO_INI==='yo'){var py=pasoYo();if(py)return '✍ <b>Llenando la declaración con el trabajador</b> (paso '+(py[2]+1)+' de '+CAMPOS_YO.length+'): ahora completa '+py[1]+'.<br><small>Si no lo sabes todavía, toca <b>Pendiente</b> o <b>No sé</b> debajo del campo y sigue.</small>';
+      return '🎉 Declaración lista. Revisa que esté todo y toca <b>💾 Guardar caso y generar PDF</b> abajo. Después sigues con la investigación.'}
+    return 'Listo. Toca <b>Crear caso y generar link</b> abajo y envíaselo por WhatsApp.';
   }
   var f=EDIT._faltan||[];return f.length?'Para cerrar este caso falta: <b>'+esc(f[0])+'</b>'+(f.length>1?' (y '+(f.length-1)+' más, arriba)':''):'✔ Este caso tiene todo. Puedes <b>cerrarlo</b>.'}
 // ¿A qué elemento apunta la manito?
@@ -1248,6 +1264,7 @@ function objetivoA(){
     if(!v('t_nombre'))return $('buscar');
     if(!MODO_INI)return document.querySelector('#cInicio .grande');
     if(esGrave()&&Object.keys(leerProto()).some(function(k){return leerProto()[k].e==='Pendiente'}))return $('protoFilas');
+    if(MODO_INI==='yo'){var py=pasoYo();if(py)return py[0]}
     return $('btnGuardar');
   }
   var f=(EDIT._faltan||[])[0]||'';
