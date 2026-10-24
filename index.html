@@ -53,6 +53,21 @@ textarea{min-height:90px;resize:vertical}
 .testigo{border:1px dashed var(--bo);border-radius:10px;padding:10px;margin-bottom:8px;background:#fafbfe}
 .grupo{font-size:12px;font-weight:bold;color:var(--az);margin:8px 0 4px}
 .hide{display:none!important}
+.cuerpo{display:flex;gap:6px;justify-content:center;background:#fff;border-radius:14px;padding:6px;border:2px solid #dfe5ef}
+.cuerpo>div{flex:1;max-width:220px}
+.figura{width:100%;height:auto;display:block}
+.figura .zona{stroke:#5a6780;stroke-width:1;cursor:pointer;transition:fill .15s}
+.figura .zona:hover{stroke:#f28c28;stroke-width:2.5}
+.figura .zona.on{stroke:#7f0000;stroke-width:2}
+.fig-t{font:bold 12px Arial;fill:#0b3d91}.fig-l{font:bold 11px Arial;fill:#f28c28}
+.cuerpo-ayuda{font-size:14px;color:#5a6780;margin:6px 0 10px;text-align:center}
+.dicho{position:fixed;left:50%;top:110px;transform:translateX(-50%);background:#0b3d91;color:#fff;padding:10px 16px;border-radius:20px;font-weight:bold;z-index:30;font-size:16px;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+
+.otro{margin-top:6px;border-color:var(--na)!important;background:#fffaf3!important}
+.otraC{display:flex;gap:6px;margin-top:6px}.otraC input{flex:1}
+.testigo .estInv{font-size:12px;margin-top:6px}
+details.lista summary{cursor:pointer;color:var(--az2);font-weight:bold;font-size:13px;margin:8px 0 4px}
+.cuerpo{max-width:520px;margin:0 auto}
 .fotos{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
 .fotos img{width:90px;height:90px;object-fit:cover;border-radius:8px;border:1px solid var(--bo);cursor:pointer}
 .barra{position:fixed;bottom:0;left:0;right:0;background:#fff;box-shadow:0 -2px 8px rgba(0,0,0,.12);padding:10px;text-align:center;z-index:5}
@@ -271,7 +286,7 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
     <label>Parte(s) del cuerpo comprometida(s)</label>
     <div id="partes"></div>
     <div class="grid" style="margin-top:10px">
-      <div><label>Tipo de lesión</label><select id="tipoLesion"><option></option><option>Golpe / contusión</option><option>Corte / herida</option><option>Torcedura / esguince</option><option>Lumbago / sobreesfuerzo</option><option>Fractura (posible)</option><option>Quemadura</option><option>Cuerpo extraño en ojo</option><option>Atrapamiento</option><option>Dolor / molestia sin lesión visible</option><option>Otra</option></select></div>
+      <div><label>Tipo de lesión</label><select id="tipoLesion"><option></option><option>Golpe / contusión</option><option>Corte / herida</option><option>Torcedura / esguince</option><option>Lumbago / sobreesfuerzo</option><option>Fractura (posible)</option><option>Quemadura</option><option>Cuerpo extraño en ojo</option><option>Atrapamiento</option><option>Dolor / molestia sin lesión visible</option><option>Otra</option></select><input id="tipoLesionOtro" class="otro hide" placeholder="✏️ Escribe cuál es..."></div>
       <div><label>Centro de atención / OAL</label><input id="centro" placeholder="Ej: Mutual, ACHS, ISL — sede"></div>
       <div><label>N° folio DIAT / DIEP</label><input id="folioDiat"></div>
     </div>
@@ -419,6 +434,8 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
       <div><label>RUT</label><input id="invRun"></div>
       <div><label>Cargo</label><input id="invCargo"></div>
       <div><label>¿Qué aporta?</label><select id="invTipo"><option value="directo">Testigo directo (lo vio)</option><option value="indirecto">Testigo indirecto (supo después)</option><option value="jefatura">Jefatura directa</option><option value="otro">Otro aporte</option><option value="trabajador">Declaración del trabajador afectado</option></select></div>
+      <div><label>¿De dónde es?</label><select id="invExt" onchange="$('bInvEmp').classList.toggle('hide',this.value!=='SI')"><option value="">De la empresa</option><option value="SI">Externo (cliente, contratista, otro)</option></select></div>
+      <div id="bInvEmp" class="hide"><label>Empresa externa / relación</label><input id="invEmpresa" placeholder="Ej: cliente, Transportes X"></div>
       <div><label>Correo (opcional)</label><input id="invMail" type="email"></div>
       <div><label>Celular (opcional, para WhatsApp)</label><input id="invTel"></div>
     </div>
@@ -512,11 +529,10 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 <script>
 var TOKEN='', USR=null, CHARLAS=[], NOMINA=[], ST={}, EDIT=null, CASOS=[], MEDS=[], DOT=0, SUBS=[];
 var TIPOS=['Accidente del trabajo','Accidente de trayecto','Incidente / cuasi accidente','Daño material','Posible enfermedad profesional','Ley Karin'];
-var PARTES={
- 'Cabeza y cara':['Cráneo','Frente','Nuca','Ojo|','Oreja|','Nariz','Mejilla|','Boca','Mandíbula','Mentón','Cuello'],
- 'Tronco':['Hombro|','Pecho','Tórax','Costado|','Abdomen','Espalda alta','Zona lumbar','Cadera|','Glúteos','Axila|'],
- 'Brazos y manos':['Brazo|','Codo|','Antebrazo|','Muñeca|','Mano|','Dedos mano|'],
- 'Piernas y pies':['Muslo|','Rodilla|','Canilla|','Pantorrilla|','Tobillo|','Talón|','Pie|','Dedos pie|']};
+var PARTES={'Cabeza y cara':['Cabeza','Nuca','Cara','Ojo|','Oreja|','Nariz','Boca / dientes','Mandíbula','Cuello'],
+  'Tronco':['Hombro|','Pecho','Costado|','Abdomen','Espalda alta','Zona lumbar','Cadera|','Glúteos'],
+  'Brazos y manos':['Brazo|','Codo|','Antebrazo|','Muñeca|','Mano|','Dedos mano|'],
+  'Piernas y pies':['Muslo|','Rodilla|','Pantorrilla|','Canilla|','Tobillo|','Talón|','Pie|','Dedos pie|']};
 var EVAC=['#1b9e3e','#5cb85c','#8bc34a','#cddc39','#ffeb3b','#ffc107','#ff9800','#ff7043','#f4511e','#e53935','#b71c1c'];
 var FIELDS=['lugarDireccion','oficio','fecha','hora','area','horaEntrada','horaSalida','contrato','hombres','mujeres','estatura','peso','edad','antiguedad',
  'labor','deporte','declaracion','tipoLesion','motivoNegativa','centro','folioDiat','reposoDesde','reposoHasta','diasPerdidos','fechaAlta',
@@ -592,7 +608,7 @@ function init(){
       });
       h+='</div>';
     }
-    $('partes').innerHTML=h;
+    $('partes').innerHTML=CUERPO.html([])+'<div id="partesDicho" style="font-size:13px;color:var(--ve);font-weight:bold;text-align:center;min-height:18px"></div><details class="lista"><summary>📋 Ver como lista</summary>'+h+'</details>';
     $('eva').innerHTML=EVAC.map(function(c,i){return '<div data-e="'+i+'" style="background:'+c+';color:'+(i>7?'#fff':'#000')+'" onclick="setEva('+i+')">'+i+'</div>'}).join('');
     document.querySelectorAll('.si-no').forEach(function(el){
       var campo=el.dataset.campo;
@@ -604,8 +620,10 @@ function init(){
     });
     document.querySelectorAll('[data-append]').forEach(function(el){
       var campo=el.dataset.append;
-      el.innerHTML=el.dataset.opc.split(',').map(function(o){return '<span class="chip" onclick="appendTxt(\''+campo+'\',\''+o+'\',this)">'+o+'</span>'}).join('');
+      el.innerHTML=el.dataset.opc.split(',').map(function(o){return '<span class="chip" onclick="appendTxt(\''+campo+'\',\''+o+'\',this)">'+o+'</span>'}).join('')+
+        '<span class="chip" style="border-style:dashed;color:var(--na);font-weight:bold" onclick="otraCausa(\''+campo+'\',this)">✏️ Otra (escribir)</span>';
     });
+    $('tipoLesion').addEventListener('change',function(){$('tipoLesionOtro').classList.toggle('hide',this.value!=='Otra');if(this.value==='Otra')$('tipoLesionOtro').focus()});
     $('charla').innerHTML='<option value="">— Ninguna —</option>'+CHARLAS.map(function(c){return '<option>'+esc(c)+'</option>'}).join('');
     PEND_F.forEach(function(id){var e=$(id);if(!e)return;e.dataset.tipo=e.type||'';var d=document.createElement('div');d.className='pend';d.dataset.para=id;
       d.innerHTML=PENDS.map(function(x){return '<span onclick="pend(\''+id+'\',\''+x+'\')">'+x+'</span>'}).join('');e.parentNode.appendChild(d);
@@ -619,7 +637,49 @@ function init(){
   $('buscar').placeholder='Cargando nómina...';
   run().withSuccessHandler(function(n){NOMINA=n;$('buscar').placeholder='Escribe nombre o RUN... ('+n.length+' en nómina)';dlNomina(true)}).getNomina(TOKEN);
 }
-function chipParte(p){return '<span class="chip" data-p="'+p+'" onclick="toggleParte(\''+p+'\')">'+p+'</span>'}
+function chipParte(p){return '<span class="chip" data-p="'+p+'" onclick="cuerpoToca(\''+p+'\')">'+p+'</span>'}
+// ---- Figura humana (frente y espalda) para marcar las partes lesionadas ----
+var CUERPO=(function(){
+  function R(x,y,w,h,rx){return {t:'r',x:x,y:y,w:w,h:h,rx:rx||4}}
+  function E(cx,cy,rx,ry){return {t:'e',cx:cx,cy:cy,rx:rx,ry:ry}}
+  var COL={cab:'#ffd6a5',cara:'#ffe8cc',ojo:'#7ec8e3',boca:'#ff8fa3',cuello:'#ffcf99',tronco:'#9bc4ff',tronco2:'#b9d4ff',art:'#fdf28b',brazo:'#c9b8ff',mano:'#ffc6ff',cadera:'#a0e7c4',pierna:'#8fe3f0',pie:'#b8f2a6',espalda:'#9bc4ff',lumbar:'#7fb0f7',gluteo:'#a0e7c4'};
+  var FC=[['Cabeza',E(100,34,27,31),'cab'],['Cara',E(100,46,18,17),'cara'],['Nariz',E(100,46,3.5,5.5),'boca'],['Boca / dientes',E(100,58,8,3.5),'boca'],
+    ['Cuello',R(90,64,20,14,4),'cuello'],['Pecho',R(74,80,52,40,10),'tronco'],['Abdomen',R(80,120,40,44,6),'tronco2']];
+  var FL=[['Ojo',E(90,38,5,3.5),'ojo'],['Oreja',E(72,40,5,9),'cara'],['Hombro',E(66,88,14,12),'art'],['Costado',R(70,120,10,44,4),'tronco'],['Cadera',R(72,164,28,24,8),'cadera'],
+    ['Brazo',R(47,98,17,52,8),'brazo'],['Codo',E(55,154,10,7),'art'],['Antebrazo',R(44,160,18,44,8),'brazo'],['Muñeca',R(43,204,18,8,3),'art'],['Mano',E(51,224,11,13),'mano'],['Dedos mano',R(43,236,16,14,5),'mano'],
+    ['Muslo',R(72,190,27,76,11),'pierna'],['Rodilla',E(86,272,12,10),'art'],['Canilla',R(76,282,20,66,8),'pierna'],['Tobillo',R(76,348,20,10,4),'art'],['Pie',E(84,366,15,8),'pie'],['Dedos pie',E(84,377,12,5),'pie']];
+  var BC=[['Cabeza',E(100,34,27,31),'cab'],['Nuca',R(86,54,28,11,4),'cuello'],['Cuello',R(90,65,20,13,4),'cuello'],['Espalda alta',R(74,80,52,46,10),'espalda'],
+    ['Zona lumbar',R(78,126,44,36,6),'lumbar'],['Glúteos',R(72,164,56,30,14),'gluteo']];
+  var BL=[['Oreja',E(72,40,5,9),'cara'],['Hombro',E(66,88,14,12),'art'],['Brazo',R(47,98,17,52,8),'brazo'],['Codo',E(55,154,10,7),'art'],['Antebrazo',R(44,160,18,44,8),'brazo'],
+    ['Muñeca',R(43,204,18,8,3),'art'],['Mano',E(51,224,11,13),'mano'],['Dedos mano',R(43,236,16,14,5),'mano'],['Muslo',R(72,196,27,70,11),'pierna'],['Rodilla',E(86,272,12,10),'art'],
+    ['Pantorrilla',R(75,282,22,66,9),'pierna'],['Tobillo',R(76,348,20,10,4),'art'],['Talón',E(86,365,11,8),'pie']];
+  function esp(s){return s.t==='r'?R(200-s.x-s.w,s.y,s.w,s.h,s.rx):E(200-s.cx,s.cy,s.rx,s.ry)}
+  function fig(cen,lat,espalda,sel){
+    var items=cen.map(function(a){return [a[0],a[1],a[2]]});
+    lat.forEach(function(a){ // en la vista de frente, el lado derecho de la persona queda a la izquierda de quien mira
+      var der=espalda?esp(a[1]):a[1],izq=espalda?a[1]:esp(a[1]);
+      items.push([a[0]+' der.',der,a[2]]);items.push([a[0]+' izq.',izq,a[2]])});
+    var orden=function(n){return /Ojo|Nariz|Boca|Codo|Rodilla|Muñeca|Tobillo|Dedos|Nuca|Talón/.test(n)?2:/Cara|Hombro|Mano|Pie/.test(n)?1:0};
+    items.sort(function(a,b){return orden(a[0])-orden(b[0])});
+    var h='<svg viewBox="0 0 200 400" class="figura" role="img" aria-label="Cuerpo '+(espalda?'de espalda':'de frente')+'">'+
+      '<text x="100" y="396" text-anchor="middle" class="fig-t">'+(espalda?'DE ESPALDA':'DE FRENTE')+'</text>'+
+      '<text x="14" y="220" class="fig-l">'+(espalda?'IZQ':'DER')+'</text><text x="186" y="220" text-anchor="end" class="fig-l">'+(espalda?'DER':'IZQ')+'</text>';
+    items.forEach(function(it){var n=it[0],s=it[1],on=sel.indexOf(n)>-1;
+      var at=' data-p="'+n+'" data-c="'+COL[it[2]]+'" class="zona'+(on?' on':'')+'" style="fill:'+(on?'#e53935':COL[it[2]])+'" onclick="cuerpoToca(this.getAttribute(\'data-p\'))"';
+      h+=(s.t==='r'?'<rect x="'+s.x+'" y="'+s.y+'" width="'+s.w+'" height="'+s.h+'" rx="'+s.rx+'"'+at+'>':'<ellipse cx="'+s.cx+'" cy="'+s.cy+'" rx="'+s.rx+'" ry="'+s.ry+'"'+at+'>')+
+        '<title>'+n+'</title>'+(s.t==='r'?'</rect>':'</ellipse>')});
+    return h+'</svg>'}
+  function html(sel){sel=sel||[];return '<div class="cuerpo"><div>'+fig(FC,FL,false,sel)+'</div><div>'+fig(BC,BL,true,sel)+'</div></div>'+
+    '<p class="cuerpo-ayuda">👆 Toca la parte del cuerpo. <b>DER</b> = lado derecho de la persona. Toca de nuevo para quitarla.</p>'}
+  function pintar(sel){document.querySelectorAll('.figura .zona').forEach(function(z){var on=sel.indexOf(z.getAttribute('data-p'))>-1;z.classList.toggle('on',on);z.style.fill=on?'#e53935':z.getAttribute('data-c')})}
+  var FEM=/^(Muñeca|Mano|Cadera|Oreja|Rodilla|Pantorrilla|Canilla|Espalda|Nariz|Boca|Cara|Cabeza|Nuca|Zona|Pierna)/;
+  function hablado(n){var m=n.match(/^(.*) (der|izq)\.$/);if(!m)return n.toLowerCase();var b=m[1],d=m[2]==='der';
+    if(b==='Dedos mano')return 'dedos de la mano '+(d?'derecha':'izquierda');
+    if(b==='Dedos pie')return 'dedos del pie '+(d?'derecho':'izquierdo');
+    return b.toLowerCase()+' '+(FEM.test(b)?(d?'derecha':'izquierda'):(d?'derecho':'izquierdo'))}
+  return {html:html,pintar:pintar,hablado:hablado};
+})();
+
 
 // ---------- LIMPIAR / NUEVO ----------
 function limpiar(){
@@ -636,6 +696,7 @@ function limpiar(){
   MODO_INI='';AVISOS=null;$('opYo').classList.remove('on');$('opLink').classList.remove('on');$('bLinkTrab').classList.add('hide');
   $('avisos').innerHTML='Elige al trabajador para ver la lista.';$('dotInfo').textContent='';$('cFalta').classList.add('hide');$('cInv').classList.add('hide');
   $('trab').classList.add('hide');$('sug').classList.add('hide');
+  MULTI.forEach(function(k){if(document.querySelector('[data-multi="'+k+'"]'))pintarMulti(k)});$('tipoLesionOtro').classList.add('hide');pintarPartes();
   aplicarTipos();rolDecl();modoDecl();pintaProto();pintaArbol();
 }
 function nuevoCaso(){
@@ -682,12 +743,25 @@ function setSN(campo,v,forzar){
   if(campo==='decModo')modoDecl();
 }
 function toggleMulti(campo,v){var a=ST[campo],i=a.indexOf(v);if(i>-1)a.splice(i,1);else a.push(v);pintarMulti(campo)}
-function pintarMulti(campo){document.querySelectorAll('[data-multi="'+campo+'"] .chip').forEach(function(c){c.classList.toggle('on',ST[campo].indexOf(c.dataset.v)>-1)})}
+function esOtro(v){return /^Otr[oa]( |$)/.test(String(v||''))}
+function pintarMulti(campo){var el=document.querySelector('[data-multi="'+campo+'"]');el.querySelectorAll('.chip').forEach(function(c){c.classList.toggle('on',ST[campo].indexOf(c.dataset.v)>-1)});
+  var inp=$(campo+'Otro');if(!inp){inp=document.createElement('input');inp.id=campo+'Otro';inp.className='otro';inp.placeholder='✏️ Escribe cuál es...';el.parentNode.insertBefore(inp,el.nextSibling)}
+  var on=ST[campo].some(esOtro);inp.classList.toggle('hide',!on)}
+function multiConOtro(k){var t=v(k+'Otro');return ST[k].map(function(x){return esOtro(x)&&t?x+': '+t:x})}
+function multiDesdeDatos(k,arr){var t='';arr=arr.map(function(x){var m=String(x).match(/^(Otr[oa]): (.*)$/);if(m){t=m[2];return m[1]}return x});ST[k]=arr;pintarMulti(k);$(k+'Otro').value=t}
 function toggleParte(p){var i=ST.partes.indexOf(p);if(i>-1)ST.partes.splice(i,1);else ST.partes.push(p);pintarPartes()}
-function pintarPartes(){document.querySelectorAll('#partes .chip').forEach(function(c){c.classList.toggle('on',ST.partes.indexOf(c.dataset.p)>-1)})}
+function pintarPartes(){document.querySelectorAll('#partes .chip').forEach(function(c){c.classList.toggle('on',ST.partes.indexOf(c.dataset.p)>-1)});CUERPO.pintar(ST.partes);
+  var dd=$('partesDicho');if(dd)dd.textContent=ST.partes.length?'Marcadas: '+ST.partes.map(CUERPO.hablado).join(', '):''}
+function cuerpoToca(p){var on=ST.partes.indexOf(p)<0;toggleParte(p);var t=(on?'Marcaste ':'Quitaste ')+CUERPO.hablado(p);dicho(t);hablar(t,1)}
+function dicho(t){var d=document.createElement('div');d.className='dicho';d.textContent=(/^Marc/.test(t)?'✅ ':'↩ ')+t;document.body.appendChild(d);setTimeout(function(){d.remove()},1800)}
 function appendTxt(campo,v,el){var t=$(campo),lin=t.value?t.value.split('\n'):[],i=lin.map(function(x){return x.trim()}).indexOf('• '+v);
   if(i>-1){lin.splice(i,1);t.value=lin.join('\n').replace(/^\s+|\s+$/g,'');el.classList.remove('on')}
   else{t.value=(t.value?t.value.replace(/\s*$/,'')+'\n':'')+'• '+v;el.classList.add('on')}}
+function otraCausa(campo,el){var ya=el.parentNode.nextElementSibling;if(ya&&ya.classList.contains('otraC')){ya.remove();return}
+  var d=document.createElement('div');d.className='otraC';d.innerHTML='<input placeholder="✏️ Escribe la causa y toca Agregar"><button class="btn sm na">Agregar</button>';
+  el.parentNode.parentNode.insertBefore(d,el.parentNode.nextSibling);var i=d.querySelector('input');i.focus();
+  var add=function(){var t=i.value.trim();if(!t)return;var ta=$(campo);ta.value=(ta.value?ta.value.replace(/\s*$/,'')+'\n':'')+'• '+t;i.value='';toast('Causa agregada');i.focus()};
+  d.querySelector('button').onclick=add;i.onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();add()}}}
 function marcarAppend(){document.querySelectorAll('[data-append]').forEach(function(el){var t=$(el.dataset.append).value.split('\n').map(function(x){return x.trim()});
   el.querySelectorAll('.chip').forEach(function(c){c.classList.toggle('on',t.indexOf('• '+c.textContent)>-1)})})}
 // ---- Pendiente / No aplica / No sé ----
@@ -696,6 +770,8 @@ function pend(id,x){var e=$(id);if(e.tagName==='SELECT'){if(e.value===x){e.value
   marcarPend(id)}
 function marcarPend(id){var e=$(id),d=document.querySelector('.pend[data-para="'+id+'"]');if(!e||!d)return;d.querySelectorAll('span').forEach(function(s){s.classList.toggle('on',e.value===s.textContent)})}
 function ponValor(id,val){var e=$(id);if(!e)return;val=val==null?'':val;
+  if(e.tagName==='SELECT'&&val&&![].some.call(e.options,function(o){return o.value===val})){var m=String(val).match(/^(Otr[oa]): (.*)$/);
+    if(m&&[].some.call(e.options,function(o){return o.value===m[1]})&&$(id+'Otro')){val=m[1];$(id+'Otro').value=m[2]}else e.add(new Option(val,val))}
   if(PENDS.indexOf(val)>-1){if(e.tagName==='SELECT'){if(![].some.call(e.options,function(o){return o.value===val}))e.add(new Option(val,val))}else e.type='text'}
   e.value=val;marcarPend(id)}
 function setEva(i){ST.eva=ST.eva===i?'':i;document.querySelectorAll('#eva div').forEach(function(d){d.classList.toggle('on',String(d.dataset.e)===String(ST.eva))})}
@@ -767,11 +843,33 @@ function addParticipante(p){
   d.innerHTML='<input placeholder="Nombre" data-k="nombre" list="dlNomina" onchange="autoPersona(this)"><input placeholder="RUN" data-k="run"><input placeholder="Cargo" data-k="cargo"><button class="x" onclick="this.parentNode.remove()">✕</button>';
   $('participantes').appendChild(d);if(p)setK(d,p);
 }
+var CLASE_INV={'Testigo directo':'directo','Testigo indirecto':'indirecto','Jefatura directa':'jefatura'};
 function addTestigo(w){
   var d=document.createElement('div');d.className='testigo';
-  d.innerHTML='<div class="grid"><div><label>Nombre</label><input data-k="nombre" list="dlNomina" onchange="autoPersona(this)"></div><div><label>RUN</label><input data-k="run"></div><div><label>Cargo</label><input data-k="cargo"></div><div><label>Antigüedad</label><input data-k="antiguedad"></div><div><label>Clasificación</label><select data-k="clase"><option>Testigo directo</option><option>Testigo indirecto</option><option>Involucrado</option></select></div></div><label style="margin-top:8px">Relato del testigo</label><textarea data-k="relato"></textarea><button class="btn sm" style="background:var(--ro);margin-top:6px" onclick="this.parentNode.remove()">Quitar testigo</button>';
-  $('testigos').appendChild(d);if(w)setK(d,w);
+  d.innerHTML='<div class="grid"><div><label>Nombre</label><input data-k="nombre" list="dlNomina" onchange="autoPersona(this)" placeholder="De la nómina o escribe otro"></div>'+
+    '<div><label>¿De dónde es?</label><select data-k="externo" onchange="extTestigo(this)"><option value="">De la empresa</option><option value="SI">Externo (cliente, contratista, otro)</option></select></div>'+
+    '<div class="tExt hide"><label>Empresa externa / relación</label><input data-k="empresaExt" placeholder="Ej: cliente, Transportes X"></div>'+
+    '<div><label>RUN</label><input data-k="run"></div><div><label>Cargo / función</label><input data-k="cargo"></div><div class="tEmp"><label>Antigüedad</label><input data-k="antiguedad"></div>'+
+    '<div><label>Teléfono</label><input data-k="telefono" placeholder="Para enviarle el link"></div>'+
+    '<div><label>Clasificación</label><select data-k="clase"><option>Testigo directo</option><option>Testigo indirecto</option><option>Jefatura directa</option><option>Involucrado</option></select></div></div>'+
+    '<label style="margin-top:8px">Relato del testigo <small style="font-weight:normal;color:#666">(se llena solo si responde por link)</small></label><textarea data-k="relato"></textarea>'+
+    '<div class="estInv"></div><button class="btn sm na" style="margin-top:6px" onclick="pedirTestigo(this)">📲 Pedirle su declaración por link</button> '+
+    '<button class="btn sm" style="background:var(--ro);margin-top:6px" onclick="this.parentNode.remove()">Quitar testigo</button>';
+  $('testigos').appendChild(d);if(w)setK(d,w);extTestigo(d.querySelector('[data-k="externo"]'));estadoTestigo(d);
 }
+function extTestigo(sel){var r=sel.closest('.testigo'),ext=sel.value==='SI';r.querySelector('.tExt').classList.toggle('hide',!ext);r.querySelector('.tEmp').classList.toggle('hide',ext)}
+function estadoTestigo(r){var n=norm(r.querySelector('[data-k="nombre"]').value),box=r.querySelector('.estInv');if(!n||!EDIT){box.innerHTML='';return}
+  var x=((EDIT._srv||{}).invitaciones||[]).filter(function(i){return norm(i.nombre)===n}).pop();
+  box.innerHTML=!x?'':x.estado==='RESPONDIDA'?'✅ Respondió por link el '+esc(x.respondida||'')+' · <a target="_blank" href="'+x.pdfUrl+'">Ver PDF firmado</a>'
+    :'📨 Link enviado ('+esc(x.creada)+'), esperando respuesta · <a href="#" onclick="copiar(\''+x.link+'\');return false">Copiar link</a>'}
+function pedirTestigo(btn){
+  if(!EDIT){alert('Primero guarda el caso (botón verde de abajo). Después podrás enviarle el link al testigo.');return}
+  var r=btn.closest('.testigo'),g=function(k){return r.querySelector('[data-k="'+k+'"]').value.trim()};
+  if(!g('nombre')){alert('Escribe el nombre del testigo.');return}
+  var inv={tipo:CLASE_INV[g('clase')]||'otro',nombre:g('nombre'),run:g('run'),cargo:g('cargo'),telefono:g('telefono'),correo:'',externo:g('externo')==='SI',empresaExt:g('empresaExt')};
+  btn.disabled=true;btn.textContent='Creando link...';
+  run().withSuccessHandler(function(res){btn.disabled=false;btn.textContent='📲 Crear otro link';EDIT._srv.invitaciones=res.invs;pintarInv(res.invs);
+    r.querySelector('.estInv').innerHTML=invBox(res.link,inv.nombre,inv.tipo,inv.telefono);toast('Link creado')}).invitar(TOKEN,EDIT.id,inv)}
 function dlNomina(rehacer){
   var dl=$('dlNomina');if(dl&&!rehacer)return;
   if(!dl){dl=document.createElement('datalist');dl.id='dlNomina';document.body.appendChild(dl)}
@@ -782,7 +880,7 @@ function autoPersona(inp){
   var w=buscaW(inp.value);if(!w)return;
   var p=inp.closest('.testigo')||inp.parentNode;
   var s=function(k,v){var e=p.querySelector('[data-k="'+k+'"]');if(e&&!e.value)e.value=v};
-  s('run',w.run);s('cargo',w.cargo);
+  s('run',w.run);s('cargo',w.cargo);s('telefono',w.telefono||'');var ex=p.querySelector('[data-k="externo"]');if(ex){ex.value='';extTestigo(ex)}
   var ing=dma(w.ingreso);if(ing){var mm=Math.max(0,Math.round((new Date()-ing)/2.63e9));s('antiguedad',(Math.floor(mm/12)?Math.floor(mm/12)+' año(s) ':'')+(mm%12)+' mes(es)')}
 }
 function filas(cont,sel){
@@ -815,7 +913,7 @@ function pintaArbol(){
 
 // ---------- INVITACIONES ----------
 function autoInv(){var q=$('invNombre').value,qn=norm(q);var w=NOMINA.find(function(x){return x.nombre===q})||NOMINA.find(function(x){return qn.length>6&&norm(x.run)===qn});
-  if(w){$('invNombre').value=w.nombre;$('invRun').value=w.run;$('invCargo').value=w.cargo;$('invMail').value=w.correo||'';$('invTel').value=w.telefono||''}}
+  if(w){$('invExt').value='';$('bInvEmp').classList.add('hide');$('invNombre').value=w.nombre;$('invRun').value=w.run;$('invCargo').value=w.cargo;$('invMail').value=w.correo||'';$('invTel').value=w.telefono||''}}
 function wspLink(tel,msg){var t=String(tel||'').replace(/\D/g,'');if(t.length===9)t='56'+t;else if(t.length===8)t='569'+t;return 'https://wa.me/'+(t.length>=11?t:'')+'?text='+encodeURIComponent(msg)}
 function invBox(link,nombre,tipo,tel){
   var trab=tipo==='trabajador',ini=String(nombre||'').split(' ')[0];
@@ -825,13 +923,13 @@ function invBox(link,nombre,tipo,tel){
     '<a class="btn sm ve" target="_blank" href="'+wspLink(tel,msg)+'">Enviar por WhatsApp</a>'+
     '<button class="btn sm" onclick="copiar(\''+link+'\')">Copiar link</button><a class="btn sm gr" target="_blank" href="'+link+'">Abrir</a></div>'}
 function crearInv(){
-  var inv={tipo:$('invTipo').value,nombre:$('invNombre').value.trim(),run:$('invRun').value.trim(),cargo:$('invCargo').value.trim(),correo:$('invMail').value.trim(),telefono:$('invTel').value.trim()};
+  var inv={tipo:$('invTipo').value,nombre:$('invNombre').value.trim(),run:$('invRun').value.trim(),cargo:$('invCargo').value.trim(),correo:$('invMail').value.trim(),telefono:$('invTel').value.trim(),externo:$('invExt').value==='SI',empresaExt:$('invEmpresa').value.trim()};
   if(inv.tipo!=='trabajador'&&!inv.nombre){alert('Escribe el nombre de la persona.');return}
   var tel=inv.tipo==='trabajador'?(EDIT.trabajador.telefono||inv.telefono):inv.telefono,nom=inv.tipo==='trabajador'?EDIT.trabajador.nombre:inv.nombre;
   run().withSuccessHandler(function(r){pintarInv(r.invs);$('invRes').innerHTML=invBox(r.link,nom,inv.tipo,tel);
     ['invNombre','invRun','invCargo','invMail','invTel'].forEach(function(i){$(i).value=''});toast(inv.correo?'Link creado y enviado por correo':'Link creado')}).invitar(TOKEN,EDIT.id,inv)}
 var NOM_INV={trabajador:'Declaración del trabajador',directo:'Testigo directo',indirecto:'Testigo indirecto',jefatura:'Jefatura directa',otro:'Otro aporte'};
-function pintarInv(l){if(!l||!l.length){$('invLista').innerHTML='';return}
+function pintarInv(l){document.querySelectorAll('#testigos .testigo').forEach(estadoTestigo);if(!l||!l.length){$('invLista').innerHTML='';return}
   $('invLista').innerHTML='<table class="lista" style="margin-bottom:10px"><thead><tr><th>Persona</th><th>Aporte</th><th>Estado</th><th></th></tr></thead><tbody>'+l.map(function(x){
     var a=x.estado==='RESPONDIDA'?'<a target="_blank" href="'+x.pdfUrl+'">Ver PDF firmado</a>':'<a href="#" onclick="copiar(\''+x.link+'\');return false">Copiar</a> · <a target="_blank" href="'+wspLink(x.telefono,'Hola '+x.nombre.split(' ')[0]+', te recuerdo completar tu aporte: '+x.link)+'">WhatsApp</a>';
     return '<tr><td><b>'+esc(x.nombre)+'</b></td><td>'+esc(NOM_INV[x.tipo]||x.tipo)+'</td><td><span class="est '+(x.estado==='RESPONDIDA'?'FIRMADA':'PENDIENTE')+'">'+esc(x.estado)+'</span><br><small>'+esc(x.respondida||x.creada)+'</small></td><td style="font-size:12px">'+a+'</td></tr>'}).join('')+'</tbody></table>'}
@@ -888,12 +986,12 @@ function vozES(){var vs=window.speechSynthesis?speechSynthesis.getVoices():[];if
   var p=[/Google español de Estados Unidos/i,/es-US/i,/es-MX/i,/es-419/i,/es-CL/i,/Google español/i,/^es/i];
   for(var i=0;i<p.length;i++){var v=VOCES.find(function(x){return p[i].test(x.name)||p[i].test(x.lang)});if(v)return v}return null}
 if(window.speechSynthesis){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=vozES}
-function hablar(t){
+function hablar(t,mudo){
   if(!window.speechSynthesis){toast('Este navegador no tiene voz');return}
   var s=speechSynthesis,hecho=false;try{s.cancel()}catch(e){}
   var go=function(){if(hecho)return;hecho=true;var v=vozES(),u=new SpeechSynthesisUtterance(t);
     if(v){u.voice=v;u.lang=v.lang}else u.lang='es-ES';u.rate=1;u.volume=1;
-    u.onerror=function(e){if(e.error!=='interrupted'&&e.error!=='canceled')toast('No se pudo reproducir la voz ('+e.error+'). Revisa el volumen.')};
+    u.onerror=function(e){if(!mudo&&e.error!=='interrupted'&&e.error!=='canceled')toast('No se pudo reproducir la voz ('+e.error+'). Revisa el volumen.')};
     s.speak(u);setTimeout(function(){try{s.resume()}catch(e){}},150)};
   if(vozES())setTimeout(go,150);else{var prev=s.onvoiceschanged;s.onvoiceschanged=function(){vozES();go()};setTimeout(go,900)}}
 function leerA(){var d=document.createElement('div');d.innerHTML=textoGuiaA();hablar((d.textContent||'').replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF\uFE0F]/gu,'').trim())}
@@ -1043,7 +1141,8 @@ function guardar(){
   d.sucursal=d.trabajador.sucursal;
   FIELDS.forEach(function(k){d[k]=v(k)});
   SINGLE.forEach(function(k){d[k]=ST[k]||''});
-  MULTI.forEach(function(k){d[k]=ST[k].slice()});
+  MULTI.forEach(function(k){d[k]=multiConOtro(k)});
+  if(v('tipoLesion')==='Otra'&&v('tipoLesionOtro'))d.tipoLesion='Otra: '+v('tipoLesionOtro');
   d.partes=ST.partes.slice();d.eva=ST.eva;
   d.arbol=leerArbol().filter(function(n){return n.txt});
   if(esGrave())d.protocolo=leerProto();
@@ -1084,11 +1183,12 @@ function cargarEnForm(d,docs){
   limpiar();EDIT=d;modoInicio('');vista('nuevo');
   ST.tipos=(d.tipos||[]).slice();aplicarTipos();
   SINGLE.forEach(function(k){if(d[k])setSN(k,d[k],true)});
-  MULTI.forEach(function(k){ST[k]=Array.isArray(d[k])?d[k].slice():(d[k]?String(d[k]).split(', '):[]);pintarMulti(k)});
+  MULTI.forEach(function(k){multiDesdeDatos(k,Array.isArray(d[k])?d[k].slice():(d[k]?String(d[k]).split(', '):[]))});
   ST.partes=(d.partes||[]).slice();pintarPartes();
   if(d.eva!==''&&d.eva!=null)setEva(+d.eva);
   FIELDS.forEach(function(k){if($(k))ponValor(k,d[k])});
   CAMPOS_T.forEach(function(k){ponValor('t_'+k,(d.trabajador||{})[k]||'')});
+  $('tipoLesionOtro').classList.toggle('hide',$('tipoLesion').value!=='Otra');
   marcarAppend();cargaProto(d.protocolo);(d.arbol||[]).forEach(addNodo);pintaArbol();
   $('cInicio').classList.add('hide');$('cInv').classList.remove('hide');pintarInv(d._srv.invitaciones);
   var fl=d._faltan||[];$('cFalta').classList.toggle('hide',!fl.length);$('faltaLista').innerHTML=fl.map(function(x){return '<li>'+esc(x)+'</li>'}).join('');
@@ -1098,6 +1198,7 @@ function cargarEnForm(d,docs){
   (d.medidas&&d.medidas.length?d.medidas:[{}]).forEach(function(m){addMedida('medidas',m)});
   (d.participantes&&d.participantes.length?d.participantes:[{}]).forEach(addParticipante);
   (d.testigos||[]).forEach(addTestigo);
+  if((d.testigos||[]).length)$('testigos').insertAdjacentHTML('afterbegin','<div class="info" style="margin-top:0">👇 Para no escribir dos veces: toca <b>📲 Pedirle su declaración por link</b> en cada testigo. Su relato llega solo a este caso.</div>');
   ST.fotos=(d.fotos||[]).slice();pintarFotos();
   plazoDT();
   pintarDecl(d._srv.declaraciones);pintarDocs(docs);
