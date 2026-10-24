@@ -100,6 +100,23 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 .proto{display:grid;grid-template-columns:1.6fr 1fr 1.2fr 1.6fr;gap:6px;align-items:center;margin-bottom:6px;font-size:13px}
 .proto.hecho select{background:#e8f5e9;color:var(--ve);font-weight:bold}.proto.pend select{background:#fdecea;color:var(--ro);font-weight:bold}
 .nodo{display:grid;grid-template-columns:110px 1fr 160px 34px;gap:6px;margin-bottom:6px}
+.asis{background:linear-gradient(180deg,#fff8ec,#fff);border:2px solid var(--na);border-radius:14px;padding:14px;margin:6px 0 10px}
+.asis .paso{font-size:12px;font-weight:bold;color:var(--na);letter-spacing:.5px}
+.asis h4{margin:4px 0 8px;font-size:17px;color:var(--az)}
+.asis .preg{background:#fff;border-left:5px solid var(--az);padding:8px 10px;border-radius:8px;font-size:15px;margin:6px 0}
+.asis .ej{font-size:12.5px;color:#5a6780;margin:4px 0 8px}
+.asis input.grande{width:100%;font-size:16px;padding:12px;border:2px solid var(--az2);border-radius:10px;box-sizing:border-box}
+.asis .sug{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.asis .sug .chip{font-size:12.5px;background:#eef4ff;border-color:#b7c9ea}
+.asis .vp{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.asis .vp .chip{flex:1;min-width:150px;text-align:center;padding:10px;font-size:14px}
+.asis .vp .chip.on{background:var(--az);color:#fff;border-color:var(--az)}
+.asis .acc{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.asis .acc .btn{font-size:15px;padding:11px 16px}
+.asis .lista{margin:6px 0;padding-left:18px;font-size:14px}
+.asis .alerta{background:#fdecea;border:1px solid #f5b5b5;color:#8b1c1c;border-radius:8px;padding:8px 10px;font-size:13px;margin:6px 0}
+.asis .ok{background:#e8f5e9;border:1px solid #a5d6a7;color:#1b5e20;border-radius:8px;padding:8px 10px;font-size:13px;margin:6px 0}
+.arbol .nb{border:0;background:none;cursor:pointer;font-size:13px;padding:2px 4px;opacity:.75}.arbol .nb:hover{opacity:1}
+.arbol .fondo{box-shadow:0 0 0 3px #ffe0b2}.arbol .sel{outline:3px solid var(--az2)}
 .arbol{margin-top:10px;padding:10px;background:#fafbfe;border:1px dashed var(--bo);border-radius:10px;font-size:13px;overflow-x:auto}
 .arbol ul{list-style:none;margin:0;padding-left:22px;border-left:2px solid var(--bo)}.arbol>ul{border:0;padding-left:0}
 .arbol li{margin:6px 0}
@@ -400,15 +417,12 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
     <div class="chips" data-append="factTrabajo" data-opc="Supervisión insuficiente,Procedimiento inexistente o inadecuado,Mantención deficiente,Herramientas / equipos inadecuados,Capacitación insuficiente,Planificación deficiente,Compras / estándares inadecuados"></div>
     <textarea id="factTrabajo" style="margin-top:6px"></textarea>
 
-    <div class="grupo" style="margin-top:16px">🌳 ÁRBOL DE CAUSAS</div>
-    <details style="font-size:13px;margin-bottom:6px"><summary style="cursor:pointer;color:var(--az);font-weight:bold">¿Cómo se arma? (toca para ver)</summary>
-      <ol style="margin:6px 0;padding-left:20px;color:#33435c"><li>Arriba va el <b>hecho final</b> (la lesión o el daño). Agrégalo sin "padre".</li>
-      <li>Pregúntate: <b>¿qué fue necesario para que pasara esto?</b> Cada respuesta es un hecho nuevo, y su "padre" es el hecho que explica.</li>
-      <li>Marca si cada hecho es <b>Variación</b> (algo distinto a lo habitual) o <b>Permanente</b> (siempre está así).</li>
-      <li>Sigue bajando hasta llegar a las causas de fondo. Las medidas deben atacar esas causas.</li></ol></details>
-    <div id="arbolEd"></div>
-    <button class="btn sm" onclick="addNodo()">+ Agregar hecho</button>
+    <div class="grupo" style="margin-top:16px">🌳 ÁRBOL DE CAUSAS <small style="font-weight:normal;color:#666">— te voy guiando pregunta por pregunta</small></div>
+    <div class="asis" id="arbAsis"></div>
     <div class="arbol" id="arbolVis"></div>
+    <details style="margin-top:8px;font-size:13px"><summary style="cursor:pointer;color:#5a6780">✏️ Edición manual (solo si sabes lo que haces)</summary>
+      <div id="arbolEd"></div>
+      <button class="btn sm gr" onclick="addNodo()">+ Agregar hecho a mano</button></details>
 
     <div class="grupo" style="margin-top:14px">Medidas correctivas a implementar <small style="font-weight:normal;color:#666">(marca "Cumplida" cuando se ejecute)</small></div>
     <div id="medidas"></div>
@@ -697,7 +711,7 @@ function limpiar(){
   $('avisos').innerHTML='Elige al trabajador para ver la lista.';$('dotInfo').textContent='';$('cFalta').classList.add('hide');$('cInv').classList.add('hide');
   $('trab').classList.add('hide');$('sug').classList.add('hide');
   MULTI.forEach(function(k){if(document.querySelector('[data-multi="'+k+'"]'))pintarMulti(k)});$('tipoLesionOtro').classList.add('hide');pintarPartes();
-  aplicarTipos();rolDecl();modoDecl();pintaProto();pintaArbol();
+  aplicarTipos();rolDecl();modoDecl();pintaProto();ASIS={foco:null,tipo:'',txt:'',aviso:''};pintaArbol();
 }
 function nuevoCaso(){
   limpiar();EDIT=null;
@@ -888,28 +902,109 @@ function filas(cont,sel){
     var o={};r.querySelectorAll('[data-k]').forEach(function(e){o[e.dataset.k]=e.value.trim()});return o});
 }
 
-// ---------- ÁRBOL DE CAUSAS ----------
-var NID=0;
-function addNodo(n){n=n||{};var d=document.createElement('div');d.className='nodo';d.dataset.id=n.id||('n'+Date.now().toString(36)+(NID++));
+// ---------- ÁRBOL DE CAUSAS (asistente paso a paso) ----------
+var NID=0, ASIS={foco:null,tipo:'',txt:'',aviso:'',final:false};
+function addNodo(n){n=n||{};var d=document.createElement('div');d.className='nodo';d.dataset.id=n.id||('n'+Date.now().toString(36)+(NID++));d.dataset.fondo=n.fondo?'1':'';
   d.innerHTML='<select data-k="tipo" onchange="pintaArbol()"><option value="V">Variación</option><option value="P">Permanente</option></select>'+
     '<input data-k="txt" placeholder="Hecho (ej: el trabajador subió al rack)" oninput="pintaArbol()"><select data-k="padre" onchange="pintaArbol()"></select>'+
     '<button class="x" onclick="this.parentNode.remove();pintaArbol()">✕</button>';
   $('arbolEd').appendChild(d);d.querySelector('[data-k="tipo"]').value=n.tipo||'V';d.querySelector('[data-k="txt"]').value=n.txt||'';d.dataset.padre=n.padre||'';pintaArbol();
-  if(!n.txt)d.querySelector('[data-k="txt"]').focus()}
+  return d.dataset.id}
 function leerArbol(){return [].map.call($('arbolEd').querySelectorAll('.nodo'),function(r){var p=r.querySelector('[data-k="padre"]');
-  return {id:r.dataset.id,tipo:r.querySelector('[data-k="tipo"]').value,txt:r.querySelector('[data-k="txt"]').value.trim(),padre:p.value||r.dataset.padre||''}})}
+  return {id:r.dataset.id,tipo:r.querySelector('[data-k="tipo"]').value,txt:r.querySelector('[data-k="txt"]').value.trim(),padre:p.value||r.dataset.padre||'',fondo:r.dataset.fondo==='1'}})}
+function filaNodo(id){return $('arbolEd').querySelector('.nodo[data-id="'+id+'"]')}
+function hijosDe(ns,pid){return ns.filter(function(n){return n.txt&&(n.padre||'')===pid})}
 function pintaArbol(){
   var ns=leerArbol(),ids={};ns.forEach(function(n){ids[n.id]=n});
-  $('arbolEd').querySelectorAll('.nodo').forEach(function(r,i){var sel=r.querySelector('[data-k="padre"]'),act=sel.value||r.dataset.padre||'';
+  $('arbolEd').querySelectorAll('.nodo').forEach(function(r){var sel=r.querySelector('[data-k="padre"]'),act=sel.value||r.dataset.padre||'';
     sel.innerHTML='<option value="">⬆ Hecho final (arriba)</option>'+ns.filter(function(n){return n.id!==r.dataset.id&&n.txt}).map(function(n){return '<option value="'+n.id+'">explica a: '+esc(n.txt.slice(0,40))+'</option>'}).join('');
     sel.value=ids[act]?act:'';r.dataset.padre=sel.value});
   ns=leerArbol();
-  var hijos=function(pid){return ns.filter(function(n){return n.txt&&(n.padre||'')===pid})};
   var pinta=function(lista,nivel,visto){return lista.length?'<ul>'+lista.map(function(n){if(visto[n.id])return '';visto[n.id]=1;
-    return '<li><span class="cx '+(nivel?n.tipo:'F')+'">'+(nivel?(n.tipo==='P'?'▭ ':'◆ '):'⚠ ')+esc(n.txt)+'</span>'+pinta(hijos(n.id),nivel+1,visto)+'</li>'}).join('')+'</ul>':''};
-  var h=pinta(hijos(''),0,{});
-  $('arbolVis').innerHTML=h?'<div style="margin-bottom:6px;color:#5a6780"><b style="color:var(--ro)">⚠ hecho final</b> · <b style="color:var(--na)">◆ variación</b> · <b style="color:#607d8b">▭ permanente</b> — se lee de arriba (consecuencia) hacia abajo (causas)</div>'+h
-    :'<small style="color:#666">Aún no hay hechos. Empieza con el hecho final (ej: "Trabajador se fractura el pie derecho").</small>'}
+    var cls=(nivel?n.tipo:'F')+(n.fondo?' fondo':'')+(ASIS.foco===n.id?' sel':'');
+    return '<li><span class="cx '+cls+'">'+(nivel?(n.tipo==='P'?'▭ ':'◆ '):'⚠ ')+esc(n.txt)+(n.fondo?' <small style="color:#e65100">🧱 causa de fondo</small>':'')+'</span>'+
+      ' <button class="nb" title="Agregar una causa a este hecho" onclick="arbFoco(\''+n.id+'\')">➕ causa</button>'+
+      '<button class="nb" title="Corregir el texto" onclick="arbEditar(\''+n.id+'\')">✏️</button>'+
+      '<button class="nb" title="Borrar" onclick="arbBorrar(\''+n.id+'\')">🗑</button>'+pinta(hijosDe(ns,n.id),nivel+1,visto)+'</li>'}).join('')+'</ul>':''};
+  var h=pinta(hijosDe(ns,''),0,{});
+  $('arbolVis').innerHTML=h?'<div style="margin-bottom:6px;color:#5a6780"><b style="color:var(--ro)">⚠ resultado final</b> · <b style="color:var(--na)">◆ variación (fue distinto ese día)</b> · <b style="color:#607d8b">▭ permanente (siempre es así)</b> · 🧱 causa de fondo — se lee de arriba (lo que pasó) hacia abajo (por qué pasó)</div>'+h
+    :'<small style="color:#666">El dibujo del árbol aparece aquí a medida que respondes las preguntas de arriba.</small>';
+  pintaAsis()}
+
+// texto sugerido para el resultado final, con lo que ya se llenó en el caso
+function arbFinalSugerido(){var n=(v('t_nombre')||'El trabajador').split(' ').slice(0,2).join(' ');
+  var les=$('tipoLesion')&&v('tipoLesion')?(v('tipoLesion')==='Otra'?v('tipoLesionOtro'):v('tipoLesion')).toLowerCase():'';
+  var pt=(ST.partes||[]).map(function(p){return CUERPO.hablado(p)}).join(' y ');
+  if(les||pt)return n+' sufre '+(les||'una lesión')+(pt?' en '+pt:'');
+  if((ST.tipos||[]).indexOf('Daño material')>-1)return 'Se produce daño en (equipo / material / instalación)';
+  return n+' sufre una lesión'}
+// ideas de causas sacadas de lo que ya se escribió (causas inmediatas/básicas, descripción y declaraciones)
+function arbIdeas(){var usados={};leerArbol().forEach(function(n){usados[norm(n.txt)]=1});var out=[],vis={};
+  function add(t){t=String(t||'').replace(/\s+/g,' ').trim().replace(/^[-•\d.)\s]+/,'');var k=norm(t);if(t.length<6||t.length>140||vis[k]||usados[k])return;vis[k]=1;out.push(t)}
+  ['accInseguras','condInseguras','factPersonales','factTrabajo'].forEach(function(id){if($(id))$(id).value.split(/\n|;/).forEach(add)});
+  ['descripcion','declaracion'].forEach(function(id){if($(id))$(id).value.split(/(?<=[.!?])\s+|\n/).slice(0,8).forEach(add)});
+  return out.slice(0,14)}
+var CULPA=/(descuid|no tuvo cuidado|falta de atenci|poca atenci|negligen|irresponsab|flojer|culpa|no se fij|imprudent|torpe|tonto|porfiad|mala suerte|accidente fortuito)/i;
+function arbHablar(t){if(VOZA)hablar(t.replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF\uFE0F«»]/gu,''),1)}
+function pintaAsis(){var c=$('arbAsis');if(!c)return;var ns=leerArbol().filter(function(n){return n.txt}),h='';
+  var finales=hijosDe(ns,'');
+  if(!finales.length){
+    h='<div class="paso">PASO 1 DE 3</div><h4>¿Cuál fue el resultado final?</h4><div class="preg">Escribe lo que pasó al final: la lesión o el daño. Ya te dejé una propuesta con los datos del caso, corrígela si hace falta.</div>'+
+      '<input class="grande" id="asTxt" value="'+esc(ASIS.txt||arbFinalSugerido())+'" oninput="ASIS.txt=this.value">'+
+      '<div class="acc"><button class="btn ve" onclick="arbCrearFinal()">✅ Sí, ese es el resultado final</button></div>';
+    c.innerHTML=h;return}
+  var pend=ns.filter(function(n){return !n.fondo&&!hijosDe(ns,n.id).length});
+  if(!ASIS.foco||!ns.some(function(n){return n.id===ASIS.foco}))ASIS.foco=pend.length?pend[0].id:null;
+  var f=ns.find(function(n){return n.id===ASIS.foco});
+  if(!f){ // terminado
+    var hojas=ns.filter(function(n){return !hijosDe(ns,n.id).length&&n.padre});
+    var meds=filas('medidas','.fila4').map(function(m){return norm(m.medida)}).join(' | ');
+    h='<div class="paso">PASO 3 DE 3</div><h4>🎉 ¡Árbol listo! Ahora las medidas</h4><div class="preg">Estas son las <b>causas de fondo</b>. Cada una necesita su medida correctiva, si no el accidente se puede repetir.</div><ul class="lista">'+
+      hojas.map(function(n){var tiene=meds.indexOf(norm(n.txt).slice(0,25))>-1;
+        return '<li>'+esc(n.txt)+' '+(tiene?'<b style="color:var(--ve)">✔ con medida</b>':'<button class="btn sm na" onclick="arbMedida(\''+n.id+'\')">➕ Crear medida</button>')+'</li>'}).join('')+'</ul>'+
+      (ns.length<4?'<div class="alerta">⚠️ El árbol tiene muy pocos hechos. Normalmente un accidente tiene 4 o más. Toca <b>➕ causa</b> en algún hecho del dibujo para seguir preguntando.</div>':'')+
+      '<div class="acc"><button class="btn sm gr" onclick="arbReabrir()">↩ Quiero seguir agregando causas</button></div>';
+    c.innerHTML=h;return}
+  var hs=hijosDe(ns,f.id),ideas=arbIdeas();
+  h='<div class="paso">PASO 2 DE 3 · quedan '+pend.length+' hecho(s) por revisar</div>'+
+    '<h4>¿Por qué pasó esto?</h4><div class="preg">Mira este hecho: <b>«'+esc(f.txt)+'»</b><br>¿Qué <b>tuvo que pasar</b> para que ocurriera?</div>'+
+    '<div class="ej">💡 Escribe <b>hechos concretos</b>, no culpas. ✔ "el piso estaba mojado" · ✔ "llevaba la caja sobre el hombro" · ✘ "descuido del trabajador"</div>'+
+    (hs.length?'<div class="ok">Ya anotaste como causas: '+hs.map(function(x){return '«'+esc(x.txt)+'»'}).join(', ')+'</div>':'')+
+    (ideas.length?'<div style="font-size:12.5px;color:#5a6780">Ideas sacadas de lo que ya escribiste (toca una para usarla):</div><div class="sug">'+ideas.map(function(t,i){return '<span class="chip" onclick="arbIdea('+i+')">'+esc(t)+'</span>'}).join('')+'</div>':'')+
+    '<input class="grande" id="asTxt" placeholder="Escribe aquí la causa..." value="'+esc(ASIS.txt)+'" oninput="ASIS.txt=this.value">'+
+    '<div style="font-size:13px;margin-top:8px"><b>¿Esto fue distinto a lo normal ese día?</b></div><div class="vp">'+
+    '<span class="chip'+(ASIS.tipo==='V'?' on':'')+'" onclick="ASIS.tipo=\'V\';pintaAsis()">◆ Sí, ese día fue distinto<br><small>(variación)</small></span>'+
+    '<span class="chip'+(ASIS.tipo==='P'?' on':'')+'" onclick="ASIS.tipo=\'P\';pintaAsis()">▭ No, siempre es así<br><small>(permanente)</small></span></div>'+
+    (ASIS.aviso?'<div class="alerta">'+ASIS.aviso+'</div>':'')+
+    '<div class="acc"><button class="btn" onclick="arbAgregar()">➕ Agregar esta causa</button>'+
+    (hs.length?'<button class="btn ve" onclick="arbSiguiente()">✔ Ya están todas, siguiente hecho</button>':'<button class="btn sm na" onclick="arbFondo()">🧱 No hay nada más atrás (es causa de fondo)</button>')+'</div>';
+  c.innerHTML=h;ASIS._ideas=ideas}
+function arbCrearFinal(){var t=(v('asTxt')||'').trim();if(t.length<8)return toast('Escribe un poco más el resultado final');
+  ASIS.txt='';ASIS.foco=addNodo({txt:t,padre:'',tipo:'V'});var r=filaNodo(ASIS.foco);r.querySelector('[data-k="txt"]').value=t;pintaArbol();
+  arbHablar('Bien. Ahora pregúntate: qué tuvo que pasar para que '+t)}
+function arbIdea(i){ASIS.txt=ASIS._ideas[i];pintaAsis();$('asTxt').focus()}
+function arbAgregar(forzar){var t=(v('asTxt')||'').trim();ASIS.txt=t;
+  if(t.length<6){ASIS.aviso='✏️ Escribe la causa con un poco más de detalle.';return pintaAsis()}
+  if(!ASIS.tipo){ASIS.aviso='👆 Elige si ese día fue distinto (variación) o si siempre es así (permanente).';return pintaAsis()}
+  if(!forzar&&CULPA.test(t)){ASIS.aviso='🤔 «'+esc(t)+'» suena a <b>culpa</b>, no a un hecho. ¿Qué pasó concretamente? Ej: en vez de "descuido" escribe "caminaba mirando el celular". <button class="btn sm gr" onclick="arbAgregar(true)">Dejarlo igual</button>';return pintaAsis()}
+  var ns=leerArbol();if(ns.some(function(n){return norm(n.txt)===norm(t)})){ASIS.aviso='Ese hecho ya está en el árbol.';return pintaAsis()}
+  addNodo({txt:t,tipo:ASIS.tipo,padre:ASIS.foco});var r=$('arbolEd').lastChild;r.dataset.padre=ASIS.foco;pintaArbol();
+  var f=leerArbol().find(function(n){return n.id===ASIS.foco});
+  ASIS.txt='';ASIS.tipo='';ASIS.aviso='';pintaArbol();toast('✔ Causa agregada');
+  arbHablar('Anotado. Hay otra cosa que también fue necesaria para que '+(f?f.txt:'')+'? Si no, toca ya están todas.')}
+function arbSiguiente(){var ns=leerArbol().filter(function(n){return n.txt});
+  var pend=ns.filter(function(n){return !n.fondo&&!hijosDe(ns,n.id).length});ASIS.foco=pend.length?pend[0].id:null;ASIS.txt='';ASIS.tipo='';ASIS.aviso='';pintaArbol();
+  var f=ns.find(function(n){return n.id===ASIS.foco});arbHablar(f?'Siguiente hecho: '+f.txt+'. Qué tuvo que pasar para que ocurriera?':'Listo el árbol. Ahora crea una medida para cada causa de fondo.');
+  $('arbAsis').scrollIntoView({behavior:'smooth',block:'center'})}
+function arbFondo(){var r=filaNodo(ASIS.foco);if(r)r.dataset.fondo='1';arbSiguiente()}
+function arbFoco(id){var r=filaNodo(id);if(r)r.dataset.fondo='';ASIS.foco=id;ASIS.txt='';ASIS.tipo='';ASIS.aviso='';pintaArbol();$('arbAsis').scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){if($('asTxt'))$('asTxt').focus()},400)}
+function arbReabrir(){var ns=leerArbol().filter(function(n){return n.txt});var h=ns.filter(function(n){return n.fondo})[0]||ns[0];if(h)arbFoco(h.id)}
+function arbEditar(id){var r=filaNodo(id);if(!r)return;var i=r.querySelector('[data-k="txt"]');var t=prompt('Corrige el hecho:',i.value);if(t&&t.trim()){i.value=t.trim();pintaArbol()}}
+function arbBorrar(id){var ns=leerArbol(),borrar=[id],k=0;while(k<borrar.length){hijosDe(ns,borrar[k]).forEach(function(h){borrar.push(h.id)});k++}
+  var n=ns.find(function(x){return x.id===id})||{};
+  confirma('🗑 ¿Borrar este hecho?','«'+esc(n.txt||'')+'»'+(borrar.length>1?' y las '+(borrar.length-1)+' causa(s) que cuelgan de él':''),'SÍ, borrar',function(){borrar.forEach(function(b){var r=filaNodo(b);if(r)r.remove()});if(borrar.indexOf(ASIS.foco)>-1)ASIS.foco=null;pintaArbol()},true)}
+function arbMedida(id){var n=leerArbol().find(function(x){return x.id===id});if(!n)return;addMedida('medidas',{medida:'Corregir: '+n.txt,estado:'Pendiente'});pintaArbol();toast('Medida creada: ponle responsable y plazo');
+  var u=$('medidas').lastChild;if(u){u.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){var e=u.querySelector('[data-k="responsable"]');if(e)e.focus()},500)}}
 
 // ---------- INVITACIONES ----------
 function autoInv(){var q=$('invNombre').value,qn=norm(q);var w=NOMINA.find(function(x){return x.nombre===q})||NOMINA.find(function(x){return qn.length>6&&norm(x.run)===qn});
@@ -965,7 +1060,7 @@ function objetivoA(){
     return $('btnGuardar');
   }
   var f=(EDIT._faltan||[])[0]||'';
-  var M=[[/Declaraci/,'cInv'],[/DIAT/,'cDocs'],[/alta/,'fechaAlta'],[/Descripci/,'descripcion'],[/rbol/,'arbolEd'],[/Protocolo/,'protoFilas'],[/No sé|Pendiente/,'cDeclaracion'],[/medida/i,'medidas']];
+  var M=[[/Declaraci/,'cInv'],[/DIAT/,'cDocs'],[/alta/,'fechaAlta'],[/Descripci/,'descripcion'],[/rbol/,'arbAsis'],[/Protocolo/,'protoFilas'],[/No sé|Pendiente/,'cDeclaracion'],[/medida/i,'medidas']];
   for(var i=0;i<M.length;i++)if(M[i][0].test(f)&&$(M[i][1])&&!$(M[i][1]).closest('.hide'))return $(M[i][1]);
   return f?null:$('edCerrar');
 }
