@@ -112,6 +112,7 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 #manoInv i{position:absolute;left:44px;top:6px;white-space:nowrap;font:bold 13px system-ui;font-style:normal;background:#f28c28;color:#fff;border-radius:8px;padding:3px 8px}
 .cfoco{outline:4px solid #f28c28 !important;outline-offset:3px;border-radius:8px}
 .nomTag{display:block;font-size:11.5px;margin-top:2px;font-weight:bold}
+.fila4>.nomTag,.fila3>.nomTag{grid-column:1/-1;order:99;margin-top:-2px}
 .nomTag.si{color:#2e7d32}.nomTag.no{color:#e65100}
 .cursoL{max-height:55vh;overflow:auto;text-align:left;margin:8px 0}
 .cursoL .sec{font-weight:bold;color:var(--az);margin:10px 0 4px;font-size:13px}
@@ -790,7 +791,7 @@ function limpiar(){
   $('avisos').innerHTML='Elige al trabajador para ver la lista.';$('dotInfo').textContent='';$('cFalta').classList.add('hide');$('cInv').classList.add('hide');
   $('trab').classList.add('hide');$('sug').classList.add('hide');
   MULTI.forEach(function(k){if(document.querySelector('[data-multi="'+k+'"]'))pintarMulti(k)});$('tipoLesionOtro').classList.add('hide');pintarPartes();
-  aplicarTipos();rolDecl();modoDecl();pintaProto();ASIS={foco:null,tipo:'',txt:'',aviso:''};IVISTO={};IPASO=1;GUARDAR_YA=false;document.querySelectorAll('#cInvest .ipaso').forEach(function(d){d.classList.toggle('hide',d.dataset.p!=='1')});pintaArbol();
+  aplicarTipos();rolDecl();modoDecl();pintaProto();ASIS={foco:null,tipo:'',txt:'',aviso:''};IVISTO={};IPASO=1;GUARDAR_YA=false;COACH.msg='';COACH.dicho='';document.querySelectorAll('#cInvest .ipaso').forEach(function(d){d.classList.toggle('hide',d.dataset.p!=='1')});pintaArbol();
 }
 function nuevoCaso(){
   limpiar();EDIT=null;
@@ -927,7 +928,7 @@ function calcDias(){
 function setK(row,o){row.querySelectorAll('[data-k]').forEach(function(e){if(o[e.dataset.k]!=null)e.value=o[e.dataset.k]})}
 function addMedida(cont,m){
   var d=document.createElement('div');d.className='fila4';
-  d.innerHTML='<input placeholder="Medida" data-k="medida"><input placeholder="Responsable (de la nómina o escribe otro)" data-k="responsable" list="dlNomina"><input type="date" data-k="plazo" title="Plazo"><select data-k="estado" onchange="estMedida(this)"><option>Pendiente</option><option>Cumplida</option></select><input type="hidden" data-k="cumplida"><button class="x" onclick="this.parentNode.remove()">✕</button>';
+  d.innerHTML='<input placeholder="Medida" data-k="medida"><input placeholder="Responsable (de la nómina o escribe otro)" data-k="responsable" list="dlNomina"><input type="date" data-k="plazo" title="Plazo"><select data-k="estado" onchange="estMedida(this)"><option>Pendiente</option><option>Cumplida</option></select><input type="hidden" data-k="cumplida"><button class="x" onclick="this.parentNode.remove();pintaPasos();pintaMedSug()">✕</button>';
   $(cont).appendChild(d);
   if(m){setK(d,m);d.classList.toggle('ok',m.estado==='Cumplida')}
 }
@@ -948,7 +949,7 @@ function addTestigo(w){
     '<div><label>Clasificación</label><select data-k="clase"><option>Testigo directo</option><option>Testigo indirecto</option><option>Jefatura directa</option><option>Involucrado</option></select></div></div>'+
     '<label style="margin-top:8px">Relato del testigo <small style="font-weight:normal;color:#666">(se llena solo si responde por link)</small></label><textarea data-k="relato"></textarea>'+
     '<div class="estInv"></div><button class="btn sm na" style="margin-top:6px" onclick="pedirTestigo(this)">📲 Pedirle su declaración por link</button> '+
-    '<button class="btn sm" style="background:var(--ro);margin-top:6px" onclick="this.parentNode.remove()">Quitar testigo</button>';
+    '<button class="btn sm" style="background:var(--ro);margin-top:6px" onclick="this.parentNode.remove();pintaPasos()">Quitar testigo</button>';
   $('testigos').appendChild(d);if(w)setK(d,w);extTestigo(d.querySelector('[data-k="externo"]'));estadoTestigo(d);
 }
 function extTestigo(sel){var r=sel.closest('.testigo'),ext=sel.value==='SI';r.querySelector('.tExt').classList.toggle('hide',!ext);r.querySelector('.tEmp').classList.toggle('hide',ext)}
@@ -985,10 +986,10 @@ function filas(cont,sel){
 // ---------- INVESTIGACIÓN EN 4 PASOS ----------
 var IPASO=1, IPASOS=[['1','📝','Qué pasó'],['2','👀','Quién lo vio'],['3','🔎','Por qué pasó'],['4','🛠','Qué haremos']];
 function invOk(n){var ns=leerArbol().filter(function(x){return x.txt});
-  if(n===1)return v('descripcion').length>30;
-  if(n===2)return $('testigos').children.length>0||IVISTO[2];
+  if(n===1)return v('descripcion').replace(/(ANTES|DURANTE|DESPU[EÉ]S)[^:\n]*:/g,'').trim().length>30;
+  if(n===2)return filas('testigos','.testigo').some(function(t){return t.nombre})||IVISTO[2];
   if(n===3)return ns.length>1&&!ns.some(function(x){return !x.fondo&&!hijosDe(ns,x.id).length});
-  if(n===4)return filas('medidas','.fila4').some(function(m){return m.medida&&m.responsable&&m.plazo});return false}
+  if(n===4){var ll=filas('medidas','.fila4').filter(function(m){return m.medida||m.responsable||m.plazo});return ll.length>0&&ll.every(function(m){return m.medida&&m.responsable&&m.plazo})}return false}
 var IVISTO={};
 function pintaPasos(){var c=$('ipasos');if(!c)return;
   c.innerHTML=IPASOS.map(function(p){var n=+p[0],ok=invOk(n);return '<div class="ip'+(n===IPASO?' act':'')+(ok?' ok':'')+'" data-p="'+n+'" onclick="invPaso('+n+')"><b>'+(ok?'✔':p[1])+'</b>Paso '+n+'<br>'+p[2]+'</div>'}).join('');
@@ -998,7 +999,7 @@ function invPaso(n){if(n<1)n=1;if(n>4){var g=$('btnGuardar');if(g)g.scrollIntoVi
   IVISTO[IPASO]=1;IPASO=n;document.querySelectorAll('#cInvest .ipaso').forEach(function(d){d.classList.toggle('hide',+d.dataset.p!==n)});
   pintaPasos();if(n===3)pintaArbol();if(n===4)pintaMedSug();
   var y=$('cInvest').getBoundingClientRect().top+window.scrollY-110;window.scrollTo({top:y,behavior:'smooth'});
-  if(typeof VOZA!=='undefined'&&VOZA){var t={1:'Paso 1. Cuenta qué pasó, en orden: antes, durante y después.',2:'Paso 2. Agrega a las personas que vieron lo que pasó.',3:'Paso 3. Vamos a buscar por qué pasó. Toca los botones que apliquen y después armamos el árbol.',4:'Paso 4. Pon una medida para cada causa de fondo, con responsable y plazo.'}[n];hablar(t,1)}
+  if(typeof VOZA!=='undefined'&&VOZA){var t={1:'Paso 1. Cuenta qué pasó, en orden: antes, durante y después.',2:'Paso 2. Agrega a las personas que vieron lo que pasó.',3:'Paso 3. Vamos a buscar por qué pasó. Toca los botones que apliquen y después armamos el árbol.',4:'Paso 4. Pon una medida para cada causa de fondo, con responsable y plazo.'}[n];hablar(t,1);COACH_SIL=Date.now()}
   try{guiaA()}catch(e){}}
 function invPlantilla(){var d=$('descripcion');if(d.value.trim()){toast('Ya tienes texto escrito; agrégale ANTES / DURANTE / DESPUÉS donde corresponda');d.focus();return}
   d.value='ANTES (qué estaba haciendo, dónde, con qué): \n\nDURANTE (qué pasó exactamente): \n\nDESPUÉS (qué se hizo, a dónde lo llevaron): ';d.focus();d.setSelectionRange(d.value.indexOf(':')+2,d.value.indexOf(':')+2);pintaPasos()}
@@ -1045,7 +1046,10 @@ function arbFinalSugerido(){var n=(v('t_nombre')||'El trabajador').split(' ').sl
   var les=$('tipoLesion')&&v('tipoLesion')?(v('tipoLesion')==='Otra'?v('tipoLesionOtro'):v('tipoLesion')).toLowerCase():'';
   var pt=(ST.partes||[]).map(function(p){return CUERPO.hablado(p)}).join(' y ');
   if(les||pt)return n+' sufre '+(les||'una lesión')+(pt?' en '+pt:'');
-  if((ST.tipos||[]).indexOf('Daño material')>-1)return 'Se produce daño en (equipo / material / instalación)';
+  var tp=ST.tipos||[];if(tp.indexOf('Daño material')>-1)return 'Se produce daño en (equipo / material / instalación)';
+  if(tp.indexOf('Ley Karin')>-1)return 'Se recibe denuncia por (acoso laboral / sexual / violencia) que involucra a '+n;
+  if(tp.indexOf('Posible enfermedad profesional')>-1)return n+' presenta (síntomas / molestias)';
+  if(tp.indexOf('Incidente / cuasi accidente')>-1)return 'Casi ocurre un accidente: (qué pudo pasar)';
   return n+' sufre una lesión'}
 // ideas de causas sacadas de lo que ya se escribió
 function arbIdeas(){var usados={};leerArbol().forEach(function(n){usados[norm(n.txt)]=1});var out=[],vis={};
@@ -1054,7 +1058,7 @@ function arbIdeas(){var usados={};leerArbol().forEach(function(n){usados[norm(n.
   ['descripcion','declaracion'].forEach(function(id){if($(id))$(id).value.split(/(?<=[.!?])\s+|\n/).slice(0,10).forEach(add)});
   return out.slice(0,14)}
 var CULPA=/(descuid|no tuvo cuidado|falta de atenci|poca atenci|negligen|irresponsab|flojer|culpa|no se fij|imprudent|torpe|tonto|porfiad|mala suerte|accidente fortuito)/i;
-function arbHablar(t){if(VOZA)hablar(t.replace(/[«»]/g,''),1)}
+function arbHablar(t){if(VOZA){hablar(t.replace(/[«»]/g,''),1);COACH_SIL=Date.now()}}
 function pintaAsis(){var c=$('arbAsis');if(!c)return;var ns=leerArbol().filter(function(n){return n.txt}),h='';
   if(!hijosDe(ns,'').length){
     h='<div class="paso">EMPECEMOS</div><h4>¿Qué fue lo que pasó al final?</h4><div class="preg">Ya te dejé escrita una propuesta con los datos del caso. Si está bien, solo toca el botón verde.</div>'+
@@ -1081,7 +1085,7 @@ function pintaAsis(){var c=$('arbAsis');if(!c)return;var ns=leerArbol().filter(f
     '<span class="chip'+(ASIS.tipo==='P'?' on':'')+'" onclick="ASIS.tipo=\'P\';pintaAsis()">Sí, siempre es así</span></div>'+
     (ASIS.aviso?'<div class="alerta">'+ASIS.aviso+'</div>':'')+
     '<div class="acc"><button class="btn" onclick="arbAgregar()">➕ Agregar esta razón</button>'+
-    (hs.length?'<button class="btn ve" onclick="arbSiguiente()">✔ No hay otra razón, sigamos</button>':'<button class="btn sm na" onclick="arbFondo()">🧱 Aquí ya no hay más "por qué" (causa de fondo)</button>')+'</div>';
+    (hs.length?'<button class="btn ve" onclick="arbSiguiente()">✔ No hay otra razón, sigamos</button>':(f.padre?'<button class="btn sm na" onclick="arbFondo()">🧱 Aquí ya no hay más "por qué" (causa de fondo)</button>':''))+'</div>';
   c.innerHTML=h;ASIS._ideas=ideas}
 function arbCrearFinal(){var t=(v('asTxt')||'').trim();if(t.length<8)return toast('Escribe un poco más lo que pasó');
   ASIS.txt='';ASIS.foco=addNodo({txt:t,padre:'',tipo:'V'});pintaArbol();
@@ -1100,7 +1104,7 @@ function arbSiguiente(){var ns=leerArbol().filter(function(n){return n.txt});
   var pend=ns.filter(function(n){return !n.fondo&&!hijosDe(ns,n.id).length});ASIS.foco=pend.length?pend[0].id:null;ASIS.txt='';ASIS.tipo='';ASIS.aviso='';pintaArbol();
   var f=ns.find(function(n){return n.id===ASIS.foco});arbHablar(f?'Ahora: por qué pasó esto: '+f.txt+'?':'Listo el árbol. Pasa al paso 4 para poner las medidas.');
   $('arbAsis').scrollIntoView({behavior:'smooth',block:'center'})}
-function arbFondo(){var r=filaNodo(ASIS.foco);if(r)r.dataset.fondo='1';arbSiguiente()}
+function arbFondo(){var r=filaNodo(ASIS.foco);if(r&&r.dataset.padre)r.dataset.fondo='1';arbSiguiente()}
 function arbFoco(id){var r=filaNodo(id);if(r)r.dataset.fondo='';ASIS.foco=id;ASIS.txt='';ASIS.tipo='';ASIS.aviso='';pintaArbol();$('arbAsis').scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){if($('asTxt'))$('asTxt').focus()},400)}
 function arbReabrir(){var ns=leerArbol().filter(function(n){return n.txt});var h=ns.filter(function(n){return n.fondo})[0]||ns[0];if(h)arbFoco(h.id)}
 function arbEditar(id){var r=filaNodo(id);if(!r)return;var i=r.querySelector('[data-k="txt"]');var t=prompt('Corrige el texto:',i.value);if(t&&t.trim()){i.value=t.trim();pintaArbol()}}
@@ -1125,7 +1129,7 @@ function arbEjemplo(){var ns=[{id:'a',txt:'Juan se esguinza el tobillo derecho',
   d.querySelector('button').onclick=function(){d.remove()};d.onclick=function(e){if(e.target===d)d.remove()};document.body.appendChild(d)}
 
 // ---------- ASISTENTE EXPERTO DE LA INVESTIGACIÓN (habla y apunta con la mano) ----------
-var COACH={el:null,msg:''};
+var COACH={el:null,msg:'',dicho:''},COACH_SIL=0;
 function chipsMarcados(){return ['accInseguras','condInseguras','factPersonales','factTrabajo'].some(function(id){return $(id)&&$(id).value.trim()})}
 function coachEstado(){var q=function(s){return document.querySelector(s)};
   if(IPASO===1){var d=v('descripcion');
@@ -1143,18 +1147,20 @@ function coachEstado(){var q=function(s){return document.querySelector(s)};
     var pend=ns.filter(function(n){return !n.fondo&&!hijosDe(ns,n.id).length}),f=ns.find(function(n){return n.id===ASIS.foco});
     if(f){var hs=hijosDe(ns,f.id),t=v('asTxt');
       if(!t&&!hs.length)return [$('asTxt'),'Escribe el porqué','Pregúntate: <b>¿por qué pasó «'+esc(f.txt)+'»?</b> Escribe la razón aquí o toca una de las ideas celestes.<small>Experto: escribe hechos que se puedan ver o comprobar, nunca culpas ("descuido").</small>','Pregúntate: por qué pasó '+f.txt+'. Escribe la razón o toca una de las ideas.'];
+      if(t&&document.activeElement===$('asTxt')&&Date.now()-ULT_TECLA<2500)return [$('asTxt'),'Sigue escribiendo','✍️ Sigue escribiendo la razón. Cuando termines, toca <b>➕ Agregar esta razón</b>.',''];
       if(t)return [q('#arbAsis .acc .btn'),'Agregar','Bien escrito. Ahora toca <b>➕ Agregar esta razón</b>.','Ahora toca agregar esta razón.'];
       return [q('#arbAsis .btn.ve'),'¿No hay más?','¿Hay <b>otra razón</b> para «'+esc(f.txt)+'»? Escríbela. Si ya no hay más, toca el botón verde <b>"No hay otra razón, sigamos"</b>.<small>Experto: casi siempre hay 2 razones: algo que hizo la persona y algo del lugar, equipo u organización.</small>','Hay otra razón más? Si no hay más, toca el botón verde.']}
     return [q('#arbAsis .btn.ve')||$('iSig'),'Paso 4','¡Árbol listo! Las cajas del borde izquierdo son las <b>causas de fondo</b>. Toca <b>"Ir al paso 4"</b> para ponerles medida.','Árbol listo. Toca ir al paso cuatro para ponerle medidas a las causas de fondo.']}
   if(IPASO===4){var bm=q('#medSug .btn.na');
     if(bm)return [bm,'Ponle medida','Cada <b>causa de fondo</b> necesita una medida. Toca <b>"➕ Ponerle medida"</b> o, si se corrige capacitando, <b>"🎓 Curso"</b>.<small>Experto: la mejor medida elimina el peligro; capacitar sola es la más débil, úsala junto a otra.</small>','Cada causa de fondo necesita una medida. Toca ponerle medida, o curso si se corrige capacitando.'];
-    var ms=[].slice.call(document.querySelectorAll('#medidas .fila4'));
+    var ms=[].slice.call(document.querySelectorAll('#medidas .fila4')),llenas=ms.filter(function(r){return ['medida','responsable','plazo'].some(function(k){var e=r.querySelector('[data-k="'+k+'"]');return e&&e.value.trim()})});
+    if(llenas.length)ms=llenas;
     for(var i=0;i<ms.length;i++){var r=ms[i],g=function(k){return r.querySelector('[data-k="'+k+'"]')};
       if(!g('medida').value.trim())return [g('medida'),'Escribe la medida','Escribe <b>qué se va a hacer</b>, concreto. Ej: "Instalar bandeja antiderrame bajo el camión".','Escribe qué se va a hacer, concreto.'];
       if(!g('responsable').value.trim())return [g('responsable'),'Responsable','¿<b>Quién</b> lo hace? Elige de la nómina o escribe el nombre si no está.','Quién es el responsable? Elige de la nómina o escribe el nombre.'];
       if(!g('plazo').value)return [g('plazo'),'Plazo','¿<b>Para cuándo</b>? Pon la fecha límite.','Para cuándo? Pon la fecha límite.']}
     if(!ms.length)return [q('#cInvest .ipaso[data-p="4"] > .btn'),'Agregar','Agrega al menos una medida con responsable y plazo.','Agrega al menos una medida con responsable y plazo.'];
-    if(!$('participantes').children.length)return [q('#cInvest .ipaso[data-p="4"] .btn[onclick^="addParticipante"]'),'Participantes','Medidas listas ✔. Anota <b>quiénes participaron</b> de la investigación (jefatura, comité paritario, prevencionista).','Medidas listas. Anota quiénes participaron de la investigación.'];
+    if(!filas('participantes','.fila3').some(function(x){return x.nombre})){var pv=document.querySelector('#participantes .fila3 [data-k="nombre"]');return [pv||q('#cInvest .ipaso[data-p="4"] .btn[onclick^="addParticipante"]'),'Participantes','Medidas listas ✔. Anota <b>quiénes participaron</b> de la investigación (jefatura, comité paritario, prevencionista).','Medidas listas. Anota quiénes participaron de la investigación.'];}
     return [$('btnGuardar')||$('iSig'),'Guardar','🎉 ¡Investigación completa! Revisa y toca <b>Guardar caso y generar PDF</b>.','Investigación completa. Toca guardar caso y generar PDF.']}
   return [null,'','','']}
 function coach(){var c=$('coachTx');if(!c||$('cInvest').closest('.hide'))return;
@@ -1163,7 +1169,7 @@ function coach(){var c=$('coachTx');if(!c||$('cInvest').closest('.hide'))return;
   else e=coachEstado();
   if(!e[0]||!e[0].offsetParent)e[0]=$('iSig');
   var el=e[0],m=e[2];
-  if(m!==COACH.msg){c.innerHTML=m;COACH.msg=m;if(VOZA&&e[3]&&invEnPantalla())hablar(e[3],1)}
+  if(m!==COACH.msg){c.innerHTML=m;COACH.msg=m;if(VOZA&&e[3]&&e[3]!==COACH.dicho&&invEnPantalla()&&Date.now()-COACH_SIL>2500){COACH.dicho=e[3];hablar(e[3],1)}}
   $('coachVoz').textContent=VOZA?'🔇 Callar':'🔊 Háblame';
   if(COACH.el!==el){if(COACH.el)COACH.el.classList.remove('cfoco');COACH.el=el;if(el)el.classList.add('cfoco')}
   $('manoInvTx').textContent=e[1]||'aquí';manoInv()}
@@ -1256,9 +1262,13 @@ function escribiendo(){var a=document.activeElement;return (a&&a.matches&&a.matc
 var CAMPOS_YO=[['fecha','📅 la <b>fecha</b> en que pasó'],['hora','🕐 la <b>hora</b> aproximada'],['area','📍 el <b>lugar exacto</b> (ej: bodega 2, patio de carga)'],
   ['lugarDireccion','🏠 la <b>dirección</b> donde ocurrió (calle, número, comuna)'],['labor','🔧 <b>qué estaba haciendo</b> el trabajador'],['#habitual','✅ si era su <b>trabajo habitual</b> (toca SÍ o NO)'],
   ['declaracion','✍ el <b>relato del trabajador</b>, con sus palabras: qué hacía, cómo pasó y qué pasó después'],['#partes','🧍 la <b>parte del cuerpo</b> lesionada (toca el monito)'],
-  ['tipoLesion','🩹 el <b>tipo de lesión</b>'],['centro','🏥 <b>dónde lo atendieron</b> (ej: Mutual Los Ángeles)']];
+  ['tipoLesion','🩹 el <b>tipo de lesión</b>'],['centro','🏥 <b>dónde lo atendieron</b> (ej: Mutual Los Ángeles)'],
+  ['trayectoSentido','🚌 el <b>sentido del trayecto</b> (de la casa al trabajo o al revés)'],['trayectoOrigen','🏠 desde <b>dónde venía</b>'],['trayectoDestino','📍 hacia <b>dónde iba</b>'],['trayectoMedio','🚗 en qué <b>medio de transporte</b>'],
+  ['danoBien','🔧 qué <b>bien, equipo o vehículo</b> se dañó'],['danoCodigo','🔢 la <b>patente o código</b> del equipo'],['danoCosto','💲 el <b>costo estimado</b> del daño'],['danoDesc','📝 <b>cómo quedó</b> el daño'],
+  ['epInicio','📅 cuándo <b>empezaron los síntomas</b>'],['epExposicion','⏱ cuánto tiempo lleva <b>expuesto</b> en el puesto'],['epSintomas','🤒 qué <b>síntomas</b> tiene'],['epTareas','🔧 qué <b>tareas</b> hace que podrían causarlo'],
+  ['lkRecepcion','📅 la <b>fecha en que se recibió</b> la denuncia'],['lkForma','📨 <b>cómo llegó</b> la denuncia'],['lkDenunciado','👤 a <b>quién se denuncia</b>'],['lkRelato','✍ el <b>relato de los hechos</b> denunciados']];
 function invPendiente(){var c=$('cInvest');if(!c||c.classList.contains('hide'))return 0;for(var n=1;n<=4;n++)if(!invOk(n))return n;return 0}
-function inmPendiente(){var c=$('cInmediatas');return c&&!c.classList.contains('hide')&&!$('inmediatas').children.length}
+function inmPendiente(){var c=$('cInmediatas');return c&&!c.classList.contains('hide')&&!filas('inmediatas','.fila4').some(function(m){return m.medida})}
 function pasoYo(){for(var i=0;i<CAMPOS_YO.length;i++){var k=CAMPOS_YO[i][0],el,ok;
     if(k==='#habitual'){el=document.querySelector('.si-no[data-campo="habitual"]');ok=!!ST.habitual}
     else if(k==='#partes'){el=$('partes');ok=(ST.partes||[]).length>0}
@@ -1275,9 +1285,9 @@ function textoGuiaA(){
     if(!v('t_nombre'))return 'Busca al <b>trabajador</b> por nombre o RUT en la tarjeta 2.';
     if(!MODO_INI)return 'Elige cómo tomar la <b>declaración del trabajador</b>: la llenas tú ahora o le envías un link.';
     if(esGrave()&&Object.keys(leerProto()).some(function(k){return leerProto()[k].e==='Pendiente'}))return '🚨 Es <b>grave</b>: registra los avisos a Inspección, SEREMI y Mutual en la tarjeta roja.';
-    if(MODO_INI==='yo'){var py=pasoYo();if(py)return '✍ <b>Llenando la declaración con el trabajador</b> (paso '+(py[2]+1)+' de '+CAMPOS_YO.length+'): ahora completa '+py[1]+'.<br><small>Si no lo sabes todavía, toca <b>Pendiente</b> o <b>No sé</b> debajo del campo y sigue.</small>';
+    if(MODO_INI==='yo'){var py=pasoYo();if(py)return '✍ <b>Llenando la declaración con el trabajador</b> (paso '+(py[2]+1)+' de '+CAMPOS_YO.length+'): ahora completa '+py[1]+'.<br><small>Si no lo sabes todavía, toca <b>Pendiente</b> o <b>No sé</b> debajo del campo (si no aparecen, escribe "no sé") y sigue.</small>';
       var salto=' <br><a href="#" onclick="GUARDAR_YA=true;guiaA();llevar(true);return false" style="font-size:12px">💾 Prefiero guardar ya y terminar después</a>';
-      if(!GUARDAR_YA&&inmPendiente())return '✅ Declaración lista. Ahora las <b>medidas inmediatas</b>: ¿qué se hizo apenas pasó? (ej: se limpió el aceite, se señalizó). Toca <b>+ Agregar medida</b>.'+salto;
+      if(!GUARDAR_YA&&inmPendiente())return '✅ Declaración lista. Ahora las <b>medidas inmediatas</b>: ¿qué se hizo apenas pasó? (ej: se limpió el aceite, se señalizó). Escríbela en el cuadro <b>Medida</b> (o toca <b>+ Agregar medida</b>).'+salto;
       if(!GUARDAR_YA&&invPendiente())return '🔎 Ahora la <b>investigación</b> (paso '+invPendiente()+' de 4). Te guía el asistente azul que está en la investigación.'+salto;
       return '🎉 ¡Todo listo! Revisa y toca <b>💾 Guardar caso y generar PDF</b> abajo.'}
     return 'Listo. Toca <b>Crear caso y generar link</b> abajo y envíaselo por WhatsApp.';
@@ -1294,13 +1304,14 @@ function objetivoA(){
     if(!MODO_INI)return document.querySelector('#cInicio .grande');
     if(esGrave()&&Object.keys(leerProto()).some(function(k){return leerProto()[k].e==='Pendiente'}))return $('protoFilas');
     if(MODO_INI==='yo'){var py=pasoYo();if(py)return py[0];
-      if(!GUARDAR_YA&&inmPendiente())return document.querySelector('#cInmediatas .btn');
+      if(!GUARDAR_YA&&inmPendiente())return document.querySelector('#inmediatas .fila4 [data-k="medida"]')||document.querySelector('#cInmediatas .btn');
       if(!GUARDAR_YA&&invPendiente())return $('coachInv')}
     return $('btnGuardar');
   }
   var f=(EDIT._faltan||[])[0]||'';
   var M=[[/Declaraci/,'cInv'],[/DIAT/,'cDocs'],[/alta/,'fechaAlta'],[/Descripci/,'descripcion'],[/rbol/,'arbAsis'],[/Protocolo/,'protoFilas'],[/No sé|Pendiente/,'cDeclaracion'],[/medida/i,'medidas']];
-  for(var i=0;i<M.length;i++)if(M[i][0].test(f)&&$(M[i][1])&&!$(M[i][1]).closest('.hide'))return $(M[i][1]);
+  var vis=function(e){var h=e.closest('.hide');return !h||(h.classList.contains('ipaso')&&!h.parentNode.closest('.hide'))};
+  for(var i=0;i<M.length;i++)if(M[i][0].test(f)&&$(M[i][1])&&vis($(M[i][1])))return $(M[i][1]);
   return f?($('cFalta')&&!$('cFalta').classList.contains('hide')?$('cFalta'):$('btnGuardar')):$('edCerrar');
 }
 var OBJ=null,PRIMERA=true;
@@ -1322,16 +1333,16 @@ function vozES(){var vs=window.speechSynthesis?speechSynthesis.getVoices():[];if
 if(window.speechSynthesis){speechSynthesis.getVoices();speechSynthesis.onvoiceschanged=vozES}
 var VOZ_PEND=null;function vozLista(){return !navigator.userActivation||navigator.userActivation.hasBeenActive}
 ['pointerdown','keydown','touchstart'].forEach(function(ev){document.addEventListener(ev,function(){if(VOZ_PEND&&VOZA){var t=VOZ_PEND;VOZ_PEND=null;setTimeout(function(){hablar(t,1)},120)}},true)});
-function hablar(t,mudo){
+var HABLA_N=0;function hablar(t,mudo){
   if(!vozLista()){VOZ_PEND=t;return}
   if(!window.speechSynthesis){toast('Este navegador no tiene voz');return}
-  var s=speechSynthesis,hecho=false;try{s.cancel()}catch(e){}
-  var go=function(){if(hecho)return;hecho=true;var v=vozES(),u=new SpeechSynthesisUtterance(t);
+  var s=speechSynthesis,hecho=false,yo=++HABLA_N;try{s.cancel()}catch(e){}
+  var go=function(){if(hecho||yo!==HABLA_N)return;hecho=true;try{s.cancel()}catch(e){}var v=vozES(),u=new SpeechSynthesisUtterance(t);
     if(v){u.voice=v;u.lang=v.lang}else u.lang='es-ES';u.rate=1;u.volume=1;
     u.onerror=function(e){if(!mudo&&e.error!=='interrupted'&&e.error!=='canceled')toast('No se pudo reproducir la voz ('+e.error+'). Revisa el volumen.')};
     s.speak(u);setTimeout(function(){try{s.resume()}catch(e){}},150)};
   if(vozES())setTimeout(go,150);else{var prev=s.onvoiceschanged;s.onvoiceschanged=function(){vozES();go()};setTimeout(go,900)}}
-function leerA(){var d=document.createElement('div');d.innerHTML=textoGuiaA();hablar((d.textContent||'').replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF\uFE0F]/gu,'').trim())}
+function leerA(){var d=document.createElement('div');d.innerHTML=textoGuiaA();hablar((d.textContent||'').replace(/[\u{1F300}-\u{1FAFF}\u2600-\u27BF\uFE0F]/gu,'').trim(),1)}
 function vozA(){VOZA=!VOZA;if(VOZA)leerA();else try{speechSynthesis.cancel()}catch(e){}guiaA();if($('coachVoz'))$('coachVoz').textContent=VOZA?'🔇 Callar':'🔊 Háblame'}
 
 
@@ -1483,8 +1494,9 @@ function guardar(){
   d.partes=ST.partes.slice();d.eva=ST.eva;
   d.arbol=leerArbol().filter(function(n){return n.txt});
   if(esGrave())d.protocolo=leerProto();
-  d.inmediatas=filas('inmediatas','.fila4');d.medidas=filas('medidas','.fila4');
-  d.participantes=filas('participantes','.fila3');d.testigos=filas('testigos','.testigo');
+  var conTexto=function(k){return function(o){return String(o[k]||'').trim()}};
+  d.inmediatas=filas('inmediatas','.fila4').filter(conTexto('medida'));d.medidas=filas('medidas','.fila4').filter(conTexto('medida'));
+  d.participantes=filas('participantes','.fila3').filter(conTexto('nombre'));d.testigos=filas('testigos','.testigo').filter(conTexto('nombre'));
   d.fotos=ST.fotos.slice();d.fotosNuevas=ST.fotosNuevas.map(function(f){return {data:f.data}});
   if(!EDIT){
     d.registradoPor=USR.nombre;
@@ -1526,7 +1538,11 @@ function cargarEnForm(d,docs){
   FIELDS.forEach(function(k){if($(k))ponValor(k,d[k])});
   CAMPOS_T.forEach(function(k){ponValor('t_'+k,(d.trabajador||{})[k]||'')});
   $('tipoLesionOtro').classList.toggle('hide',$('tipoLesion').value!=='Otra');
-  marcarAppend();cargaProto(d.protocolo);(d.arbol||[]).forEach(addNodo);pintaArbol();
+  marcarAppend();cargaProto(d.protocolo);
+  var arb=(d.arbol||[]).map(function(n){return Object.assign({},n)});
+  if(arb.length&&!arb.some(function(n){return 'fondo' in n}))arb.forEach(function(n){n.fondo=!!n.padre&&!arb.some(function(m){return m.padre===n.id})});
+  var hecho={},ord=[];while(ord.length<arb.length){var pr=arb.filter(function(n){return !hecho[n.id]&&(!n.padre||hecho[n.padre]||!arb.some(function(m){return m.id===n.padre}))});if(!pr.length)pr=arb.filter(function(n){return !hecho[n.id]}).slice(0,1);pr.forEach(function(n){hecho[n.id]=1;ord.push(n)})}
+  ord.forEach(function(n){addNodo(n)});pintaArbol();
   $('cInicio').classList.add('hide');$('cInv').classList.remove('hide');pintarInv(d._srv.invitaciones);
   var fl=d._faltan||[];$('cFalta').classList.toggle('hide',!fl.length);$('faltaLista').innerHTML=fl.map(function(x){return '<li>'+esc(x)+'</li>'}).join('');
   $('trab').classList.remove('hide');$('buscar').value=(d.trabajador||{}).nombre||'';calc();
