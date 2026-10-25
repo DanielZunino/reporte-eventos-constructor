@@ -100,6 +100,7 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 .proto{display:grid;grid-template-columns:1.6fr 1fr 1.2fr 1.6fr;gap:6px;align-items:center;margin-bottom:6px;font-size:13px}
 .proto.hecho select{background:#e8f5e9;color:var(--ve);font-weight:bold}.proto.pend select{background:#fdecea;color:var(--ro);font-weight:bold}
 .nodo{display:grid;grid-template-columns:110px 1fr 160px 34px;gap:6px;margin-bottom:6px}
+#manoBorde{position:fixed;left:50%;transform:translateX(-50%);z-index:30;background:#f28c28;color:#fff;font:bold 15px system-ui;border-radius:24px;padding:9px 18px;box-shadow:0 4px 14px rgba(0,0,0,.3);cursor:pointer;animation:latido 1.4s infinite;border:0}
 #coachInv{position:sticky;top:96px;z-index:7;display:flex;gap:10px;align-items:flex-start;background:linear-gradient(135deg,#0b3d91,#1565c0);color:#fff;border-radius:14px;padding:10px 12px;margin-bottom:12px;box-shadow:0 4px 14px rgba(11,61,145,.25)}
 #coachInv .av{font-size:34px;line-height:1}
 #coachInv .tx{flex:1;font-size:15px;line-height:1.35}
@@ -226,7 +227,7 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 </header>
 
 <div id="bannerG" class="hide"></div>
-<div id="manoMov" class="hide"><span>👉</span></div><div id="manoInv" class="hide"><span>👉</span><i id="manoInvTx">aquí</i></div>
+<div id="manoMov" class="hide"><span>👉</span></div><button id="manoBorde" class="hide" type="button"></button><div id="manoInv" class="hide"><span>👉</span><i id="manoInvTx">aquí</i></div>
 <div class="guiaA" id="guiaA"><div class="bur"><div class="barG"><span class="grip" title="Mantén apretado y arrastra">✥ Arrástrame</span><button onclick="centrarG('guiaA','gA')" title="Volver a su lugar">⟲</button><button onclick="minG('guiaA','gA',true)" title="Minimizar">–</button></div><span id="guiaATx"></span><br><button id="bVozA" onclick="vozA()">🔇 Silenciar</button><button onclick="llevar(true)">👉 Llévame</button></div><button class="miniG" onclick="minG('guiaA','gA',false)" title="Mostrar la ayuda (puedes arrastrarla)">👉</button></div>
 <main id="vNuevo">
 
@@ -1160,6 +1161,7 @@ function coach(){var c=$('coachTx');if(!c||$('cInvest').closest('.hide'))return;
   var a=document.activeElement,e;
   if(a&&a.closest&&a.closest('#cInvest')&&a.id!=='asTxt'&&a.matches('textarea,input:not([type=date]):not([type=button])')&&escribiendo()&&COACH.el)e=[a,'Sigue escribiendo','✍️ Tómate tu tiempo, sigue escribiendo. Cuando termines, toca fuera del cuadro y te digo qué sigue.',''];
   else e=coachEstado();
+  if(!e[0]||!e[0].offsetParent)e[0]=$('iSig');
   var el=e[0],m=e[2];
   if(m!==COACH.msg){c.innerHTML=m;COACH.msg=m;if(VOZA&&e[3]&&invEnPantalla())hablar(e[3],1)}
   $('coachVoz').textContent=VOZA?'🔇 Callar':'🔊 Háblame';
@@ -1173,6 +1175,21 @@ function coachVozT(){VOZA=!VOZA;$('coachVoz').textContent=VOZA?'🔇 Callar':'�
 function invEnPantalla(){var c=$('cInvest');if(!c||c.closest('.hide'))return false;var r=c.getBoundingClientRect();return r.top<window.innerHeight*0.6&&r.bottom>140}
 setInterval(function(){try{coach()}catch(e){}},700);
 window.addEventListener('scroll',function(){try{manoInv()}catch(e){}},{passive:true});window.addEventListener('resize',function(){try{manoInv()}catch(e){}});
+
+
+// ---------- La manito NUNCA desaparece: se reubica sola y, si lo que sigue está fuera de la pantalla, aparece un aviso "Baja / Sube" ----------
+function manoBorde(){var b=$('manoBorde');if(!b)return;var t=null;
+  if($('app').classList.contains('hide')||!$('vNuevo')||$('vNuevo').classList.contains('hide')){b.classList.add('hide');return}
+  if(OBJ&&OBJ.closest&&OBJ.closest('#cInvest'))t=(COACH.el&&COACH.el.offsetParent)?COACH.el:OBJ;else t=OBJ;
+  if(invEnPantalla()&&COACH.el&&COACH.el.offsetParent)t=COACH.el;
+  if(!t||!t.offsetParent){b.classList.add('hide');return}
+  var r=t.getBoundingClientRect();
+  if(r.bottom<90){b.textContent='☝ Sube: aquí sigue';b.style.top='104px';b.style.bottom='auto';b.classList.remove('hide')}
+  else if(r.top>window.innerHeight-70){b.textContent='👇 Baja: aquí sigue';b.style.bottom='84px';b.style.top='auto';b.classList.remove('hide')}
+  else b.classList.add('hide');
+  b.onclick=function(){t.scrollIntoView({behavior:'smooth',block:'center'});if(t.matches&&t.matches('input,textarea'))setTimeout(function(){t.focus()},450)}}
+setInterval(function(){try{var o=objetivoA();if(o!==OBJ||!OBJ||!OBJ.offsetParent)guiaA();else moverMano();manoInv();manoBorde()}catch(e){}},600);
+window.addEventListener('scroll',function(){try{manoBorde()}catch(e){}},{passive:true});
 
 // ---------- NÓMINA en todos los campos de nombre (con opción de persona que no está) ----------
 function nomTag(inp){if(!inp||inp.getAttribute('list')!=='dlNomina')return;var t=inp.nextElementSibling;if(!t||!t.classList||!t.classList.contains('nomTag')){t=document.createElement('small');t.className='nomTag';inp.insertAdjacentElement('afterend',t)}
@@ -1284,7 +1301,7 @@ function objetivoA(){
   var f=(EDIT._faltan||[])[0]||'';
   var M=[[/Declaraci/,'cInv'],[/DIAT/,'cDocs'],[/alta/,'fechaAlta'],[/Descripci/,'descripcion'],[/rbol/,'arbAsis'],[/Protocolo/,'protoFilas'],[/No sé|Pendiente/,'cDeclaracion'],[/medida/i,'medidas']];
   for(var i=0;i<M.length;i++)if(M[i][0].test(f)&&$(M[i][1])&&!$(M[i][1]).closest('.hide'))return $(M[i][1]);
-  return f?null:$('edCerrar');
+  return f?($('cFalta')&&!$('cFalta').classList.contains('hide')?$('cFalta'):$('btnGuardar')):$('edCerrar');
 }
 var OBJ=null,PRIMERA=true;
 function guiaA(){if(!$('guiaATx'))return;$('guiaATx').innerHTML=textoGuiaA();$('bVozA').textContent=VOZA?'🔇 Silenciar':'🔊 Escúchame';
