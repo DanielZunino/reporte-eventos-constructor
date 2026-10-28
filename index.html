@@ -199,7 +199,9 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 .modal .bt{display:flex;gap:10px}.modal .bt button{flex:1;padding:12px;border:0;border-radius:10px;font-size:16px;font-weight:bold;cursor:pointer}
 .acc{white-space:nowrap}.acc button{border:0;border-radius:8px;padding:5px 8px;margin:2px;cursor:pointer;font-size:12px;font-weight:bold}
 .tab.limpia{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.5)}
-.est.ARCHIVADO{background:#607d8b}.est.PAPELERA{background:#8e0000}
+.est.ARCHIVADO{background:#607d8b}
+.faltaA{color:var(--az);text-decoration:none;display:inline-block;padding:3px 0}.faltaA b{color:var(--na);white-space:nowrap}.faltaA:hover{text-decoration:underline}
+.destello{outline:4px solid var(--na)!important;outline-offset:3px;border-radius:10px;animation:pulso 1.4s infinite}.est.PAPELERA{background:#8e0000}
 .falta li{margin:3px 0}
 @media(max-width:600px){.proto,.nodo{grid-template-columns:1fr 1fr}.proto b,.nodo input{grid-column:1/-1}}
 @media(max-width:600px){.fila4,.fila3{grid-template-columns:1fr 1fr}.fila4 input:first-child,.fila3 input:first-child{grid-column:1/-1}.eva div{padding:8px 0;font-size:12px}.barras div{grid-template-columns:90px 1fr 30px}}
@@ -217,7 +219,7 @@ main{padding-bottom:200px}
 .miniG{display:none;pointer-events:auto;position:fixed;right:10px;bottom:72px;width:auto;height:auto;border-radius:18px;border:2px solid var(--na);background:#fff;font-size:13px;font-weight:bold;padding:6px 12px;color:#b26a1f;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2)}
 .guiaA.min .miniG{display:block}
 #coachInv{position:relative!important;top:auto!important}
-#manoInv,#manoMov,#manoBorde{display:none!important} /* sin manitos flotantes: nunca tapan opciones; se marca el campo en naranjo */
+#manoBorde,#manoInv i{display:none!important} /* la manito solo aparece al costado del campo (si hay margen), nunca encima de las opciones */
 #coachInv .cbt{display:flex;flex-direction:column;gap:4px}
 #coachInv .asisB{background:#ffe082!important;color:#0b3d91!important;font-weight:bold}
 textarea{overflow:hidden;resize:none;min-height:64px}
@@ -1576,6 +1578,23 @@ function verAccesos(){toast('Revisando los gerentes de sucursal de la nómina...
 function guardaSucU(ix,usuario){var val=$('sucU'+ix).value,lista=val.split(',').map(function(x){return x.trim()}).filter(String);
   if(!lista.length){toast('Escriba al menos una sucursal');return}
   llamar('sucursalesUsuario',TOKEN,usuario,lista).then(function(r){$('sucU'+ix).value=r.sucursal;toast('✔ Sucursales guardadas: '+r.sucursal)}).catch(function(e){alert(e.message||e)})}
+// "Lo que falta": cada punto es un vínculo que lleva al lugar donde se completa
+var FALTAN=[];
+function irFalta(i){var t=norm2(FALTAN[i]||''),dest=null,paso=0;
+  if(/DECLARACION FIRMADA/.test(t))dest=$('cDeclaracion').offsetParent?'cDeclaracion':'cInv';
+  else if(/DIAT|DIEP/.test(t))dest='cDocs';
+  else if(/FECHA DE ALTA/.test(t))dest='fechaAlta';
+  else if(/DESCRIPCION DEL EVENTO/.test(t)){paso=1;dest='dAntes'}
+  else if(/CONCLUSION/.test(t)){paso=5;dest='concl'}
+  else if(/ARBOL/.test(t)){paso=3;dest='arbolUI'}
+  else if(/NO SE|PENDIENTE \/ NO APLICA|RESPUESTA/.test(t))dest='cDeclaracion';
+  else if(/PROTOCOLO/.test(t))dest='cProto';
+  else if(/MEDIDA/.test(t)){paso=4;dest='medidas'}
+  if(!dest)return;
+  if(paso)invPaso(paso);
+  setTimeout(function(){var o=$(dest);if(!o)return;if(o.closest('.card.hide')){toast('Esa sección no aplica a este caso');return}
+    o.scrollIntoView({behavior:'smooth',block:'center'});o.classList.add('destello');setTimeout(function(){o.classList.remove('destello')},3500);
+    if(o.matches('input,textarea,select'))setTimeout(function(){o.focus()},500)},paso?350:0)}
 function pedirLimpiar(){confirma('🧹 ¿Seguro que quieres limpiar el formulario?','Se borra todo lo que escribiste y no está guardado. Los casos ya guardados no se tocan.','SÍ, limpiar',function(){nuevoCaso();toast('Formulario limpio')},true)}
 function archivar(id,si){var c=CASOS.find(function(x){return x['ID']===id})||{};
   confirma(si?'🗄 ¿Archivar el caso '+esc(id)+'?':'↩ ¿Desarchivar el caso '+esc(id)+'?',
@@ -1755,7 +1774,7 @@ function cargarEnForm(d,docs){
   var raices=ARB.filter(function(n){return !n.padre});if(raices.length>1)raices.slice(1).forEach(function(n){n.padre=raices[0].id});
   pintaArbol();
   $('cInicio').classList.add('hide');$('cInv').classList.remove('hide');pintarInv(d._srv.invitaciones);
-  var fl=d._faltan||[];$('cFalta').classList.toggle('hide',!fl.length);$('faltaLista').innerHTML=fl.map(function(x){return '<li>'+esc(x)+'</li>'}).join('');
+  var fl=d._faltan||[];$('cFalta').classList.toggle('hide',!fl.length);$('faltaLista').innerHTML=fl.map(function(x,i){return '<li><a href="#" class="faltaA" onclick="irFalta('+i+');return false">'+esc(x)+' <b>→ ir</b></a></li>'}).join('');FALTAN=fl.slice();
   $('trab').classList.remove('hide');$('buscar').value=(d.trabajador||{}).nombre||'';calc();
   (d.inmediatas&&d.inmediatas.length?d.inmediatas:[{}]).forEach(function(m){addMedida('inmediatas',m)});
   (d.medidas||[]).forEach(function(m){addMedida('medidas',m)});
