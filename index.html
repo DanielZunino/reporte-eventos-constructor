@@ -192,6 +192,8 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 .acj{overflow-wrap:anywhere}
 .acj{border:1px solid #dfe5ef;border-radius:12px;padding:10px 12px;margin:8px 0}.acj b{color:var(--az)}.acj .sb{font-size:13px;color:#5a6780}
 .acj .cred{font-family:monospace;font-size:14px;background:#f3f6fb;border-radius:8px;padding:6px 8px;margin:6px 0}.acj .nv{background:#2e7d32;color:#fff;border-radius:8px;padding:1px 7px;font-size:11px;margin-left:6px}
+.acj .sucE{margin:4px 0 8px}.acj .sucE label{font-size:12px;color:#5a6780;display:block;margin-bottom:3px}.acj .sucE .fx{display:flex;gap:6px}
+.acj .sucE input{flex:1;min-width:0;padding:7px 8px;border:1px solid #cfd8e6;border-radius:8px;font-size:14px}.acj .sucE button{border:0;border-radius:8px;background:var(--az);color:#fff;font-weight:bold;padding:0 12px;cursor:pointer}
 .acj .bts{display:flex;gap:8px;flex-wrap:wrap}.acj .bts a{flex:1 1 120px;min-width:0;text-align:center;padding:9px;border-radius:10px;font-weight:bold;text-decoration:none;font-size:14px}
 .acj .bts .ma{background:#0b3d91;color:#fff}.acj .bts .wa{background:#25d366;color:#fff}.acj .bts .no{background:#e0e4ec;color:#8a96aa;pointer-events:none}
 .modal .bt{display:flex;gap:10px}.modal .bt button{flex:1;padding:12px;border:0;border-radius:10px;font-size:16px;font-weight:bold;cursor:pointer}
@@ -409,6 +411,8 @@ textarea{overflow:hidden;resize:none;min-height:64px}
     <div class="grid">
       <div><label>Fecha del evento *</label><input type="date" id="fecha" onchange="calc()"></div>
       <div><label>Hora aproximada</label><input type="time" id="hora"></div>
+      <div><label>Sucursal donde ocurrió</label><input id="sucursalEvento" list="dlSuc" placeholder="Vacío = la del trabajador" autocomplete="off"><datalist id="dlSuc"></datalist></div>
+      <div><label>¿Fuera de sucursal? Indique el lugar</label><input id="lugarOtro" placeholder="Ej: obra del cliente, calle, faena"></div>
       <div><label>Área / lugar exacto</label><input id="area" placeholder="Ej: bodega 2, patio de carga"></div>
       <div><label id="lLugarDir">Dirección donde ocurrió</label><input id="lugarDireccion" placeholder="Calle, número, comuna"></div>
       <div><label>Profesión u oficio</label><input id="oficio"></div>
@@ -748,7 +752,7 @@ var PARTES={'Cabeza y cara':['Cabeza','Nuca','Cara','Ojo|','Oreja|','Nariz','Boc
   'Brazos y manos':['Brazo|','Codo|','Antebrazo|','Muñeca|','Mano|','Dedos mano|'],
   'Piernas y pies':['Muslo|','Rodilla|','Pantorrilla|','Canilla|','Tobillo|','Talón|','Pie|','Dedos pie|']};
 var EVAC=['#1b9e3e','#5cb85c','#8bc34a','#cddc39','#ffeb3b','#ffc107','#ff9800','#ff7043','#f4511e','#e53935','#b71c1c'];
-var FIELDS=['lugarDireccion','oficio','fecha','hora','area','horaEntrada','horaSalida','contrato','hombres','mujeres','estatura','peso','edad','antiguedad',
+var FIELDS=['sucursalEvento','lugarOtro','lugarDireccion','oficio','fecha','hora','area','horaEntrada','horaSalida','contrato','hombres','mujeres','estatura','peso','edad','antiguedad',
  'labor','deporte','declaracion','declQue','declRelato','declSugerencia','entrevistador','entrevistadorCargo','fechaDeclaracion','danoMarca','danoPropietario','porConfirmar','tipoLesion','motivoNegativa','centro','folioDiat','reposoDesde','reposoHasta','diasPerdidos','fechaAlta',
  'trayectoSentido','trayectoOrigen','trayectoDestino','trayectoMedio','trayectoPrueba','danoBien','danoCodigo','danoCosto','danoDesc',
  'epInicio','epExposicion','epSintomas','epTareas','lkRecepcion','lkForma','lkInvestiga','lkAvisoDT','lkDenunciado','lkRelato',
@@ -850,7 +854,7 @@ function init(){
   cargarBanner();
   nuevoCaso();
   $('buscar').placeholder='Cargando nómina...';
-  run().withSuccessHandler(function(n){NOMINA=n;$('buscar').placeholder='Escribe nombre o RUN... ('+n.length+' en nómina)';dlNomina(true)}).getNomina(TOKEN);
+  run().withSuccessHandler(function(n){NOMINA=n;$('buscar').placeholder='Escribe nombre o RUN... ('+n.length+' en nómina)';dlNomina(true);dlSucursales()}).getNomina(TOKEN);
 }
 function chipParte(p){return '<span class="chip" data-p="'+p+'" onclick="cuerpoToca(\''+p+'\')">'+p+'</span>'}
 // ---- Figura humana (frente y espalda) para marcar las partes lesionadas ----
@@ -1536,6 +1540,9 @@ function confirma(tit,msg,si,cb,rojo){var d=document.createElement('div');d.clas
   d.innerHTML='<div class="cx"><h3>'+tit+'</h3><p>'+msg+'</p><div class="bt"><button style="background:#e0e4ec;color:#33435c">NO</button><button style="background:'+(rojo?'var(--ro)':'var(--az)')+';color:#fff">'+si+'</button></div></div>';
   var b=d.querySelectorAll('button');b[0].onclick=function(){d.remove()};b[1].onclick=function(){d.remove();cb()};
   d.onclick=function(e){if(e.target===d)d.remove()};document.body.appendChild(d)}
+// sucursales para "Sucursal donde ocurrió" (personas que se mueven entre sucursales)
+function listaSuc(){var v={},o=[];(NOMINA||[]).forEach(function(w){var x=String(w.sucursal||'').trim();if(x&&!v[x.toUpperCase()]){v[x.toUpperCase()]=1;o.push(x)}});return o.sort()}
+function dlSucursales(){$('dlSuc').innerHTML=listaSuc().map(function(x){return '<option value="'+esc(x)+'">'}).join('')}
 // ---------- ACCESOS DE JEFATURAS (gerentes de sucursal de la nómina) ----------
 function fonoWsp(t){var n=String(t||'').replace(/\D/g,'');if(n.length===9&&n[0]==='9')n='56'+n;else if(n.length===8)n='569'+n;return n.length>=11?n:''}
 function msgAcceso(o,X){var n=String(o.nombre||'').split(' ')[0];
@@ -1549,19 +1556,24 @@ function verAccesos(){toast('Revisando los gerentes de sucursal de la nómina...
     var h='<h3>👥 Accesos de jefaturas</h3><p class="sb" style="font-size:14px;margin:0 0 6px">Gerentes de sucursal de la nómina con acceso al sistema'+(nuevos?' — <b>'+nuevos+' nuevo(s) creado(s) ahora</b>':'')+'. Envíe a cada uno su acceso por correo o WhatsApp.</p>'+
       '<p style="margin:0 0 8px"><a target="_blank" href="'+esc(X.qr)+'">Enlace del QR para trabajadores</a></p>';
     if(!X.lista.length)h+='<div class="info">No encontré personas con cargo "Gerente" en la nómina.</div>';
-    X.lista.forEach(function(o){
+    X.lista.forEach(function(o,ix){
       var asunto='Acceso al Sistema de Reporte de Eventos — Constructor Center',txt=msgAcceso(o,X),w=fonoWsp(o.telefono);
       h+='<div class="acj"><b>'+esc(o.nombre)+'</b>'+(o.nuevo?'<span class="nv">nuevo</span>':'')+'<div class="sb">'+esc(o.cargo||'')+' · '+esc(o.sucursal||'')+(o.activo===false?' · <b style="color:var(--ro)">INACTIVO</b>':'')+'</div>'+
         (o.error?'<div class="sb" style="color:var(--ro)">⚠ '+esc(o.error)+'</div>':
-        '<div class="cred">Usuario: <b>'+esc(o.usuario)+'</b><br>Clave: <b>'+esc(o.clave)+'</b></div><div class="bts">'+
+        '<div class="cred">Usuario: <b>'+esc(o.usuario)+'</b><br>Clave: <b>'+esc(o.clave)+'</b></div>'+
+        '<div class="sucE"><label>Sucursales que ve (si se mueve entre sucursales, sepárelas con coma)</label><div class="fx"><input id="sucU'+ix+'" list="dlSucAcc" value="'+esc(o.sucursal||'')+'"><button onclick="guardaSucU('+ix+',\''+esc(o.usuario).replace(/'/g,"\\'")+'\')">Guardar</button></div></div><div class="bts">'+
         (o.correo?'<a class="ma" target="_blank" href="mailto:'+encodeURIComponent(o.correo)+'?subject='+encodeURIComponent(asunto)+'&body='+encodeURIComponent(txt)+'">📧 Enviar por correo</a>':'<a class="no">Sin correo en la nómina</a>')+
         (w?'<a class="wa" target="_blank" href="https://wa.me/'+w+'?text='+encodeURIComponent(txt)+'">📲 Enviar por WhatsApp</a>':'<a class="no">Sin teléfono en la nómina</a>')+'</div>')+'</div>';
     });
+    h+='<datalist id="dlSucAcc">'+(X.sucursales||[]).concat(['TODAS']).map(function(x){return '<option value="'+esc(x)+'">'}).join('')+'</datalist>';
     var d=document.createElement('div');d.className='modal';
     d.innerHTML='<div class="cx ancho">'+h+'<div class="bt" style="margin-top:12px"><button style="background:var(--az);color:#fff">Cerrar</button></div></div>';
     d.querySelector('.bt button').onclick=function(){d.remove()};d.onclick=function(e){if(e.target===d)d.remove()};document.body.appendChild(d);
   }).catch(function(e){alert(e.message||e)});
 }
+function guardaSucU(ix,usuario){var val=$('sucU'+ix).value,lista=val.split(',').map(function(x){return x.trim()}).filter(String);
+  if(!lista.length){toast('Escriba al menos una sucursal');return}
+  llamar('sucursalesUsuario',TOKEN,usuario,lista).then(function(r){$('sucU'+ix).value=r.sucursal;toast('✔ Sucursales guardadas: '+r.sucursal)}).catch(function(e){alert(e.message||e)})}
 function pedirLimpiar(){confirma('🧹 ¿Seguro que quieres limpiar el formulario?','Se borra todo lo que escribiste y no está guardado. Los casos ya guardados no se tocan.','SÍ, limpiar',function(){nuevoCaso();toast('Formulario limpio')},true)}
 function archivar(id,si){var c=CASOS.find(function(x){return x['ID']===id})||{};
   confirma(si?'🗄 ¿Archivar el caso '+esc(id)+'?':'↩ ¿Desarchivar el caso '+esc(id)+'?',
@@ -1844,7 +1856,7 @@ function cargarLibsInforme(){if(LIBS)return LIBS;
   LIBS=(async function(){
     if(!window.pdfMake)await cargaScript('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/pdfmake.min.js');
     if(!window.PDFLib)await cargaScript('https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js');
-    if(!window.Informe)await cargaScript(BASE_PUB+'informe.js?v=5');
+    if(!window.Informe)await cargaScript(BASE_PUB+'informe.js?v=6');
     var FU='https://cdn.jsdelivr.net/npm/@fontsource/lato@5.0.20/files/lato-latin-';
     var F={normal:'400-normal.woff',bold:'700-normal.woff',italics:'400-italic.woff',bolditalics:'700-italic.woff'},vfs={},buf={};
     await Promise.all(Object.keys(F).map(function(k){return fetch(FU+F[k]).then(function(r){if(!r.ok)throw new Error('No se pudo cargar la letra del informe');return r.arrayBuffer()}).then(function(b){buf[k]=b;vfs[F[k]]=bufB64(b)})}));
