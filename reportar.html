@@ -30,6 +30,7 @@ h1{font-size:24px;line-height:1.25;margin:6px 0 6px;color:var(--az)}
 input,textarea,select{width:100%;padding:14px;border:3px solid var(--bo);border-radius:12px;font-size:19px;font-family:inherit;background:#fff}
 input:focus,textarea:focus{outline:none;border-color:var(--az2)}
 textarea{min-height:120px;resize:none;overflow:hidden;line-height:1.4}
+.op.pdfB{background:#0b3d91;border-color:#0b3d91;color:#fff;font-weight:bold}.op.pdfB small{color:#dfe8ff}
 label.l{display:block;font-weight:bold;font-size:16px;color:#33435c;margin:14px 0 6px}
 .nav{position:fixed;bottom:0;left:0;right:0;background:#fff;box-shadow:0 -2px 10px rgba(0,0,0,.12);padding:12px 16px;display:flex;gap:10px;z-index:6}
 .nav button{flex:1;border:0;border-radius:14px;padding:16px;font-size:19px;font-weight:bold;cursor:pointer;font-family:inherit}
@@ -536,7 +537,7 @@ var PASOS={
      '<div class="yo"><small>Tu número de caso</small><div class="nom">'+esc(R._id)+'</div><small>Anótalo o sácale una foto a esta pantalla.</small></div>'+
      caja('info','<b>¿Qué pasa ahora?</b><ol>'+pasos.map(function(p){return '<li>'+p+'</li>'}).join('')+'</ol>')+
      (R.urgente==='SI'?caja('ro','Recuerda: atiéndete en '+esc(INFO.oal)+(INFO.fonoOal?' — fono <b>'+esc(INFO.fonoOal)+'</b>':'')+'.'):'')+
-     mutualCard()+
+     mutualCard()+btnPdf()+
      (MODO==='qr'?'<button class="op" onclick="location.reload()"><span class="ic">↩</span><span>Hacer otro reporte</span></button>':caja('ok','Ya puedes cerrar esta página.'));
  }}
 };
@@ -703,6 +704,12 @@ function mutualCard(){var M=R._mutual;if(!M||lk()||!lesion())return '';
     (String(R.correo||'').indexOf('@')>0?caja('ok','📧 También te enviamos una copia a <b>'+esc(R.correo)+'</b> con el PDF de tu declaración.'):'');
 }
 
+// ---- Descargar el PDF de la declaración (para llevarlo a la Mutual) ----
+function btnPdf(){if(!R._pdf||!R._pdf.b64)return '';
+  return '<button class="op pdfB" onclick="bajarPdf()"><span class="ic">⬇</span><span>Descargar mi declaración (PDF)<small>'+(lesion()&&!lk()?'Llévala a '+esc(INFO.oal)+' junto a estos datos':'Guárdala en tu celular')+'</small></span></button>'}
+function bajarPdf(){try{var b=atob(R._pdf.b64),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);
+  var url=URL.createObjectURL(new Blob([u],{type:'application/pdf'})),a=document.createElement('a');a.href=url;a.download=R._pdf.nombre||('Declaracion caso '+R._id+'.pdf');
+  document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(url);a.remove()},4000)}catch(e){aviso('No se pudo descargar: '+esc(e.message))}}
 // ---- Enviar ----
 function conOtros(){var g={};Object.keys(R).forEach(function(k){if(!/Otro$/.test(k)||!(R[k]||'').trim())return;var b=k.slice(0,-4),t=R[k].trim();if(!(b in R))return;g[b]=R[b];
     R[b]=Array.isArray(R[b])?R[b].map(function(x){return esOtro(x)?x+': '+t:x}):(esOtro(R[b])?R[b]+': '+t:R[b])});return g}
@@ -713,7 +720,7 @@ function enviar(){
     var ap={run:R.run||'',cargo:R.cargo||'',donde:R.donde||'',comoSupo:R.comoSupo||'',queVio:R.queVio||[],relato:R.relato||'',sugerencia:R.sugerencia||'',
       pendientes:R._alt||{},fotos:R.fotos||[],firma:FIRMA.png()};
     ENVIANDO=true;botones();
-    google.script.run.withSuccessHandler(function(r){ENVIANDO=false;R._id=r.id;PILA=[];ir('fin',true)})
+    google.script.run.withSuccessHandler(function(r){ENVIANDO=false;R._id=r.id;R._pdf=r.pdf||null;PILA=[];ir('fin',true)})
       .withFailureHandler(function(e){ENVIANDO=false;botones();aviso(esc(e.message))}).responderInvitacion(TK,ap);
     return;
   }
@@ -736,7 +743,7 @@ function enviar(){
     horaEntrada:R.horaEntrada||'',horaSalida:R.horaSalida||'',lugarDireccion:R.lugarDireccion||'',pendientes:R._alt||{},
     fotos:R.fotos||[],firma:FIRMA.png()};
   ENVIANDO=true;botones();
-  var ok=function(r){ENVIANDO=false;R._id=r.id;R._mutual=r.mutual||null;PILA=[];ir('fin',true)};
+  var ok=function(r){ENVIANDO=false;R._id=r.id;R._mutual=r.mutual||null;R._pdf=r.pdf||null;PILA=[];ir('fin',true)};
   var ko=function(e){ENVIANDO=false;botones();aviso(esc(e.message));if(MODO==='qr'&&/RUT|clave/.test(e.message)){PILA=[];ir('rut',true)}};
   if(MODO==='trab')google.script.run.withSuccessHandler(ok).withFailureHandler(ko).responderInvitacion(TK,envio);
   else google.script.run.withSuccessHandler(ok).withFailureHandler(ko).enviarReporte(R.k,envio,SES);
