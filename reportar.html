@@ -20,15 +20,16 @@ h1{font-size:24px;line-height:1.25;margin:6px 0 6px;color:var(--az)}
   padding:16px;margin:0 0 12px;font-size:19px;font-weight:bold;color:var(--tx);cursor:pointer;font-family:inherit;line-height:1.25}
 .op .ic{font-size:34px;flex:none;width:44px;text-align:center}
 .op small{display:block;font-weight:normal;font-size:14px;color:#5a6780;margin-top:3px}
-.op.on{border-color:var(--az);background:#e3ecfb}
+.op.on{border-color:var(--az);background:#cfe0fb;box-shadow:0 0 0 2px #9fbdf0}
 .op.ro{border-color:#ef9a9a}.op.ro.on{border-color:var(--ro);background:#fdecea}
 .chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
 .chip{border:3px solid var(--bo);background:#fff;border-radius:30px;padding:12px 18px;font-size:17px;cursor:pointer;user-select:none;font-family:inherit;color:var(--tx)}
-.chip.on{background:var(--az);border-color:var(--az);color:#fff;font-weight:bold}
+.chip.on{background:var(--az);border-color:var(--az);color:#fff;font-weight:bold;box-shadow:0 0 0 2px #c9dafc}
+.chip.on::before,.op.on[onclick^="elige"]>span:last-child::before{content:"✔ "}
 .grupo{font-size:15px;font-weight:bold;color:var(--az);margin:14px 0 8px}
 input,textarea,select{width:100%;padding:14px;border:3px solid var(--bo);border-radius:12px;font-size:19px;font-family:inherit;background:#fff}
 input:focus,textarea:focus{outline:none;border-color:var(--az2)}
-textarea{min-height:170px;resize:vertical;line-height:1.4}
+textarea{min-height:120px;resize:none;overflow:hidden;line-height:1.4}
 label.l{display:block;font-weight:bold;font-size:16px;color:#33435c;margin:14px 0 6px}
 .nav{position:fixed;bottom:0;left:0;right:0;background:#fff;box-shadow:0 -2px 10px rgba(0,0,0,.12);padding:12px 16px;display:flex;gap:10px;z-index:6}
 .nav button{flex:1;border:0;border-radius:14px;padding:16px;font-size:19px;font-weight:bold;cursor:pointer;font-family:inherit}
@@ -153,11 +154,16 @@ var PARTES={};for(var g in PARTES_BASE){PARTES[g]=[];PARTES_BASE[g].forEach(func
 var EVA=[['😀','#1b9e3e'],['🙂','#5cb85c'],['🙂','#8bc34a'],['😐','#cddc39'],['😐','#ffeb3b'],['😕','#ffc107'],['😟','#ff9800'],['😣','#ff7043'],['😖','#f4511e'],['😫','#e53935'],['😭','#b71c1c']];
 
 function $(i){return document.getElementById(i)}
+// cajas de texto que crecen solas
+function autoAlto(t){if(!t||t.tagName!=='TEXTAREA')return;t.style.height='auto';t.style.height=(t.scrollHeight+2)+'px'}
+document.addEventListener('input',function(e){autoAlto(e.target)});document.addEventListener('focusin',function(e){autoAlto(e.target)});
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function has(t){return (R.tipos||[]).indexOf(t)>-1}
 function acc(){return has(T_ACC)||has(T_TRA)}
 function lesion(){return acc()||has(T_EP)}
 function lk(){return has(T_LK)}
+// Documento ante la Mutual según lo que se marcó: DIAT (accidente), DIEP (posible enfermedad), ninguno (daño, incidente)
+function docT(){var a=acc(),e=has(T_EP);return a&&e?'DIAT y DIEP':a?'DIAT':e?'DIEP':''}
 function hoyISO(o){var h=new Date();h.setDate(h.getDate()-(o||0));return new Date(h-h.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
 function dma(iso){var p=String(iso||'').split('-');return p.length===3?p[2]+'-'+p[1]+'-'+p[0]:iso}
 
@@ -263,7 +269,7 @@ function cuerpoToca(p){var a=R.partes=(R.partes||[]).filter(function(x){return x
 var PASOS={
  inicio:{nav:0,guia:'Toca el botón <b>Comenzar</b> para empezar',html:function(){
    if(MODO==='trab')return '<div class="triste">😔</div>'+titulo('Hola '+esc(INV.saludo)+', lamentamos lo que te pasó','Prevención registró: <b>'+esc(CASO.tipos.join(' + '))+'</b> del '+esc(CASO.fechaDMA||dma(CASO.fecha))+'. Ahora necesitamos <b>tu declaración</b>.')+
-     caja('info','<b>¿Para qué es esto?</b><ul><li>Con tus respuestas se llena la <b>DIAT</b> para la Mutual.</li><li>Te vamos a guiar pregunta por pregunta. Si algo no lo sabes, toca <b>No sé</b>.</li><li>Al final firmas con el dedo y te llega un resumen con los datos que te piden en la Mutual.</li></ul>')+
+     caja('info','<b>¿Para qué es esto?</b><ul>'+(docT()?'<li>Con tus respuestas se llena la <b>'+docT()+'</b> para la Mutual.</li>':'<li>Con tus respuestas queda registrado lo que pasó, para investigarlo y que no se repita.</li>')+'<li>Te vamos a guiar pregunta por pregunta. Si algo no lo sabes, toca <b>No sé</b>.</li><li>Al final firmas con el dedo y te llega un resumen '+(docT()?'con los datos que te piden en la Mutual.':'de lo que informaste.')+'</li></ul>')+
      '<button class="op on" onclick="siguiente()"><span class="ic">▶</span><span>Comenzar mi declaración</span></button>';
    if(MODO==='aporte')return '<div class="grande">🤝</div>'+titulo('Hola '+esc(INV.saludo)+', necesitamos tu ayuda','Se está investigando un caso: <b>'+esc(CASO.tipos.join(' + '))+'</b> del '+esc(CASO.fechaDMA||dma(CASO.fecha))+' en <b>'+esc(CASO.sucursal)+'</b>'+(CASO.trabajador?' (afectado: '+esc(CASO.trabajador)+')':'')+'.')+
      caja('info','Te pedimos tu aporte como <b>'+esc(CALIDAD[INV.tipo]||'colaborador')+'</b>.<ul><li>No se busca culpables: se busca la causa para que no vuelva a pasar.</li><li>Son pocas preguntas. Si algo no lo sabes, toca <b>No sé</b>.</li><li>Al final firmas con el dedo.</li></ul>')+
@@ -321,7 +327,7 @@ var PASOS={
  },ok:function(){return !!R.urgente||'Elige una opción'}},
 
  datos:{ver:function(){return !lk()},alt:1,campos:['direccion','comuna','telefono'],guia:'Revisa tus datos. Si algo cambió, corrígelo y toca <b>Siguiente</b>',html:function(){
-   return titulo('Revisa tus datos','La Mutual los pide para la <b>DIAT</b>. Si algo cambió, corrígelo.')+
+   return titulo('Revisa tus datos',(docT()?'La Mutual los pide para la <b>'+docT()+'</b>. ':'Son para poder contactarte. ')+'Si algo cambió, corrígelo.')+
      '<label class="l">Dirección de tu casa</label>'+campo('direccion','Calle y número')+
      '<label class="l">Comuna</label>'+campo('comuna','Ej: Temuco')+
      '<label class="l">Teléfono</label>'+campo('telefono','Ej: 9 1234 5678','tel')+
@@ -683,7 +689,7 @@ function pad(id){
 function resFirma(filas){
   return '<div class="res">'+filas.map(function(x){return '<div><b>'+x[0]+'</b>'+esc(x[1]||'—')+'</div>'}).join('')+'</div>'+PASOS._firma.html()}
 // ---- Datos para la Mutual ----
-function mutualCard(){var M=R._mutual;if(!M||lk())return '';
+function mutualCard(){var M=R._mutual;if(!M||lk()||!lesion())return '';
   var f=function(a,b){return '<div><b>'+a+'</b>'+esc(b||'—')+'</div>'};
   var txt='CASO '+M.evento.caso+' — '+M.evento.tipo+'\nFecha: '+M.evento.fecha+' '+M.evento.hora+'\nLugar: '+M.evento.lugar+(M.evento.direccion?' ('+M.evento.direccion+')':'')+
     '\n\nEMPRESA: '+M.empresa.razon+'\nRUT empresa: '+(M.empresa.rut||'—')+'\nDirección: '+(M.empresa.direccion||'—')+'\nSucursal: '+M.empresa.sucursal+(M.empresa.dirSucursal?' — '+M.empresa.dirSucursal:'')+
