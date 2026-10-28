@@ -262,7 +262,7 @@ textarea{overflow:hidden;resize:none;min-height:64px}
 .rchip{background:#e3ecfb;border:1px solid #b7c9ea;border-radius:12px;padding:2px 8px;font-size:12.5px}
 .rchip b{color:var(--ro);cursor:pointer;margin-left:2px}
 .mQ{height:32px;margin-top:18px}
-@media(max-width:640px){main{padding-bottom:230px}.guiaA .bur{flex-wrap:wrap;height:112px;align-content:flex-start;font-size:13px;gap:4px}.guiaA .gav{display:none}#guiaATx{flex:1 1 100%}.guiaA .gbt{max-width:none;width:100%;justify-content:flex-start}#asisP{bottom:186px;height:min(440px,calc(100vh - 260px))}}
+@media(max-width:640px){main{padding-bottom:230px}.guiaA .bur{flex-wrap:wrap;height:112px;align-content:flex-start;font-size:13px;gap:4px}.guiaA .gav{display:none}#guiaATx{flex:1 1 100%}.guiaA .gbt{max-width:none;width:100%;justify-content:flex-start}#asisP{bottom:186px;height:min(330px,calc(100vh - 260px))}}
 .mQ{width:40px;justify-self:end}
 .mMv{border:0;background:none;color:var(--az2);font-size:12px;cursor:pointer;padding:2px 0;margin-top:2px;text-decoration:underline}
 .inmR{border:1px solid var(--bo);border-radius:8px;padding:6px 8px;margin:4px 0;font-size:13.5px;background:#fff}
@@ -279,18 +279,20 @@ textarea{overflow:hidden;resize:none;min-height:64px}
 .vid input{flex:1;min-width:180px}
 .barraP{width:100%;height:8px;background:#e3e7ef;border-radius:4px;overflow:hidden}.barraP i{display:block;height:100%;width:0;background:var(--ve)}
 /* Asísteme */
-#asisP{position:fixed;right:10px;bottom:160px;width:min(420px,calc(100% - 20px));height:min(460px,calc(100vh - 240px));background:#fff;border:3px solid var(--az);border-radius:16px;z-index:25;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+#asisP{position:fixed;right:10px;bottom:160px;width:min(320px,calc(100% - 20px));height:min(340px,calc(100vh - 240px));background:#fff;border:2px solid var(--az);border-radius:14px;font-size:13px;z-index:25;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,.3)}
 #asisP.hide{display:none!important}
-#asisP .ah{background:var(--az);color:#fff;padding:8px 10px;display:flex;align-items:center;gap:8px;border-radius:12px 12px 0 0;font-weight:bold}
-#asisP .ah button{margin-left:auto;background:rgba(255,255,255,.2);border:0;color:#fff;border-radius:8px;padding:4px 10px;cursor:pointer;font-weight:bold}
-#asisLog{flex:1;overflow:auto;padding:8px;font-size:14px;background:#f6f8fc}
-#asisLog .m{margin:6px 0;padding:8px 10px;border-radius:12px;max-width:90%;line-height:1.35}
+#asisP .ah{background:var(--az);color:#fff;padding:5px 8px;display:flex;align-items:center;gap:6px;border-radius:11px 11px 0 0;font-weight:bold;font-size:13px}#asisP .ah small{font-weight:normal;opacity:.8;font-size:11px}
+#asisP .ah .abt{margin-left:auto;display:flex;gap:3px}#asisP.min{height:auto!important}#asisP.min #asisLog,#asisP.min .aq,#asisP.min .ain{display:none}
+#asisP.t0{width:min(280px,calc(100% - 20px));height:min(280px,calc(100vh - 240px))}#asisP .ah small{display:none}#asisP.t2 .ah small{display:inline}#asisP.min{width:auto!important;min-width:230px}#asisP.t2{width:min(420px,calc(100% - 20px));height:min(480px,calc(100vh - 200px));font-size:14px}#asisP.t2 #asisLog{font-size:14px}
+#asisP .ah button{background:rgba(255,255,255,.2);border:0;color:#fff;border-radius:6px;padding:2px 6px;cursor:pointer;font-weight:bold;font-size:12px}
+#asisLog{flex:1;overflow:auto;padding:6px;font-size:12.5px;background:#f6f8fc}
+#asisLog .m{margin:4px 0;padding:6px 8px;border-radius:10px;max-width:92%;line-height:1.3}#asisLog .m ol{margin:4px 0;padding-left:18px}
 #asisLog .m.yo{background:#e3ecfb;margin-left:auto;text-align:right}
 #asisLog .m.el{background:#fff;border:1px solid var(--bo)}
-#asisP .aq{display:flex;flex-wrap:wrap;gap:4px;padding:6px 8px;border-top:1px solid var(--bo)}
-#asisP .aq span{font-size:12px;border:1px solid #b7c9ea;background:#eef4ff;border-radius:12px;padding:3px 8px;cursor:pointer}
-#asisP .ain{display:flex;gap:6px;padding:8px;border-top:1px solid var(--bo)}
-#asisP .ain input{flex:1}
+#asisP .aq{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:4px;padding:4px 6px;border-top:1px solid var(--bo);scrollbar-width:thin}
+#asisP .aq span{font-size:11px;white-space:nowrap;border:1px solid #b7c9ea;background:#eef4ff;border-radius:10px;padding:2px 7px;cursor:pointer}
+#asisP .ain{display:flex;gap:5px;padding:5px 6px;border-top:1px solid var(--bo)}
+#asisP .ain input{flex:1;min-width:0;padding:6px 8px;font-size:13px}#asisP .ain button{padding:4px 10px!important;font-size:14px!important;min-height:0!important}
 #asisP .ain button{border:0;border-radius:10px;padding:0 12px;font-size:18px;cursor:pointer;background:var(--na);color:#fff}
 #asisP .ain button.oye{background:var(--ro);animation:pulso 1s infinite}
 </style>
@@ -1902,13 +1904,18 @@ var ASISV={abierto:false,rec:null,oyendo:false,dictar:false,campo:null};
 document.addEventListener('focusin',function(e){var t=e.target;if(t&&t.matches&&t.matches('input:not([type=date]):not([type=time]):not([type=checkbox]):not([type=file]),textarea')&&!t.closest('#asisP'))ASISV.campo=t});
 function abrirAsis(){var p=$('asisP');
   if(!p){p=document.createElement('div');p.id='asisP';p.className='hide';
-    p.innerHTML='<div class="ah">🧑‍🏫 Asísteme <small style="font-weight:normal;opacity:.85">háblame o escríbeme</small><button onclick="cerrarAsis()">✕ Cerrar</button></div><div id="asisLog"></div>'+
+    p.innerHTML='<div class="ah">🧑‍🏫 Asísteme <small>háblame o escríbeme</small><span class="abt"><button title="Achicar" onclick="tamAsis(-1)">A−</button><button title="Agrandar" onclick="tamAsis(1)">A+</button><button title="Minimizar" id="asisMinB" onclick="minAsis()">▁</button><button title="Cerrar" onclick="cerrarAsis()">✕</button></span></div><div id="asisLog"></div>'+
       '<div class="aq">'+['¿Qué hago ahora?','Llévame','¿Cómo armo el árbol?','¿Qué es causa de fondo?','¿Qué medida pongo?','¿Corresponde DIAT?','✍ Dictar en el campo','Descargar el PDF'].map(function(x){return '<span onclick="asisPreguntar(this.textContent)">'+x+'</span>'}).join('')+'</div>'+
       '<div class="ain"><input id="asisIn" placeholder="Escribe tu pregunta..." onkeydown="if(event.key===\'Enter\'){asisPreguntar(this.value);this.value=\'\'}"><button id="asisMic" title="Hablar" onclick="asisOir()">🎤</button><button title="Enviar" onclick="asisPreguntar($(\'asisIn\').value);$(\'asisIn\').value=\'\'">➤</button></div>';
     document.body.appendChild(p)}
-  p.classList.remove('hide');ASISV.abierto=true;
+  p.classList.remove('hide','min');aplicaTamAsis();if($('asisMinB'))$('asisMinB').textContent='▁';ASISV.abierto=true;
   if(!$('asisLog').children.length){var g=guiaActual();asisMsg('Hola '+String((USR&&USR.nombre)||'').split(' ')[0]+'. Estoy aquí para guiarte paso a paso. '+g,'el')}
-  else asisMsg(guiaActual(),'el')}
+  else{var u=[].slice.call($('asisLog').querySelectorAll('.m.el')).pop(),g2=guiaActual();if(!u||sinHtml(u.innerHTML).indexOf(sinHtml(g2))<0)asisMsg(g2,'el')}}
+// tamaño del asistente: chico / normal / grande, y minimizar (solo la barra azul); se recuerda en este equipo
+var ASIST=1;try{ASIST=+(localStorage.getItem('asisTam')||1)}catch(e){}
+function aplicaTamAsis(){var p=$('asisP');if(!p)return;p.classList.remove('t0','t2');if(ASIST===0)p.classList.add('t0');if(ASIST===2)p.classList.add('t2')}
+function tamAsis(d){ASIST=Math.max(0,Math.min(2,ASIST+d));try{localStorage.setItem('asisTam',ASIST)}catch(e){}var p=$('asisP');if(p)p.classList.remove('min');aplicaTamAsis()}
+function minAsis(){var p=$('asisP');if(!p)return;var m=p.classList.toggle('min');$('asisMinB').textContent=m?'▢':'▁';$('asisMinB').title=m?'Abrir':'Minimizar'}
 function cerrarAsis(){var p=$('asisP');if(p)p.classList.add('hide');ASISV.abierto=false;asisParar()}
 function sinHtml(h){var d=document.createElement('div');d.innerHTML=h;return (d.textContent||'').replace(/[\u{1F300}-\u{1FAFF}☀-➿️]/gu,'').replace(/\s+/g,' ').trim()}
 function guiaActual(){if(invEnPantalla()||(!$('cInvest').classList.contains('hide')&&IPASO>1)){var e=coachEstado();return 'Estás en la investigación, paso '+IPASO+' de 5. '+sinHtml(e[2])}return sinHtml(textoGuiaA())}
@@ -1916,6 +1923,8 @@ function asisMsg(t,q){var d=document.createElement('div');d.className='m '+q;d.i
 function asisPreguntar(q){q=String(q||'').trim();if(!q)return;asisMsg(esc(q),'yo');var r=asisResponder(q);asisMsg(r.t,'el');if(r.a)setTimeout(r.a,300)}
 function asisResponder(q){var n=norm2(q),doc=docOAL(),tp=ST.tipos||[];
   var R=function(t,a){return {t:t,a:a}};
+  if(/^(HOLA|BUEN(OS|AS)|QUE TAL|COMO ESTAS|COMO ESTA|HEY|ALO)\b/.test(n))return R('¡Hola! Bien, aquí para ayudarte con el caso. ¿En qué te ayudo? Por ejemplo: <i>¿qué hago ahora?</i>');
+  if(/^(GRACIAS|VALE|OK|BUENA|EXCELENTE|PERFECTO)\b/.test(n))return R('¡De nada! Si necesitas algo más, aquí estoy.');
   if(/DICTA|ESCRIBE LO QUE DIGO/.test(n)){if(!ASISV.campo)return R('Primero toca el cuadro donde quieres escribir y después vuelve a tocar <b>✍ Dictar en el campo</b>.');ASISV.dictar=true;return R('Te escucho: habla y lo escribo en el campo que tocaste. Para terminar toca 🎤 de nuevo.',function(){asisOir(true)})}
   if(/CALLA|SILENCIO|NO HABLES/.test(n)){VOZA=false;try{speechSynthesis.cancel()}catch(e){}return R('Listo, me quedo en silencio. Si quieres que vuelva a hablar, dime "háblame".')}
   if(/HABLAME|ACTIVA LA VOZ/.test(n)){VOZA=true;return R('Listo, vuelvo a hablarte.')}
@@ -1946,7 +1955,7 @@ function asisResponder(q){var n=norm2(q),doc=docOAL(),tp=ST.tipos||[];
   if(/FIRMA/.test(n))return R('El trabajador firma con el dedo cuando responde su declaración por link, o en la toma presencial (tarjeta 9). Su firma aparece en el informe junto a su declaración, y la declaración original firmada va como Anexo 1.');
   if(/NOMINA|NO APARECE|INSCRI/.test(n))return R('Solo se pueden registrar personas inscritas en la nómina. Si no aparece, debe completar primero el Formulario de Inscripción. Si sus datos están mal (por ejemplo la fecha de nacimiento), corrígelos aquí y avisa para corregir la nómina.');
   if(/GUARDA/.test(n))return R('Para guardar toca el botón verde <b>💾 Guardar</b> de abajo. Al guardar se genera el informe PDF y queda en la carpeta del caso.',function(){$('btnGuardar').scrollIntoView({behavior:'smooth',block:'center'})});
-  return R('No te entendí bien. Puedes preguntarme, por ejemplo: <i>¿qué hago ahora?</i>, <i>¿cómo armo el árbol?</i>, <i>¿qué medida pongo?</i>, <i>¿corresponde DIAT?</i>, o decirme <i>siguiente</i>, <i>atrás</i> o <i>llévame</i>.<br><br>'+guiaActual())}
+  return R('No te entendí bien. Prueba con: <i>¿qué hago ahora?</i>, <i>¿cómo armo el árbol?</i>, <i>¿qué medida pongo?</i>, <i>¿corresponde DIAT?</i>, o <i>llévame</i>.')}
 function asisOir(dictar){var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){asisMsg('Este navegador no permite hablarme. Escribe tu pregunta (en el celular puedes usar el micrófono del teclado).','el');return}
   if(ASISV.oyendo){asisParar();return}
