@@ -271,9 +271,10 @@ textarea{overflow:hidden;resize:none;min-height:64px}
 .conc{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;border:1px solid var(--bo);border-radius:10px;padding:8px;background:#f7f9fd}
 .conc .cn{min-width:26px;height:26px;border-radius:6px;background:var(--az);color:#fff;font-weight:bold;display:flex;align-items:center;justify-content:center}
 .conc input{margin-bottom:4px;font-weight:bold}
-.fotos .fo{width:150px;border:1px solid var(--bo);border-radius:10px;padding:6px;background:#fff;display:flex;flex-direction:column;gap:4px}
+.fotos .fo{width:170px;border:1px solid var(--bo);border-radius:10px;padding:6px;background:#fff;display:flex;flex-direction:column;gap:4px}
 .fotos .fo img{width:100%;height:100px;object-fit:cover;border-radius:6px}
 .fotos .fo .fph{display:flex;align-items:center;justify-content:center;height:100px;background:var(--gr);border-radius:6px;text-decoration:none;font-weight:bold;color:var(--az);text-align:center}
+.fotos .fo .fph.im{position:relative;padding:0;overflow:hidden;background:#000}.fotos .fo .fph.im img{height:120px;border-radius:6px}.fotos .fo .fph.im .nfo{position:absolute;left:4px;top:4px;background:rgba(11,61,145,.85);color:#fff;font-size:11px;border-radius:6px;padding:1px 6px}
 .fotos .fo input{font-size:12.5px;padding:6px}
 .fotos .fo .fob{display:flex;gap:4px;align-items:center;justify-content:space-between}
 .fotos .fo .fob button{border:1px solid var(--bo);background:#fff;border-radius:6px;cursor:pointer;padding:3px 8px}
@@ -634,7 +635,7 @@ textarea{overflow:hidden;resize:none;min-height:64px}
 
     <div class="inav">
       <button class="btn gr" id="iAtras" onclick="invPaso(IPASO-1)">⬅ Atrás</button>
-      <button class="btn" id="iSig" onclick="invPaso(IPASO+1)">Siguiente ➡</button>
+      <button class="btn" id="iSig" onclick="pasoSig()">Siguiente ➡</button>
     </div>
   </div></div>
 
@@ -727,7 +728,7 @@ textarea{overflow:hidden;resize:none;min-height:64px}
   <p style="font-size:12px;color:#666">Tasa de accidentabilidad = accidentes del trabajo con tiempo perdido ÷ dotación × 100. Tasa de siniestralidad = días perdidos (accidentes del trabajo y EP) ÷ dotación × 100. No incluye trayecto.</p>
 </main>
 
-<div class="barra" id="barra"><button class="btn ve" id="btnGuardar" onclick="guardar()">💾 Guardar caso y generar PDF</button></div>
+<div class="barra" id="barra"><button class="btn ve" id="btnGuardar" onclick="guardarBarra()">💾 Guardar caso y generar PDF</button><button class="btn na hide" id="btnInforme" onclick="guardar()">📄 Guardar y generar informe</button></div>
 </div>
 
 <script>
@@ -780,7 +781,7 @@ function run(){return google.script.run.withFailureHandler(err)}
 function err(e){
   var m=(e&&e.message)||String(e);
   if(/SESION/.test(m)){var c=credGuardada();ls('tk_eventos',null);if(c){toast('Reconectando...');entrar();return}salir();$('loginMsg').textContent='Tu sesión expiró. Vuelve a entrar.';return}
-  var b=$('btnGuardar');b.disabled=false;b.textContent=EDIT?'💾 Guardar cambios y regenerar PDF':'💾 Guardar caso y generar PDF';
+  var b=$('btnGuardar');b.disabled=false;b.textContent=EDIT?'💾 Guardar':'💾 Guardar caso y generar PDF';
   alert('Error: '+m);
 }
 
@@ -1129,7 +1130,14 @@ function invOk(n){
 function pintaPasos(){var c=$('ipasos');if(!c)return;
   c.innerHTML=IPASOS.map(function(p){var n=+p[0],ok=invOk(n);return '<div class="ip'+(n===IPASO?' act':'')+(ok?' ok':'')+'" data-p="'+n+'" onclick="invPaso('+n+')"><b>'+(ok?'✔':p[1])+'</b>Paso '+n+'<br>'+p[2]+'</div>'}).join('');
   $('iAtras').style.visibility=IPASO>1?'visible':'hidden';
-  $('iSig').textContent=IPASO<5?'Siguiente: '+IPASOS[IPASO][2]+' ➡':'✔ Listo: guardar y generar el informe'}
+  $('iSig').textContent=IPASO<5?(EDIT?'💾 Guardar y seguir: ':'Siguiente: ')+IPASOS[IPASO][2]+' ➡':'✔ Listo: guardar y generar el informe'}
+// Avanzar de paso: en un caso ya creado guarda (sin armar el informe) y lleva al paso siguiente
+function pasoSig(){if(IPASO>=5){guardar();return}var n=IPASO+1;
+  if(!EDIT){invPaso(n);return}
+  guardar({solo:true,luego:function(){invPaso(n);toast('✔ Guardado. Sigue con el paso '+n+': '+IPASOS[n-1][2])}})}
+// Botón verde de abajo: en un caso ya creado solo guarda y te lleva a lo que falta; el informe se genera con su propio botón
+function guardarBarra(){if(!EDIT){guardar();return}
+  guardar({solo:true,luego:function(){toast('✔ Guardado. Te llevo a lo que sigue');setTimeout(function(){try{guiaA();llevar(true)}catch(e){}},400)}})}
 function invPaso(n){if(n<1)n=1;if(n>5){var g=$('btnGuardar');if(g)g.scrollIntoView({behavior:'smooth',block:'center'});return}
   IVISTO[IPASO]=1;IPASO=n;document.querySelectorAll('#cInvest .ipaso').forEach(function(d){d.classList.toggle('hide',+d.dataset.p!==n)});
   pintaPasos();if(n===3)pintaArbol();if(n===4)pintaMedCob();if(n===5&&!$('concl').children.length)CONC_T.slice(0,0).forEach(addConcl);
@@ -1344,7 +1352,7 @@ function coachEstado(){var q=function(s){return document.querySelector(s)};
     return [$('iSig'),'Siguiente','Medidas listas ✔. Toca <b>Siguiente</b> para las conclusiones.','Medidas listas. Toca siguiente para las conclusiones.']}
   if(IPASO===5){if(!leerConcl().length)return [q('#cInvest .ipaso[data-p="5"] > .btn.na'),'Proponer','<b>Paso 5:</b> toca <b>✨ Proponer conclusiones</b>: te dejo una propuesta con los datos del caso para que la revises.','Paso 5. Toca proponer conclusiones y revísalas.'];
     if(!filas('participantes','.fila3').some(function(x){return x.nombre})){var pv=document.querySelector('#participantes .fila3 [data-k="nombre"]');return [pv||q('#cInvest .ipaso[data-p="5"] .btn[onclick^="addParticipante"]'),'Participantes','Anota <b>quiénes participaron</b> de la investigación.','Anota quiénes participaron de la investigación.']}
-    return [$('btnGuardar')||$('iSig'),'Guardar','🎉 ¡Investigación completa! Toca <b>Guardar</b>: se genera el informe PDF con el formato aprobado.','Investigación completa. Toca guardar.']}
+    return [($('btnInforme')&&!$('btnInforme').classList.contains('hide')?$('btnInforme'):$('btnGuardar'))||$('iSig'),'Informe','🎉 ¡Investigación completa! Toca <b>📄 Guardar y generar informe</b>: se arma el informe PDF con el formato aprobado.','Investigación completa. Toca guardar y generar informe.']}
   return [null,'','','']}
 function coach(){var c=$('coachTx');if(!c||$('cInvest').closest('.hide'))return;
   var a=document.activeElement,e;
@@ -1690,7 +1698,7 @@ function subir(i,inp){
 
 // ---------- GUARDAR ----------
 function v(i){return ($(i).value||'').trim()}
-function guardar(){
+function guardar(op){op=op||{};
   if(!ST.tipos.length){alert('Marca el tipo de evento.');return}
   if(!v('t_nombre')){alert('Busca y elige al trabajador en la nómina.');return}
   if(!EDIT&&!MODO_INI){alert('Elige cómo se toma la declaración del trabajador: la llenas tú ahora o le envías un link.');$('cInicio').scrollIntoView({behavior:'smooth'});return}
@@ -1729,7 +1737,9 @@ function guardar(){
   var eraNuevo=!EDIT,modo=MODO_INI;
   run().withSuccessHandler(function(r){
     b.disabled=false;
-    if(!eraNuevo){toast('Caso '+r.id+' guardado. Armando el informe PDF...');editar(r.id,true,function(){subirCola();informePDF(EDIT,{subir:true})});cargarBanner();return}
+    if(!eraNuevo){var paso=IPASO;
+      if(op.solo){b.textContent='💾 Guardar';editar(r.id,true,function(){subirCola();if(paso>1)invPaso(paso);if(op.luego)op.luego()});cargarBanner();return}
+      toast('Caso '+r.id+' guardado. Armando el informe PDF...');editar(r.id,true,function(){subirCola();informePDF(EDIT,{subir:true});if(paso>1)invPaso(paso)});cargarBanner();return}
     b.textContent='💾 Guardar caso y generar PDF';
     var res=$('resultado');
     res.innerHTML='<div class="res"><b>✔ Caso '+r.id+' guardado.</b><br>'+
@@ -1782,7 +1792,7 @@ function cargarEnForm(d,docs){
   (d.conclusiones||[]).forEach(addConcl);
   (d.testigos||[]).forEach(addTestigo);
   if((d.testigos||[]).length)$('testigos').insertAdjacentHTML('afterbegin','<div class="info" style="margin-top:0">👇 Para no escribir dos veces: toca <b>📲 Pedirle su declaración por link</b> en cada testigo. Su relato llega solo a este caso.</div>');
-  ST.fotos=(d.fotos||[]).map(function(f){return Object.assign({},f)});pintarFotos();pintarVideos();
+  ST.fotos=(d.fotos||[]).map(function(f){return Object.assign({},f)});pintarFotos();pintarVideos();cargarMiniaturas(d);
   plazoDT();
   pintarDecl(d._srv.declaraciones);pintarDocs(docs);
   $('cEstado').classList.remove('hide');$('cDocs').classList.remove('hide');
@@ -1791,7 +1801,7 @@ function cargarEnForm(d,docs){
   $('edPdf').href=d._srv.pdfUrl;$('edCarpeta').href=d._srv.carpetaUrl;
   $('edCerrar').classList.toggle('hide',USR.rol!=='ADMIN');
   $('edCerrar').textContent=est==='CERRADO'?'Reabrir caso':'Cerrar caso';
-  $('btnGuardar').textContent='💾 Guardar cambios y generar el informe PDF';
+  $('btnGuardar').textContent='💾 Guardar';$('btnInforme').classList.remove('hide');
   revisarNomina();cargarAvisos(true);pintaMedCob();setTimeout(autoTodo,80);
   guiaA();
 }
@@ -1847,11 +1857,15 @@ function leerFoto(f){var rd=new FileReader();rd.onload=function(){var img=new Im
     var url=c.toDataURL('image/jpeg',0.8);ST.fotosNuevas.push({data:url.split(',')[1],url:url,nota:''});pintarFotos()};img.src=rd.result};rd.readAsDataURL(f)}
 function moverFoto(i,dlt){var j=i+dlt;if(j<0||j>=ST.fotos.length)return;var x=ST.fotos[i];ST.fotos[i]=ST.fotos[j];ST.fotos[j]=x;pintarFotos()}
 function pintarFotos(){var h='';
-  ST.fotos.forEach(function(f,i){h+='<div class="fo"><a class="fph" target="_blank" href="'+f.url+'">📷<br>Foto '+(i+1)+'</a><input value="'+esc(f.nota||'')+'" placeholder="¿Qué muestra? (sale en el informe)" oninput="ST.fotos['+i+'].nota=this.value">'+
+  ST.fotos.forEach(function(f,i){h+='<div class="fo"><a class="fph'+(MINI[f.id]?' im':'')+'" target="_blank" href="'+f.url+'" title="Ver en grande">'+(MINI[f.id]?'<img src="'+MINI[f.id]+'"><span class="nfo">Foto '+(i+1)+'</span>':'📷<br>Foto '+(i+1))+'</a><input value="'+esc(f.nota||'')+'" placeholder="¿Qué muestra? (sale en el informe)" oninput="ST.fotos['+i+'].nota=this.value">'+
     '<div class="fob"><button type="button" onclick="moverFoto('+i+',-1)" title="Antes">◀</button><button type="button" onclick="moverFoto('+i+',1)" title="Después">▶</button><button type="button" class="x" title="Quitar del informe" onclick="ST.fotos.splice('+i+',1);pintarFotos()">✕</button></div></div>'});
   ST.fotosNuevas.forEach(function(f,i){h+='<div class="fo nueva"><img src="'+f.url+'"><input value="'+esc(f.nota||'')+'" placeholder="¿Qué muestra? (sale en el informe)" oninput="ST.fotosNuevas['+i+'].nota=this.value">'+
     '<div class="fob"><small>Se guarda al guardar el caso</small><button type="button" class="x" title="Quitar" onclick="ST.fotosNuevas.splice('+i+',1);pintarFotos()">✕</button></div></div>'});
   $('fotosPrev').innerHTML=h}
+// miniaturas de las fotos ya guardadas (se piden al abrir el caso)
+var MINI={};
+function cargarMiniaturas(d){if(!d||!d.id||!(d.fotos||[]).length)return;var falta=d.fotos.some(function(f){return !MINI[f.id]});if(!falta){pintarFotos();return}
+  llamar('miniaturas',TOKEN,d.id).then(function(m){Object.assign(MINI,m||{});pintarFotos()}).catch(function(){})}
 function colaVideo(f){if(f.size>2e9)return alert('El video es muy grande (máximo 2 GB).');
   var d=EDIT||EDIT_TMP;if(!d||!d.id){VCOLA.push(f);toast('El video se subirá apenas guardes el caso');pintarVideos();return}
   subirVideo(f,d)}
@@ -1978,7 +1992,7 @@ function asisResponder(q){var n=norm2(q),doc=docOAL(),tp=ST.tipos||[];
   if(/CONCLUSION/.test(n))return R('En el paso 5 toca <b>✨ Proponer conclusiones</b>: te dejo 5 puntos armados con los datos del caso (el evento, la causa principal, las condiciones, los antecedentes del trabajador y las medidas). Revísalos y corrige lo que haga falta.',function(){invPaso(5)});
   if(/FIRMA/.test(n))return R('El trabajador firma con el dedo cuando responde su declaración por link, o en la toma presencial (tarjeta 9). Su firma aparece en el informe junto a su declaración, y la declaración original firmada va como Anexo 1.');
   if(/NOMINA|NO APARECE|INSCRI/.test(n))return R('Solo se pueden registrar personas inscritas en la nómina. Si no aparece, debe completar primero el Formulario de Inscripción. Si sus datos están mal (por ejemplo la fecha de nacimiento), corrígelos aquí y avisa para corregir la nómina.');
-  if(/GUARDA/.test(n))return R('Para guardar toca el botón verde <b>💾 Guardar</b> de abajo. Al guardar se genera el informe PDF y queda en la carpeta del caso.',function(){$('btnGuardar').scrollIntoView({behavior:'smooth',block:'center'})});
+  if(/GUARDA/.test(n))return R('El botón verde <b>💾 Guardar</b> guarda lo que llevas y te lleva a lo que sigue. Cuando esté todo, toca <b>📄 Guardar y generar informe</b> (naranjo) y el PDF queda en la carpeta del caso.',function(){$('btnGuardar').scrollIntoView({behavior:'smooth',block:'center'})});
   return R('No te entendí bien. Prueba con: <i>¿qué hago ahora?</i>, <i>¿cómo armo el árbol?</i>, <i>¿qué medida pongo?</i>, <i>¿corresponde DIAT?</i>, o <i>llévame</i>.')}
 function asisOir(dictar){var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){asisMsg('Este navegador no permite hablarme. Escribe tu pregunta (en el celular puedes usar el micrófono del teclado).','el');return}
