@@ -179,6 +179,9 @@ function chips(campo,lista,multi){
     return '<button class="chip'+(on?' on':'')+'" onclick="elige(\''+campo+'\',\''+esc(v).replace(/'/g,"\\'")+'\','+(multi?1:0)+')">'+esc(v)+'</button>'}).join('')+'</div>'+otroInput(campo,multi);
 }
 function esOtro(v){return /^Otr[oa]( |$)/.test(String(v||''))}
+// sucursales para "¿Dónde pasó?": la del trabajador primero, luego las demás y "Otro lugar"
+function sucursalesEv(){var mia=String((YO||{}).sucursal||'').trim(),n=function(x){return String(x||'').trim().toUpperCase()};
+  return (mia?[mia]:[]).concat((INFO.sucursales||[]).filter(function(x){return n(x)!==n(mia)})).concat(['Otro lugar (cliente, obra, calle)'])}
 function otroInput(campo,multi){var sel=multi?(R[campo]||[]):[R[campo]];if(!sel.some(esOtro))return '';
   return '<input id="'+campo+'Otro" class="otro" placeholder="✏️ Escribe cuál es..." value="'+esc(R[campo+'Otro']||'')+'" oninput="R.'+campo+'Otro=this.value;botones()">'}
 function sino(campo){return chips(campo,['SI','NO'])}
@@ -364,10 +367,16 @@ var PASOS={
    ok:function(){return (R.trayectoPrueba||[]).length>0||'Marca al menos una opción'}},
 
  donde:{ver:function(){return !has(T_TRA)||R.tipo!==T_TRA},html:function(){
-   return titulo('¿Dónde pasó?','Tu sucursal: <b>'+esc(YO.sucursal)+'</b>')+chips('lugar',INFO.lugares)+
+   if(!R.sucEvento&&YO.sucursal)R.sucEvento=YO.sucursal;
+   var fuera=esOtro(R.sucEvento);
+   return titulo('¿Dónde pasó?','Si trabajas en varias sucursales, marca la sucursal donde pasó')+
+     '<label class="l">¿En qué sucursal o lugar?</label>'+chips('sucEvento',sucursalesEv())+
+     (fuera?'':'<label class="l">¿En qué parte?</label>'+chips('lugar',INFO.lugares))+
      '<label class="l">Más detalle del lugar (opcional)</label>'+campo('lugarDetalle','Ej: pasillo 3, al lado del rack de fierros')+
      (MODO!=='aporte'&&acc()?'<label class="l">Dirección donde pasó (la pide la Mutual)</label>'+campo('lugarDireccion','Calle, número y comuna'):'');
- },ok:function(){return !!R.lugar||'Elige el lugar'}},
+ },ok:function(){if(!R.sucEvento)return 'Marca la sucursal o lugar donde pasó';
+   if(esOtro(R.sucEvento))return !!String(R.sucEventoOtro||'').trim()||'Escribe dónde pasó (cliente, obra, calle...)';
+   return !!R.lugar||'Elige en qué parte pasó'}},
 
  actividad:{ver:function(){return !lk()&&R.tipo!==T_EP&&R.tipo!==T_TRA},alt:1,campos:['actividad','habitual'],html:function(){
    return titulo('¿Qué estabas haciendo?')+chips('actividad',INFO.actividades)+
@@ -504,7 +513,7 @@ var PASOS={
      ['Cómo supiste',[R.comoSupo,R.donde].filter(Boolean).join(' — ')],['Qué viste o supiste',(R.queVio||[]).join(', ')],['Lo que contaste',R.relato]];
      return titulo('Revisa y firma','Si algo está mal, usa <b>Atrás</b> para corregir.')+resFirma(filas)}
    var f=fechaISO();filas=[['Quién',YO.nombre+' — '+YO.sucursal],['Qué',R.tipos.join(' + ')],['Cuándo',dma(f)+' '+(R.horaExacta||R.momento||'')],
-     ['Dónde',has(T_TRA)&&R.tipo===T_TRA?R.trayectoLugar:[R.lugar,R.lugarDetalle,R.lugarDireccion].filter(Boolean).join(' — ')]];
+     ['Dónde',has(T_TRA)&&R.tipo===T_TRA?R.trayectoLugar:[esOtro(R.sucEvento)?R.sucEventoOtro:'Sucursal '+(R.sucEvento||''),R.lugar,R.lugarDetalle,R.lugarDireccion].filter(Boolean).join(' — ')]];
    if(!lk())filas.splice(1,0,['Tus datos',[R.direccion,R.comuna,R.telefono].filter(Boolean).join(' · ')]);
    if(R.horaEntrada||R.horaSalida)filas.push(['Horario ese día',(R.horaEntrada||'—')+' a '+(R.horaSalida||'—')]);
    if(R.partes&&R.partes.length)filas.push(['Parte del cuerpo',R.partes.join(', ')]);
@@ -741,6 +750,7 @@ function enviar(){
     testigos:R.hayTestigos==='SI'?(R.testigos||[]).filter(function(t){return t.nombre.trim()}):[],
     direccion:R.direccion||'',comuna:R.comuna||'',telefono:R.telefono||'',correo:R.correo||'',contrato:R.contrato||'',
     horaEntrada:R.horaEntrada||'',horaSalida:R.horaSalida||'',lugarDireccion:R.lugarDireccion||'',pendientes:R._alt||{},
+    sucEvento:has(T_TRA)&&R.tipo===T_TRA?'':String(R.sucEvento||'').replace(/:.*$/,''),sucEventoOtro:R.sucEventoOtro||'',
     fotos:R.fotos||[],firma:FIRMA.png()};
   ENVIANDO=true;botones();
   var ok=function(r){ENVIANDO=false;R._id=r.id;R._mutual=r.mutual||null;R._pdf=r.pdf||null;PILA=[];ir('fin',true)};
