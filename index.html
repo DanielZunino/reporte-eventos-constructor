@@ -101,7 +101,7 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 .proto.hecho select{background:#e8f5e9;color:var(--ve);font-weight:bold}.proto.pend select{background:#fdecea;color:var(--ro);font-weight:bold}
 .nodo{display:grid;grid-template-columns:110px 1fr 160px 34px;gap:6px;margin-bottom:6px}
 #manoBorde{position:fixed;left:50%;transform:translateX(-50%);z-index:30;background:#f28c28;color:#fff;font:bold 15px system-ui;border-radius:24px;padding:9px 18px;box-shadow:0 4px 14px rgba(0,0,0,.3);cursor:pointer;animation:latido 1.4s infinite;border:0}
-#coachInv{position:sticky;top:96px;z-index:7;display:flex;gap:10px;align-items:flex-start;background:linear-gradient(135deg,#0b3d91,#1565c0);color:#fff;border-radius:14px;padding:10px 12px;margin-bottom:12px;box-shadow:0 4px 14px rgba(11,61,145,.25)}
+#coachInv{position:relative;display:flex;gap:10px;align-items:flex-start;background:linear-gradient(135deg,#0b3d91,#1565c0);color:#fff;border-radius:14px;padding:10px 12px;margin-bottom:12px;box-shadow:0 4px 14px rgba(11,61,145,.25)}
 #coachInv .av{font-size:34px;line-height:1}
 #coachInv .tx{flex:1;font-size:15px;line-height:1.35}
 #coachInv .tx b{color:#ffe082}
@@ -201,8 +201,8 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 .tab.limpia{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.5)}
 .est.ARCHIVADO{background:#607d8b}
 .secOff{display:none!important}
-.secNav{position:sticky;top:0;z-index:12;display:flex;gap:6px;overflow-x:auto;padding:8px 2px 10px;margin:0 0 10px;background:var(--fondo,#f4f6fb);scrollbar-width:thin}
-.secNav button{flex:0 0 auto;border:2px solid var(--bo);background:#fff;color:var(--az);border-radius:12px;padding:6px 10px;font-weight:bold;font-size:13px;cursor:pointer;text-align:left;line-height:1.15}
+.secNav{position:static;display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;margin:0 0 12px}
+.secNav button{width:100%;min-height:46px;border:2px solid var(--bo);background:#fff;color:var(--az);border-radius:12px;padding:6px 10px;font-weight:bold;font-size:13px;cursor:pointer;text-align:left;line-height:1.15}
 .secNav button small{display:block;font-weight:normal;font-size:11px;color:#6b778c}
 .secNav button.on{background:var(--az);color:#fff;border-color:var(--az)}.secNav button.on small{color:#dbe6ff}
 .secNav button.ok{border-color:#2e7d32}.secNav button.falta{border-color:var(--na)}
@@ -335,6 +335,7 @@ textarea{overflow:hidden;resize:none;min-height:64px}
     <button class="tab" id="tCasos" onclick="vista('casos')">Casos registrados</button>
     <button class="tab" id="tPanel" onclick="vista('panel')">Panel</button>
     <button class="tab hide" id="tAcc" onclick="verAccesos()">👥 Accesos jefaturas</button>
+    <button class="tab hide" id="tPap" onclick="vista('casos');setTimeout(verPapelera,600)">🗑 Papelera</button>
     <button class="tab limpia" onclick="pedirLimpiar()">🧹 Limpiar formulario</button>
   </div>
 </header>
@@ -810,7 +811,7 @@ function arrancar(r){
   TOKEN=r.token;USR=r.u;CHARLAS=r.charlas||[];CURSOS=r.cursos||[];ls('tk_eventos',TOKEN);
   $('login').classList.add('hide');$('app').classList.remove('hide');
   $('hola').textContent=USR.nombre+' · '+(USR.rol==='ADMIN'?'Administrador':'Gerente — '+USR.sucursal);
-  $('tAcc').classList.toggle('hide',USR.rol!=='ADMIN');
+  $('tAcc').classList.toggle('hide',USR.rol!=='ADMIN');$('tPap').classList.toggle('hide',USR.rol!=='ADMIN');
   init();
 }
 function salir(){ls('tk_eventos',null);TOKEN='';$('app').classList.add('hide');$('login').classList.remove('hide');$('loginMsg').textContent='';rellenar()}
@@ -1510,7 +1511,7 @@ var OBJ=null,PRIMERA=true;
 function guiaA(){if(!$('guiaATx'))return;$('guiaATx').innerHTML=textoGuiaA();$('bVozA').textContent=VOZA?'🔇 Silenciar':'🔊 Escúchame';
   var o=objetivoA();if(o&&o.closest&&o.closest('.ipaso.hide')){var pc=document.querySelector('#ipasos .ip[data-p="'+o.closest('.ipaso').dataset.p+'"]');if(pc)o=pc}var cambio=o!==OBJ;if(OBJ&&cambio)OBJ.classList.remove('foco');OBJ=o;moverMano();
   if(cambio&&o){o.classList.add('foco');if(!PRIMERA&&!escribiendo()&&Date.now()-ULT_MOV>4000)llevar(false);if(VOZA&&!escribiendo()&&!(o.closest&&o.closest('#cInvest')))leerA()}PRIMERA=false}
-function moverMano(){var m=$('manoMov'),o=OBJ;if(!o||!o.offsetParent||$('app').classList.contains('hide')||(o.closest&&o.closest('#cInvest'))){m.classList.add('hide');return}
+function moverMano(){var m=$('manoMov'),o=OBJ;if(!o||!o.offsetParent||$('app').classList.contains('hide')||(o.closest&&(o.closest('#cInvest')||o.closest('.barra')))){m.classList.add('hide');return}
   var r=o.getBoundingClientRect(),x=r.left+window.scrollX-52,y=r.top+window.scrollY+Math.min(r.height,48)/2-26;
   if(r.left<58){m.classList.add('hide');return}m.style.left=x+'px';m.style.top=y+'px';m.classList.remove('hide')}
 function llevar(siempre){var o=OBJ;if(!o)return;var sd=secDe(o);if(sd>-1&&sd!==SEC){irSec(sd,true);setTimeout(function(){llevar(siempre)},300);return}var ip=o.closest&&o.closest('.ipaso.hide');if(ip){invPaso(+ip.dataset.p);setTimeout(function(){llevar(siempre)},400);return}var r=o.getBoundingClientRect();
@@ -1617,7 +1618,7 @@ function estadoDeclTxt(){var c=(CASOS||[]).find(function(x){return EDIT&&x['ID']
 function pintaSecs(){var n=$('secNav');if(!n)return;var h='',k=0;
   SECS.forEach(function(s,i){if(!secVisible(i))return;k++;var ok=secOk(i);
     h+='<button type="button" class="'+(i===SEC?'on ':'')+(ok?'ok':'falta')+'" onclick="irSec('+i+')">'+(ok?'✔ ':k+'. ')+esc(s.t)+'<small>'+esc(s.d)+'</small></button>'});
-  n.innerHTML=h;var b=n.querySelector('.on');if(b)b.scrollIntoView({block:'nearest',inline:'center'})}
+  if(n.innerHTML!==h)n.innerHTML=h}
 function irSec(i,quieto){if(i<0)i=0;if(i>=SECS.length)i=SECS.length-1;
   if(!secVisible(i)){var d=i>=SEC?1:-1;for(var j=i;j>=0&&j<SECS.length;j+=d)if(secVisible(j)){i=j;break}}
   SEC=i;SECS.forEach(function(s,k){s.c.forEach(function(id){var o=$(id);if(o)o.classList.toggle('secOff',k!==i)})});
@@ -1628,7 +1629,7 @@ function irSec(i,quieto){if(i<0)i=0;if(i>=SECS.length)i=SECS.length-1;
   var tSig=sig<0?(EDIT?'📄 Guardar y generar informe':'💾 Guardar caso'):(EDIT?'💾 Guardar y seguir: ':'Siguiente: ')+SECS[sig].t+' ➡';
   pie.innerHTML=(ant>=0?'<button type="button" class="btn gr" onclick="irSec('+ant+')">⬅ '+esc(SECS[ant].t)+'</button>':'<span></span>')+
     '<button type="button" class="btn '+(sig<0?'na':'ve')+'" onclick="secSig()">'+tSig+'</button>';
-  pintaSecs();if(!quieto){var y=$('secNav').getBoundingClientRect().top+window.scrollY-6;window.scrollTo({top:Math.max(0,y),behavior:'smooth'})}
+  pintaSecs();if(!quieto){var hh=(document.querySelector('header')||{}).offsetHeight||0,y=$('secNav').getBoundingClientRect().top+window.scrollY-hh-8;window.scrollTo({top:Math.max(0,y),behavior:'smooth'})}
   setTimeout(function(){try{autoTodo();guiaA()}catch(e){}},80)}
 function secSig(){var sig=-1;for(var b=SEC+1;b<SECS.length;b++)if(secVisible(b)){sig=b;break}
   if(sig<0){guardar();return}
@@ -2085,7 +2086,7 @@ function pintarCasos(){
   var q=norm($('fCasos').value),e=$('fEstado').value;
   var r=CASOS.filter(function(c){return (e?c['Estado']===e:c['Estado']!=='ARCHIVADO'&&c['Estado']!=='PAPELERA')&&(!q||norm(Object.values(c).join(' ')).indexOf(q)>-1)});
   var adm=USR&&USR.rol==='ADMIN',nArch=CASOS.filter(function(c){return c['Estado']==='ARCHIVADO'}).length,nPap=CASOS.filter(function(c){return c['Estado']==='PAPELERA'}).length;
-  $('btnPap').classList.toggle('hide',!adm);$('btnPap').textContent='🗑 Papelera'+(nPap?' ('+nPap+')':'');
+  $('btnPap').classList.toggle('hide',!adm);$('btnPap').textContent='🗑 Papelera'+(nPap?' ('+nPap+')':' (vacía)');$('tPap').textContent='🗑 Papelera'+(nPap?' ('+nPap+')':'');
   $('tbCasos').innerHTML=r.length?r.map(function(c){
     var dec=c['Declaración']||'',dcl=dec.indexOf('FIRMADA')===0?'FIRMADA':dec.indexOf('PENDIENTE')===0?'PENDIENTE':dec?'SIN':'';
     var mp=+c['Medidas pendientes']||0;
@@ -2095,7 +2096,7 @@ function pintarCasos(){
       '<td><span class="est '+esc(c['Estado'])+'">'+esc(c['Estado'])+'</span>'+(/^PENDIENTE/.test(c['Alerta grave']||'')?'<br><span class="est SIN">🚨 GRAVE</span>':'')+'</td>'+
       '<td class="acc" onclick="event.stopPropagation()">'+(c['Estado']==='PAPELERA'?(adm?'<button style="background:#e3f0ff;color:#0b3d91" onclick="restaurar(\''+c['ID']+'\')">↩ Restaurar</button><button style="background:#8e0000;color:#fff" onclick="borrarDef(\''+c['ID']+'\')">Borrar para siempre</button>'+(c['_papHasta']?'<br><small style="color:#8e0000">Se borra solo el '+esc(c['_papHasta'])+'</small>':''):''):(c['Datos']?'<button style="background:#e8f5e9;color:#1b5e20" onclick="descargarCaso(\''+c['ID']+'\')">⬇ PDF</button>':'')+(adm?(c['Estado']==='ARCHIVADO'?'<button style="background:#e3f0ff;color:#0b3d91" onclick="archivar(\''+c['ID']+'\',false)">↩ Desarchivar</button>'
         :'<button style="background:#eceff1;color:#37474f" onclick="archivar(\''+c['ID']+'\',true)">🗄 Archivar</button>')+
-        '<button style="background:#ffcdd2;color:#8e0000" onclick="eliminar(\''+c['ID']+'\')">🗑 Eliminar</button>':'<small>—</small>'))+'</td></tr>'}).join('')
+        '<button style="background:#ffcdd2;color:#8e0000" onclick="eliminar(\''+c['ID']+'\')" title="Se puede recuperar durante 30 días">🗑 A papelera</button>':'<small>—</small>'))+'</td></tr>'}).join('')
     :'<tr><td colspan="9">'+(e==='PAPELERA'?'La papelera está vacía.':'Sin casos.')+'</td></tr>';
   if(e==='PAPELERA'&&r.length)$('tbCasos').insertAdjacentHTML('afterbegin','<tr><td colspan="9" style="background:#fdecea;color:#8e0000;font-size:13px">🗑 Casos eliminados. Puede restaurarlos durante 30 días; después se borran solos.</td></tr>');
   setTimeout(guiaA,50);
