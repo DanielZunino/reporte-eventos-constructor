@@ -188,6 +188,12 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:20;display:flex;align-items:center;justify-content:center;padding:16px}
 .modal .cx{background:#fff;border-radius:16px;max-width:420px;width:100%;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.3);text-align:center}
 .modal h3{margin:0 0 8px;color:var(--az)}.modal p{font-size:14px;color:#33435c;margin:0 0 16px}
+.modal .cx.ancho{max-width:640px;max-height:86vh;overflow-y:auto;overflow-x:hidden;text-align:left;box-sizing:border-box}
+.acj{overflow-wrap:anywhere}
+.acj{border:1px solid #dfe5ef;border-radius:12px;padding:10px 12px;margin:8px 0}.acj b{color:var(--az)}.acj .sb{font-size:13px;color:#5a6780}
+.acj .cred{font-family:monospace;font-size:14px;background:#f3f6fb;border-radius:8px;padding:6px 8px;margin:6px 0}.acj .nv{background:#2e7d32;color:#fff;border-radius:8px;padding:1px 7px;font-size:11px;margin-left:6px}
+.acj .bts{display:flex;gap:8px;flex-wrap:wrap}.acj .bts a{flex:1 1 120px;min-width:0;text-align:center;padding:9px;border-radius:10px;font-weight:bold;text-decoration:none;font-size:14px}
+.acj .bts .ma{background:#0b3d91;color:#fff}.acj .bts .wa{background:#25d366;color:#fff}.acj .bts .no{background:#e0e4ec;color:#8a96aa;pointer-events:none}
 .modal .bt{display:flex;gap:10px}.modal .bt button{flex:1;padding:12px;border:0;border-radius:10px;font-size:16px;font-weight:bold;cursor:pointer}
 .acc{white-space:nowrap}.acc button{border:0;border-radius:8px;padding:5px 8px;margin:2px;cursor:pointer;font-size:12px;font-weight:bold}
 .tab.limpia{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.5)}
@@ -313,6 +319,7 @@ textarea{overflow:hidden;resize:none;min-height:64px}
     <button class="tab on" id="tNuevo" onclick="nuevoCaso()">+ Nuevo caso</button>
     <button class="tab" id="tCasos" onclick="vista('casos')">Casos registrados</button>
     <button class="tab" id="tPanel" onclick="vista('panel')">Panel</button>
+    <button class="tab hide" id="tAcc" onclick="verAccesos()">👥 Accesos jefaturas</button>
     <button class="tab limpia" onclick="pedirLimpiar()">🧹 Limpiar formulario</button>
   </div>
 </header>
@@ -783,6 +790,7 @@ function arrancar(r){
   TOKEN=r.token;USR=r.u;CHARLAS=r.charlas||[];CURSOS=r.cursos||[];ls('tk_eventos',TOKEN);
   $('login').classList.add('hide');$('app').classList.remove('hide');
   $('hola').textContent=USR.nombre+' · '+(USR.rol==='ADMIN'?'Administrador':'Gerente — '+USR.sucursal);
+  $('tAcc').classList.toggle('hide',USR.rol!=='ADMIN');
   init();
 }
 function salir(){ls('tk_eventos',null);TOKEN='';$('app').classList.add('hide');$('login').classList.remove('hide');$('loginMsg').textContent='';rellenar()}
@@ -1528,6 +1536,32 @@ function confirma(tit,msg,si,cb,rojo){var d=document.createElement('div');d.clas
   d.innerHTML='<div class="cx"><h3>'+tit+'</h3><p>'+msg+'</p><div class="bt"><button style="background:#e0e4ec;color:#33435c">NO</button><button style="background:'+(rojo?'var(--ro)':'var(--az)')+';color:#fff">'+si+'</button></div></div>';
   var b=d.querySelectorAll('button');b[0].onclick=function(){d.remove()};b[1].onclick=function(){d.remove();cb()};
   d.onclick=function(e){if(e.target===d)d.remove()};document.body.appendChild(d)}
+// ---------- ACCESOS DE JEFATURAS (gerentes de sucursal de la nómina) ----------
+function fonoWsp(t){var n=String(t||'').replace(/\D/g,'');if(n.length===9&&n[0]==='9')n='56'+n;else if(n.length===8)n='569'+n;return n.length>=11?n:''}
+function msgAcceso(o,X){var n=String(o.nombre||'').split(' ')[0];
+  return 'Estimado(a) '+n+':\n\nJunto con saludarle, le informo que ya tiene acceso al Sistema de Reporte e Investigación de Eventos de Constructor Center. Desde ahí podrá registrar los accidentes, incidentes y daños materiales de su sucursal, y enviar al trabajador el enlace para su declaración.\n\n'+
+    '• Enlace del sistema: '+X.portal+'\n• Usuario: '+o.usuario+'\n• Clave: '+o.clave+'\n\n'+
+    'Ante un accidente, lo primero es que el trabajador complete su declaración escaneando el código QR o abriendo este enlace: '+X.qr+'\n'+
+    'Si el trabajador no puede hacerlo, usted puede crear el caso en el sistema y enviarle el enlace para que la complete y firme.\n\nSaludos cordiales.\nDaniel Zunino Urrutia\nAsesor en Prevención de Riesgos\nIntegra Prevención SpA'}
+function verAccesos(){toast('Revisando los gerentes de sucursal de la nómina...');
+  llamar('accesosJefaturas',TOKEN).then(function(X){
+    var nuevos=X.lista.filter(function(o){return o.nuevo}).length;
+    var h='<h3>👥 Accesos de jefaturas</h3><p class="sb" style="font-size:14px;margin:0 0 6px">Gerentes de sucursal de la nómina con acceso al sistema'+(nuevos?' — <b>'+nuevos+' nuevo(s) creado(s) ahora</b>':'')+'. Envíe a cada uno su acceso por correo o WhatsApp.</p>'+
+      '<p style="margin:0 0 8px"><a target="_blank" href="'+esc(X.qr)+'">Enlace del QR para trabajadores</a></p>';
+    if(!X.lista.length)h+='<div class="info">No encontré personas con cargo "Gerente" en la nómina.</div>';
+    X.lista.forEach(function(o){
+      var asunto='Acceso al Sistema de Reporte de Eventos — Constructor Center',txt=msgAcceso(o,X),w=fonoWsp(o.telefono);
+      h+='<div class="acj"><b>'+esc(o.nombre)+'</b>'+(o.nuevo?'<span class="nv">nuevo</span>':'')+'<div class="sb">'+esc(o.cargo||'')+' · '+esc(o.sucursal||'')+(o.activo===false?' · <b style="color:var(--ro)">INACTIVO</b>':'')+'</div>'+
+        (o.error?'<div class="sb" style="color:var(--ro)">⚠ '+esc(o.error)+'</div>':
+        '<div class="cred">Usuario: <b>'+esc(o.usuario)+'</b><br>Clave: <b>'+esc(o.clave)+'</b></div><div class="bts">'+
+        (o.correo?'<a class="ma" target="_blank" href="mailto:'+encodeURIComponent(o.correo)+'?subject='+encodeURIComponent(asunto)+'&body='+encodeURIComponent(txt)+'">📧 Enviar por correo</a>':'<a class="no">Sin correo en la nómina</a>')+
+        (w?'<a class="wa" target="_blank" href="https://wa.me/'+w+'?text='+encodeURIComponent(txt)+'">📲 Enviar por WhatsApp</a>':'<a class="no">Sin teléfono en la nómina</a>')+'</div>')+'</div>';
+    });
+    var d=document.createElement('div');d.className='modal';
+    d.innerHTML='<div class="cx ancho">'+h+'<div class="bt" style="margin-top:12px"><button style="background:var(--az);color:#fff">Cerrar</button></div></div>';
+    d.querySelector('.bt button').onclick=function(){d.remove()};d.onclick=function(e){if(e.target===d)d.remove()};document.body.appendChild(d);
+  }).catch(function(e){alert(e.message||e)});
+}
 function pedirLimpiar(){confirma('🧹 ¿Seguro que quieres limpiar el formulario?','Se borra todo lo que escribiste y no está guardado. Los casos ya guardados no se tocan.','SÍ, limpiar',function(){nuevoCaso();toast('Formulario limpio')},true)}
 function archivar(id,si){var c=CASOS.find(function(x){return x['ID']===id})||{};
   confirma(si?'🗄 ¿Archivar el caso '+esc(id)+'?':'↩ ¿Desarchivar el caso '+esc(id)+'?',
