@@ -199,7 +199,7 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 .modal .bt{display:flex;gap:10px}.modal .bt button{flex:1;padding:12px;border:0;border-radius:10px;font-size:16px;font-weight:bold;cursor:pointer}
 .acc{white-space:nowrap}.acc button{border:0;border-radius:8px;padding:5px 8px;margin:2px;cursor:pointer;font-size:12px;font-weight:bold}
 .tab.limpia{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.5)}
-.est.ARCHIVADO{background:#607d8b}
+.est.ARCHIVADO{background:#607d8b}.est.PAPELERA{background:#8e0000}
 .falta li{margin:3px 0}
 @media(max-width:600px){.proto,.nodo{grid-template-columns:1fr 1fr}.proto b,.nodo input{grid-column:1/-1}}
 @media(max-width:600px){.fila4,.fila3{grid-template-columns:1fr 1fr}.fila4 input:first-child,.fila3 input:first-child{grid-column:1/-1}.eva div{padding:8px 0;font-size:12px}.barras div{grid-template-columns:90px 1fr 30px}}
@@ -702,8 +702,8 @@ textarea{overflow:hidden;resize:none;min-height:64px}
   <div class="card"><h2>Casos registrados</h2><div class="in">
     <div class="grid">
       <div><label>Buscar</label><input id="fCasos" oninput="pintarCasos()" placeholder="Nombre, sucursal, tipo..."></div>
-      <div><label>Estado</label><select id="fEstado" onchange="pintarCasos()"><option value="">Todos</option><option>ABIERTO</option><option>CERRADO</option><option>ARCHIVADO</option></select></div>
-      <div style="align-self:end"><a id="linkRegistro" target="_blank" class="btn sm na hide">Abrir planilla de registro</a></div>
+      <div><label>Estado</label><select id="fEstado" onchange="pintarCasos()"><option value="">Todos</option><option>ABIERTO</option><option>CERRADO</option><option>ARCHIVADO</option><option value="PAPELERA">🗑 Papelera</option></select></div>
+      <div style="align-self:end;display:flex;gap:6px;flex-wrap:wrap"><a id="linkRegistro" target="_blank" class="btn sm na hide">Abrir planilla de registro</a><button id="btnPap" class="btn sm hide" style="background:#eceff1;color:#37474f" onclick="verPapelera()">🗑 Papelera</button></div>
     </div>
     <p style="font-size:12px;color:#666;margin:8px 0 0">Toca un caso para abrirlo y completarlo.</p>
     <div style="overflow-x:auto;margin-top:6px"><table class="lista"><thead><tr><th>Caso</th><th>Fecha</th><th>Trabajador</th><th>Tipo</th><th>Sucursal</th><th>Declaración</th><th>Med. pend.</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="tbCasos"></tbody></table></div>
@@ -1422,7 +1422,7 @@ function pintarInv(l){document.querySelectorAll('#testigos .testigo').forEach(es
 
 // ---------- BANNER GRAVES ----------
 function cargarBanner(){run().withSuccessHandler(function(r){CASOS=r.casos;MEDS=r.medidas;DOT=r.dotacion;pintarBanner()}).getCasos(TOKEN)}
-function pintarBanner(){var g=CASOS.filter(function(c){return /^PENDIENTE/.test(c['Alerta grave']||'')&&c['Estado']!=='CERRADO'&&c['Estado']!=='ARCHIVADO'});
+function pintarBanner(){var g=CASOS.filter(function(c){return /^PENDIENTE/.test(c['Alerta grave']||'')&&c['Estado']!=='CERRADO'&&c['Estado']!=='ARCHIVADO'&&c['Estado']!=='PAPELERA'});
   $('bannerG').className=g.length?'':'hide';
   $('bannerG').innerHTML=g.map(function(c){return '<div class="bannerG" onclick="editar(\''+c['ID']+'\')">🚨 ACCIDENTE '+esc(String(c['Gravedad']).toUpperCase())+' — Caso '+esc(c['ID'])+' · '+esc(c['Trabajador'])+' ('+esc(c['Sucursal'])+')<small>'+esc(c['Alerta grave'])+' — toca para registrar los avisos</small></div>'}).join('')}
 
@@ -1582,8 +1582,13 @@ function archivar(id,si){var c=CASOS.find(function(x){return x['ID']===id})||{};
     si?esc(c['Trabajador']||'')+'. El caso sale de la lista y del aviso rojo, pero no se borra nada: lo ves eligiendo Estado = ARCHIVADO y puedes desarchivarlo cuando quieras.':'Vuelve a la lista con el estado que tenía.',
     si?'SÍ, archivar':'SÍ, desarchivar',function(){run().withSuccessHandler(function(){toast(si?'Caso archivado':'Caso desarchivado');cargarCasos('casos')}).archivarCaso(TOKEN,id,si)})}
 function eliminar(id){var c=CASOS.find(function(x){return x['ID']===id})||{};
-  confirma('🗑 ¿Eliminar el caso '+esc(id)+'?','<b>'+esc(c['Trabajador']||'')+'</b> — '+esc(c['Tipo de evento']||'')+' del '+esc(c['Fecha evento']||'')+'.<br><br>Se borra del registro y su carpeta va a la <b>papelera de Drive</b> (se puede recuperar allí durante 30 días). Los links pendientes dejan de funcionar.',
-    'SÍ, eliminar',function(){run().withSuccessHandler(function(){toast('Caso '+id+' eliminado');if(EDIT&&EDIT.id===id)nuevoCaso();cargarCasos('casos')}).eliminarCaso(TOKEN,id)},true)}
+  confirma('🗑 ¿Enviar el caso '+esc(id)+' a la papelera?','<b>'+esc(c['Trabajador']||'')+'</b> — '+esc(c['Tipo de evento']||'')+' del '+esc(c['Fecha evento']||'')+'.<br><br>Sale de la lista. Lo puede <b>restaurar desde 🗑 Papelera durante 30 días</b>; después se borra solo.',
+    'SÍ, a la papelera',function(){run().withSuccessHandler(function(){toast('Caso '+id+' enviado a la papelera');if(EDIT&&EDIT.id===id)nuevoCaso();cargarCasos('casos')}).eliminarCaso(TOKEN,id)},true)}
+function verPapelera(){$('fEstado').value='PAPELERA';pintarCasos()}
+function restaurar(id){run().withSuccessHandler(function(){toast('↩ Caso '+id+' restaurado');$('fEstado').value='';cargarCasos('casos')}).restaurarCaso(TOKEN,id)}
+function borrarDef(id){var c=CASOS.find(function(x){return x['ID']===id})||{};
+  confirma('⚠ ¿Borrar para siempre el caso '+esc(id)+'?','<b>'+esc(c['Trabajador']||'')+'</b>. Se borra del registro y su carpeta va a la papelera de Drive. <b>Esto no se puede deshacer desde el sistema.</b>',
+    'SÍ, borrar para siempre',function(){run().withSuccessHandler(function(){toast('Caso '+id+' borrado');cargarCasos('casos')}).borrarDefinitivo(TOKEN,id)},true)}
 
 // ---------- LEY KARIN plazo ----------
 function plazoDT(){
@@ -1987,8 +1992,9 @@ function cargarCasos(x){
 }
 function pintarCasos(){
   var q=norm($('fCasos').value),e=$('fEstado').value;
-  var r=CASOS.filter(function(c){return (e?c['Estado']===e:c['Estado']!=='ARCHIVADO')&&(!q||norm(Object.values(c).join(' ')).indexOf(q)>-1)});
-  var adm=USR&&USR.rol==='ADMIN',nArch=CASOS.filter(function(c){return c['Estado']==='ARCHIVADO'}).length;
+  var r=CASOS.filter(function(c){return (e?c['Estado']===e:c['Estado']!=='ARCHIVADO'&&c['Estado']!=='PAPELERA')&&(!q||norm(Object.values(c).join(' ')).indexOf(q)>-1)});
+  var adm=USR&&USR.rol==='ADMIN',nArch=CASOS.filter(function(c){return c['Estado']==='ARCHIVADO'}).length,nPap=CASOS.filter(function(c){return c['Estado']==='PAPELERA'}).length;
+  $('btnPap').classList.toggle('hide',!adm);$('btnPap').textContent='🗑 Papelera'+(nPap?' ('+nPap+')':'');
   $('tbCasos').innerHTML=r.length?r.map(function(c){
     var dec=c['Declaración']||'',dcl=dec.indexOf('FIRMADA')===0?'FIRMADA':dec.indexOf('PENDIENTE')===0?'PENDIENTE':dec?'SIN':'';
     var mp=+c['Medidas pendientes']||0;
@@ -1996,10 +2002,11 @@ function pintarCasos(){
       '<td>'+(dcl?'<span class="est '+dcl+'">'+esc(dec.split(' — ')[0].split(' · ')[0])+'</span>':'<small>—</small>')+'</td>'+
       '<td style="text-align:center;font-weight:bold;color:'+(mp?'var(--ro)':'var(--ve)')+'">'+(c['Datos']?mp:'—')+'</td>'+
       '<td><span class="est '+esc(c['Estado'])+'">'+esc(c['Estado'])+'</span>'+(/^PENDIENTE/.test(c['Alerta grave']||'')?'<br><span class="est SIN">🚨 GRAVE</span>':'')+'</td>'+
-      '<td class="acc" onclick="event.stopPropagation()">'+(c['Datos']?'<button style="background:#e8f5e9;color:#1b5e20" onclick="descargarCaso(\''+c['ID']+'\')">⬇ PDF</button>':'')+(adm?(c['Estado']==='ARCHIVADO'?'<button style="background:#e3f0ff;color:#0b3d91" onclick="archivar(\''+c['ID']+'\',false)">↩ Desarchivar</button>'
+      '<td class="acc" onclick="event.stopPropagation()">'+(c['Estado']==='PAPELERA'?(adm?'<button style="background:#e3f0ff;color:#0b3d91" onclick="restaurar(\''+c['ID']+'\')">↩ Restaurar</button><button style="background:#8e0000;color:#fff" onclick="borrarDef(\''+c['ID']+'\')">Borrar para siempre</button>'+(c['_papHasta']?'<br><small style="color:#8e0000">Se borra solo el '+esc(c['_papHasta'])+'</small>':''):''):(c['Datos']?'<button style="background:#e8f5e9;color:#1b5e20" onclick="descargarCaso(\''+c['ID']+'\')">⬇ PDF</button>':'')+(adm?(c['Estado']==='ARCHIVADO'?'<button style="background:#e3f0ff;color:#0b3d91" onclick="archivar(\''+c['ID']+'\',false)">↩ Desarchivar</button>'
         :'<button style="background:#eceff1;color:#37474f" onclick="archivar(\''+c['ID']+'\',true)">🗄 Archivar</button>')+
-        '<button style="background:#ffcdd2;color:#8e0000" onclick="eliminar(\''+c['ID']+'\')">🗑 Eliminar</button>':'<small>—</small>')+'</td></tr>'}).join('')
-    :'<tr><td colspan="9">Sin casos.</td></tr>';
+        '<button style="background:#ffcdd2;color:#8e0000" onclick="eliminar(\''+c['ID']+'\')">🗑 Eliminar</button>':'<small>—</small>'))+'</td></tr>'}).join('')
+    :'<tr><td colspan="9">'+(e==='PAPELERA'?'La papelera está vacía.':'Sin casos.')+'</td></tr>';
+  if(e==='PAPELERA'&&r.length)$('tbCasos').insertAdjacentHTML('afterbegin','<tr><td colspan="9" style="background:#fdecea;color:#8e0000;font-size:13px">🗑 Casos eliminados. Puede restaurarlos durante 30 días; después se borran solos.</td></tr>');
   setTimeout(guiaA,50);
   if(!e&&nArch)$('tbCasos').innerHTML+='<tr><td colspan="9" style="color:#607d8b;font-size:12px">'+nArch+' caso(s) archivado(s) ocultos. Elige Estado = ARCHIVADO para verlos.</td></tr>';
 }
@@ -2020,7 +2027,7 @@ function barras(id,obj,orden){
 }
 function pintarPanel(){
   var anio=$('pAnio').value,dot=+$('pDot').value||0;
-  var cs=CASOS.filter(function(c){return String(c['Fecha evento']).slice(-4)===anio});
+  var cs=CASOS.filter(function(c){return String(c['Fecha evento']).slice(-4)===anio&&c['Estado']!=='PAPELERA'});
   var porMes={},porTipo={},porSuc={},dias=0,ctp=0,graves=0,abiertos=0,declP=0;
   var MES=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
   cs.forEach(function(c){
