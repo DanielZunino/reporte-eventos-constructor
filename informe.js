@@ -195,11 +195,15 @@ layout: { hLineWidth: function () { return 0.6; }, vLineWidth: function () { ret
 paddingLeft: function () { return 8; }, paddingRight: function () { return 6; }, paddingTop: function () { return 6; }, paddingBottom: function () { return 7; } } });
 if (d.gravedad === 'Grave' || d.gravedad === 'Fatal')
 cont.push({ margin: [0, 8, 0, 0], table: { widths: ['*'], body: [[{ text: 'ACCIDENTE ' + d.gravedad.toUpperCase() + ': se suspenden las faenas afectadas y se avisa de inmediato a la Inspección del Trabajo y a la SEREMI de Salud (art. 76 Ley 16.744).', bold: true, color: '#8e0000', fontSize: 9, fillColor: '#fdecea' }]] }, layout: bordeL(C.ro) });
-var horaTxt = vacio(d.hora) ? 'No informada' : s(d.hora) + ((d.horaDecl ? d.horaDecl === d.hora : (srv.declTrabajador || srv.autorreporte)) ? ' (según declaración)' : '');
+var lugarEv = function (d) { var ts = s((d.trabajador || {}).sucursal);
+      if (!vacio(d.lugarOtro)) return ['Sucursal o lugar del evento', 'Fuera de sucursal: ' + s(d.lugarOtro)];
+      if (!vacio(d.sucursalEvento) && s(d.sucursalEvento).toUpperCase() !== ts.toUpperCase()) return ['Sucursal o lugar del evento', titulo(d.sucursalEvento) + ' (el trabajador pertenece a ' + titulo(ts) + ')'];
+      return null; };
+    var horaTxt = vacio(d.hora) ? 'No informada' : s(d.hora) + ((d.horaDecl ? d.horaDecl === d.hora : (srv.declTrabajador || srv.autorreporte)) ? ' (según declaración)' : '');
 var horario = vacio(d.horaEntrada) && vacio(d.horaSalida) ? 'No informado' : ni(d.horaEntrada) + ' a ' + ni(d.horaSalida);
 var dot = vacio(d.hombres) && vacio(d.mujeres) ? 'No informada' : (s(d.hombres) || '0') + (+d.hombres === 1 ? ' hombre' : ' hombres') + ' / ' + (s(d.mujeres) || '0') + (+d.mujeres === 1 ? ' mujer' : ' mujeres');
 var b1 = [sec('Datos generales del evento'), kv([['Fecha del evento', dma(d.fechaDMA || d.fecha)], ['Hora aproximada', horaTxt],
-['Área / lugar exacto', ni(d.area)], ['Horario de trabajo ese día', horario],
+lugarEv(d), ['Área / lugar exacto', ni(d.area)], ['Horario de trabajo ese día', horario],
 ['Dotación de la sucursal', dot], ['Dirección del lugar', ni(d.lugarDireccion, true)],
 d.gravedad ? ['Gravedad', d.gravedad] : null])];
 cont.push({ stack: b1 });
