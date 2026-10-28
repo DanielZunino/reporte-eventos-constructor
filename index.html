@@ -200,6 +200,14 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 .acc{white-space:nowrap}.acc button{border:0;border-radius:8px;padding:5px 8px;margin:2px;cursor:pointer;font-size:12px;font-weight:bold}
 .tab.limpia{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.5)}
 .est.ARCHIVADO{background:#607d8b}
+.secOff{display:none!important}
+.secNav{position:sticky;top:0;z-index:12;display:flex;gap:6px;overflow-x:auto;padding:8px 2px 10px;margin:0 0 10px;background:var(--fondo,#f4f6fb);scrollbar-width:thin}
+.secNav button{flex:0 0 auto;border:2px solid var(--bo);background:#fff;color:var(--az);border-radius:12px;padding:6px 10px;font-weight:bold;font-size:13px;cursor:pointer;text-align:left;line-height:1.15}
+.secNav button small{display:block;font-weight:normal;font-size:11px;color:#6b778c}
+.secNav button.on{background:var(--az);color:#fff;border-color:var(--az)}.secNav button.on small{color:#dbe6ff}
+.secNav button.ok{border-color:#2e7d32}.secNav button.falta{border-color:var(--na)}
+.secPie{display:flex;gap:10px;justify-content:space-between;align-items:center;margin:4px 0 18px;flex-wrap:wrap}
+.secPie .btn{font-size:16px;padding:12px 18px}.secPie .info{flex:1 1 100%;margin:0}
 .faltaA{color:var(--az);text-decoration:none;display:inline-block;padding:3px 0}.faltaA b{color:var(--na);white-space:nowrap}.faltaA:hover{text-decoration:underline}
 .destello{outline:4px solid var(--na)!important;outline-offset:3px;border-radius:10px;animation:pulso 1.4s infinite}.est.PAPELERA{background:#8e0000}
 .falta li{margin:3px 0}
@@ -348,8 +356,11 @@ textarea{overflow:hidden;resize:none;min-height:64px}
 
   <div class="card hide" id="cFalta"><h2>👉 Lo que falta para cerrar este caso</h2><div class="in"><ul class="falta" id="faltaLista" style="margin:0;padding-left:20px"></ul></div></div>
 
+  <!-- NAVEGACIÓN POR SECCIONES: se ve una sección a la vez -->
+  <div id="secNav" class="secNav"></div>
+
   <!-- 1 TIPO -->
-  <div class="card"><h2><span class="n">1</span>¿Qué pasó? <small style="font-weight:normal">(puedes marcar más de uno)</small></h2><div class="in">
+  <div class="card" id="cTipo"><h2><span class="n">1</span>¿Qué pasó? <small style="font-weight:normal">(puedes marcar más de uno)</small></h2><div class="in">
     <p id="carita" style="margin:0 0 8px;font-size:15px;color:#33435c">😔 Lamentamos lo ocurrido. Marca el tipo de evento y te guiamos con lo que sigue.</p>
     <div class="chips" id="tipos"></div>
     <div id="bGravedad" class="hide" style="margin-top:12px">
@@ -365,7 +376,7 @@ textarea{overflow:hidden;resize:none;min-height:64px}
   </div></div>
 
   <!-- 2 TRABAJADOR -->
-  <div class="card"><h2><span class="n">2</span>Trabajador involucrado</h2><div class="in">
+  <div class="card" id="cTrab"><h2><span class="n">2</span>Trabajador involucrado</h2><div class="in">
     <label>Buscar por nombre o RUN</label>
     <input id="buscar" placeholder="Escribe nombre o RUN..." oninput="sugerir()" autocomplete="off">
     <div id="sug" class="sug hide"></div>
@@ -412,7 +423,7 @@ textarea{overflow:hidden;resize:none;min-height:64px}
   </div></div>
 
   <!-- 3 EVENTO -->
-  <div class="card"><h2><span class="n">3</span>Datos del evento</h2><div class="in">
+  <div class="card" id="cDatos"><h2><span class="n">3</span>Datos del evento</h2><div class="in">
     <div class="grid">
       <div><label>Fecha del evento *</label><input type="date" id="fecha" onchange="calc()"></div>
       <div><label>Hora aproximada</label><input type="time" id="hora"></div>
@@ -929,7 +940,7 @@ function nuevoCaso(){
   addMedida('inmediatas');addParticipante();
   $('fecha').value=hoyISO();$('fechaDeclaracion').value=hoyISO();pintarFotos();setTimeout(autoTodo,50);
   ['cEstado','cDocs','bBtnDecl'].forEach(function(i){$(i).classList.add('hide')});
-  $('cInicio').classList.remove('hide');modoInicio('');
+  $('cInicio').classList.remove('hide');modoInicio('');setTimeout(function(){irSec(0,true)},60);
   $('btnGuardar').textContent='💾 Guardar caso y generar PDF';
   vista('nuevo');window.scrollTo(0,0);
 }
@@ -1502,7 +1513,7 @@ function guiaA(){if(!$('guiaATx'))return;$('guiaATx').innerHTML=textoGuiaA();$('
 function moverMano(){var m=$('manoMov'),o=OBJ;if(!o||!o.offsetParent||$('app').classList.contains('hide')||(o.closest&&o.closest('#cInvest'))){m.classList.add('hide');return}
   var r=o.getBoundingClientRect(),x=r.left+window.scrollX-52,y=r.top+window.scrollY+Math.min(r.height,48)/2-26;
   if(r.left<58){m.classList.add('hide');return}m.style.left=x+'px';m.style.top=y+'px';m.classList.remove('hide')}
-function llevar(siempre){var o=OBJ;if(!o)return;var ip=o.closest&&o.closest('.ipaso.hide');if(ip){invPaso(+ip.dataset.p);setTimeout(function(){llevar(siempre)},400);return}var r=o.getBoundingClientRect();
+function llevar(siempre){var o=OBJ;if(!o)return;var sd=secDe(o);if(sd>-1&&sd!==SEC){irSec(sd,true);setTimeout(function(){llevar(siempre)},300);return}var ip=o.closest&&o.closest('.ipaso.hide');if(ip){invPaso(+ip.dataset.p);setTimeout(function(){llevar(siempre)},400);return}var r=o.getBoundingClientRect();
   if(siempre||r.top<70||r.bottom>window.innerHeight-90){o.scrollIntoView({behavior:'smooth',block:'center'})}
   var f=o.matches('input,textarea,select')?o:null;if(siempre&&f)setTimeout(function(){f.focus()},500)}
 window.addEventListener('resize',moverMano);window.addEventListener('scroll',function(){if(OBJ&&getComputedStyle(OBJ.closest('.barra')||document.body).position==='fixed')moverMano()},{passive:true});
@@ -1586,8 +1597,50 @@ function verAccesos(){toast('Revisando los gerentes de sucursal de la nómina...
 function guardaSucU(ix,usuario){var val=$('sucU'+ix).value,lista=val.split(',').map(function(x){return x.trim()}).filter(String);
   if(!lista.length){toast('Escriba al menos una sucursal');return}
   llamar('sucursalesUsuario',TOKEN,usuario,lista).then(function(r){$('sucU'+ix).value=r.sucursal;toast('✔ Sucursales guardadas: '+r.sucursal)}).catch(function(e){alert(e.message||e)})}
+// ---------- SECCIONES: el caso se completa por partes, una a la vez ----------
+var SECS=[{t:'Qué pasó',d:'Tipo y trabajador',c:['cTipo','cTrab','cInicio']},{t:'Datos del evento',d:'Fecha, hora, lugar',c:['cDatos','cProto']},
+  {t:'Declaración',d:'Relato y firma',c:['cDeclaracion','cDecl','cInv']},{t:'Lesión / daño',d:'Según lo que pasó',c:['cLesion','cTrayecto','cDano','cEP','cKarin']},
+  {t:'Medidas inmediatas',d:'Lo que se hizo al tiro',c:['cInmediatas']},{t:'Investigación',d:'5 pasos',c:['cInvest']},
+  {t:'Fotos y videos',d:'Medios de prueba',c:['cFotos']},{t:'Cierre',d:'Capacitación y documentos',c:['cCharla','cDocs']}];
+var SEC=0,SEC_FIJA=false;
+function secVisible(i){return SECS[i].c.some(function(id){var o=$(id);return o&&!o.classList.contains('hide')})}
+function secOk(i){try{
+  if(i===0)return ST.tipos.length>0&&!!v('t_nombre');
+  if(i===1)return !!v('fecha')&&!!v('area');
+  if(i===2)return !!(v('declRelato')||v('declQue'))||(EDIT&&/^FIRMADA/.test(estadoDeclTxt()));
+  if(i===3)return true;
+  if(i===4)return leerMedidas('inmediatas').some(function(m){return m.medida});
+  if(i===5)return [1,2,3,4,5].every(invOk);
+  if(i===6)return (ST.fotos.length+ST.fotosNuevas.length)>0;
+  return true}catch(e){return false}}
+function estadoDeclTxt(){var c=(CASOS||[]).find(function(x){return EDIT&&x['ID']===EDIT.id});return c?c['Declaración']||'':''}
+function pintaSecs(){var n=$('secNav');if(!n)return;var h='',k=0;
+  SECS.forEach(function(s,i){if(!secVisible(i))return;k++;var ok=secOk(i);
+    h+='<button type="button" class="'+(i===SEC?'on ':'')+(ok?'ok':'falta')+'" onclick="irSec('+i+')">'+(ok?'✔ ':k+'. ')+esc(s.t)+'<small>'+esc(s.d)+'</small></button>'});
+  n.innerHTML=h;var b=n.querySelector('.on');if(b)b.scrollIntoView({block:'nearest',inline:'center'})}
+function irSec(i,quieto){if(i<0)i=0;if(i>=SECS.length)i=SECS.length-1;
+  if(!secVisible(i)){var d=i>=SEC?1:-1;for(var j=i;j>=0&&j<SECS.length;j+=d)if(secVisible(j)){i=j;break}}
+  SEC=i;SECS.forEach(function(s,k){s.c.forEach(function(id){var o=$(id);if(o)o.classList.toggle('secOff',k!==i)})});
+  var ult=null;SECS[i].c.forEach(function(id){var o=$(id);if(o&&!o.classList.contains('hide'))ult=o});
+  var pie=$('secPie');if(!pie){pie=document.createElement('div');pie.id='secPie';pie.className='secPie'}
+  if(ult)ult.insertAdjacentElement('afterend',pie);
+  var ant=-1,sig=-1;for(var a=i-1;a>=0;a--)if(secVisible(a)){ant=a;break}for(var b=i+1;b<SECS.length;b++)if(secVisible(b)){sig=b;break}
+  var tSig=sig<0?(EDIT?'📄 Guardar y generar informe':'💾 Guardar caso'):(EDIT?'💾 Guardar y seguir: ':'Siguiente: ')+SECS[sig].t+' ➡';
+  pie.innerHTML=(ant>=0?'<button type="button" class="btn gr" onclick="irSec('+ant+')">⬅ '+esc(SECS[ant].t)+'</button>':'<span></span>')+
+    '<button type="button" class="btn '+(sig<0?'na':'ve')+'" onclick="secSig()">'+tSig+'</button>';
+  pintaSecs();if(!quieto){var y=$('secNav').getBoundingClientRect().top+window.scrollY-6;window.scrollTo({top:Math.max(0,y),behavior:'smooth'})}
+  setTimeout(function(){try{autoTodo();guiaA()}catch(e){}},80)}
+function secSig(){var sig=-1;for(var b=SEC+1;b<SECS.length;b++)if(secVisible(b)){sig=b;break}
+  if(sig<0){guardar();return}
+  if(!EDIT){irSec(sig);return}
+  guardar({solo:true,luego:function(){irSec(sig);toast('✔ Guardado. Sigue con: '+SECS[sig].t)}})}
+function secDe(o){var c=o&&o.closest&&o.closest('.card');if(!c)return -1;for(var i=0;i<SECS.length;i++)if(SECS[i].c.indexOf(c.id)>-1)return i;return -1}
+function primeraSecPendiente(){for(var i=0;i<SECS.length;i++)if(secVisible(i)&&!secOk(i))return i;return 0}
+setInterval(function(){try{if(!$('vNuevo').classList.contains('hide'))pintaSecs()}catch(e){}},2500);
 // "Lo que falta": cada punto es un vínculo que lleva al lugar donde se completa
 var FALTAN=[];
+function refrescarFalta(id){run().withSuccessHandler(function(x){var fl=(x.d&&x.d._faltan)||[];FALTAN=fl.slice();$('cFalta').classList.toggle('hide',!fl.length);
+  $('faltaLista').innerHTML=fl.map(function(t,i){return '<li><a href="#" class="faltaA" onclick="irFalta('+i+');return false">'+esc(t)+' <b>→ ir</b></a></li>'}).join('')}).getCaso(TOKEN,id)}
 function irFalta(i){var t=norm2(FALTAN[i]||''),dest=null,paso=0;
   if(/DECLARACION FIRMADA/.test(t))dest=$('cDeclaracion').offsetParent?'cDeclaracion':'cInv';
   else if(/DIAT|DIEP/.test(t))dest='cDocs';
@@ -1599,6 +1652,7 @@ function irFalta(i){var t=norm2(FALTAN[i]||''),dest=null,paso=0;
   else if(/PROTOCOLO/.test(t))dest='cProto';
   else if(/MEDIDA/.test(t)){paso=4;dest='medidas'}
   if(!dest)return;
+  var sd=secDe($(dest));if(sd>-1&&sd!==SEC)irSec(sd,true);
   if(paso)invPaso(paso);
   setTimeout(function(){var o=$(dest);if(!o)return;if(o.closest('.card.hide')){toast('Esa sección no aplica a este caso');return}
     o.scrollIntoView({behavior:'smooth',block:'center'});o.classList.add('destello');setTimeout(function(){o.classList.remove('destello')},3500);
@@ -1738,8 +1792,12 @@ function guardar(op){op=op||{};
   run().withSuccessHandler(function(r){
     b.disabled=false;
     if(!eraNuevo){var paso=IPASO;
-      if(op.solo){b.textContent='💾 Guardar';editar(r.id,true,function(){subirCola();if(paso>1)invPaso(paso);if(op.luego)op.luego()});cargarBanner();return}
-      toast('Caso '+r.id+' guardado. Armando el informe PDF...');editar(r.id,true,function(){subirCola();informePDF(EDIT,{subir:true});if(paso>1)invPaso(paso)});cargarBanner();return}
+      if(op.solo){b.disabled=false;b.textContent='💾 Guardar';
+        if(!d.fotosNuevas.length&&!VCOLA.length){var srv=EDIT._srv,est0=EDIT._estado;EDIT=d;EDIT._srv=srv;EDIT._estado=est0;delete EDIT.fotosNuevas;if(op.luego)op.luego();refrescarFalta(r.id);cargarBanner();return}
+        SEC_FIJA=true;editar(r.id,true,function(){subirCola();irSec(SEC,true);if(paso>1)invPaso(paso);if(op.luego)op.luego()});cargarBanner();return}
+      toast('Caso '+r.id+' guardado. Armando el informe PDF...');
+      if(!d.fotosNuevas.length&&!VCOLA.length){var srv2=EDIT._srv,est2=EDIT._estado;EDIT=d;EDIT._srv=srv2;EDIT._estado=est2;delete EDIT.fotosNuevas;informePDF(EDIT,{subir:true});refrescarFalta(r.id);cargarBanner();return}
+      SEC_FIJA=true;editar(r.id,true,function(){subirCola();irSec(SEC,true);informePDF(EDIT,{subir:true});if(paso>1)invPaso(paso)});cargarBanner();return}
     b.textContent='💾 Guardar caso y generar PDF';
     var res=$('resultado');
     res.innerHTML='<div class="res"><b>✔ Caso '+r.id+' guardado.</b><br>'+
@@ -1802,7 +1860,7 @@ function cargarEnForm(d,docs){
   $('edCerrar').classList.toggle('hide',USR.rol!=='ADMIN');
   $('edCerrar').textContent=est==='CERRADO'?'Reabrir caso':'Cerrar caso';
   $('btnGuardar').textContent='💾 Guardar';$('btnInforme').classList.remove('hide');
-  revisarNomina();cargarAvisos(true);pintaMedCob();setTimeout(autoTodo,80);
+  revisarNomina();cargarAvisos(true);pintaMedCob();setTimeout(autoTodo,80);setTimeout(function(){if(!SEC_FIJA)irSec(primeraSecPendiente(),true);SEC_FIJA=false},120);
   guiaA();
 }
 function partirDecl(t){var dec=String(t||''),que='',sug='';
