@@ -195,6 +195,96 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 .falta li{margin:3px 0}
 @media(max-width:600px){.proto,.nodo{grid-template-columns:1fr 1fr}.proto b,.nodo input{grid-column:1/-1}}
 @media(max-width:600px){.fila4,.fila3{grid-template-columns:1fr 1fr}.fila4 input:first-child,.fila3 input:first-child{grid-column:1/-1}.eva div{padding:8px 0;font-size:12px}.barras div{grid-template-columns:90px 1fr 30px}}
+
+/* ===== v5: guía fija abajo (no tapa nada: el contenido deja su espacio), cajas que crecen, selección marcada ===== */
+main{padding-bottom:200px}
+.guiaA{position:fixed;left:0;right:0;bottom:64px;z-index:6;display:flex;justify-content:center;pointer-events:none;max-width:none}
+.guiaA .bur{pointer-events:auto;width:min(920px,calc(100% - 16px));height:86px;overflow:auto;display:flex;gap:8px;align-items:center;background:#fff;border:2px solid var(--na);border-radius:14px;padding:6px 10px;font-size:14px;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+.guiaA .gav{font-size:26px}
+#guiaATx{flex:1;line-height:1.3}
+.guiaA .gbt{display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end;max-width:230px}
+.guiaA .gbt button{border:0;background:var(--na);color:#fff;border-radius:14px;padding:5px 9px;font-weight:bold;font-size:12px;cursor:pointer;margin:0}
+.guiaA .gbt button.asisB{background:var(--az)}
+.guiaA.min .bur{display:none}
+.miniG{display:none;pointer-events:auto;position:fixed;right:10px;bottom:72px;width:auto;height:auto;border-radius:18px;border:2px solid var(--na);background:#fff;font-size:13px;font-weight:bold;padding:6px 12px;color:#b26a1f;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.guiaA.min .miniG{display:block}
+#coachInv{position:relative!important;top:auto!important}
+#manoInv,#manoMov,#manoBorde{display:none!important} /* sin manitos flotantes: nunca tapan opciones; se marca el campo en naranjo */
+#coachInv .cbt{display:flex;flex-direction:column;gap:4px}
+#coachInv .asisB{background:#ffe082!important;color:#0b3d91!important;font-weight:bold}
+textarea{overflow:hidden;resize:none;min-height:64px}
+.chip.on,.si-no .chip.on,.vp .chip.on{background:var(--az)!important;border-color:var(--az)!important;color:#fff!important;font-weight:bold;box-shadow:0 0 0 2px #c9dafc}
+.chip.on::before{content:"✔ "}
+.chip.t-on::before{content:"✔ "}
+.malo{border:2px solid var(--ro)!important;background:#fff5f5!important}
+.tl3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0}
+.tlc{border-radius:10px;padding:8px;border:2px solid}
+.tlc.a{border-color:#1565c0;background:#eef4fd}.tlc.d{border-color:#f28c28;background:#fff4e8}.tlc.s{border-color:#2e7d32;background:#edf7ee}
+.tlc label small{font-weight:normal;color:#5a6780;display:block}
+.tlc textarea{min-height:110px;background:#fff}
+.tlb{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+@media(max-width:700px){.tl3{grid-template-columns:1fr}}
+#arbolUI .arbN{border:2px solid var(--az2);background:#eef4fd;border-radius:12px;padding:8px 10px;margin:4px 0}
+#arbolUI .arbN.raiz{border-color:var(--ro);background:#fdecea}
+#arbolUI .arbN.fondo{border-color:#e67e22;background:#fff6ec}
+#arbolUI .arbN.princ{box-shadow:0 0 0 3px #ffe0b2}
+#arbolUI .arbN.perm{border-style:dashed}
+#arbolUI .aet{font-size:11.5px;font-weight:bold;color:var(--az2);letter-spacing:.3px}
+#arbolUI .raiz .aet{color:var(--ro)}#arbolUI .fondo .aet{color:#c25e00}
+#arbolUI .vtag{font-weight:normal;color:#5a6780}
+#arbolUI .pill{background:var(--na);color:#fff;border-radius:10px;padding:1px 8px;font-size:10.5px;white-space:nowrap}
+#arbolUI .pill.gr{background:#e67e22}
+#arbolUI .atx{font-size:15px;margin:4px 0}
+#arbolUI .aacc{display:flex;flex-wrap:wrap;gap:4px}
+#arbolUI .aacc button{border:1px solid var(--bo);background:#fff;border-radius:8px;padding:4px 8px;font-size:12.5px;cursor:pointer}
+#arbolUI .aacc button:first-child{background:var(--az);color:#fff;border-color:var(--az);font-weight:bold}
+#arbolUI .arbR.sub{margin-left:16px;border-left:3px solid #9fb0cc;padding-left:8px}
+#arbolUI .arbRamas>.arbR{margin-bottom:10px}
+#arbolUI .arbFl{font-size:12px;color:#5a6780;font-style:italic;margin:2px 0 2px 12px}
+#arbolUI .arbEd{background:#fff;border:2px dashed var(--na);border-radius:12px;padding:10px;margin:6px 0}
+#arbolUI .arbEd .preg{font-size:15px}
+#arbolUI .arbEd .acc{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.med{border:1px solid var(--bo);border-left:5px solid var(--na);border-radius:10px;padding:8px;margin-bottom:8px;background:#fffdf8}
+.med.ok{border-left-color:var(--ve);background:#f3fbf4}
+.med textarea{min-height:44px}
+.med label{font-size:11.5px;margin:6px 0 2px}
+.mRow{display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:8px;align-items:start}
+@media(max-width:700px){.mRow{grid-template-columns:1fr 1fr}.mResp{grid-column:1/-1}}
+.rlist{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:4px}
+.rchip{background:#e3ecfb;border:1px solid #b7c9ea;border-radius:12px;padding:2px 8px;font-size:12.5px}
+.rchip b{color:var(--ro);cursor:pointer;margin-left:2px}
+.mQ{height:32px;margin-top:18px}
+@media(max-width:640px){main{padding-bottom:230px}.guiaA .bur{flex-wrap:wrap;height:112px;align-content:flex-start;font-size:13px;gap:4px}.guiaA .gav{display:none}#guiaATx{flex:1 1 100%}.guiaA .gbt{max-width:none;width:100%;justify-content:flex-start}#asisP{bottom:186px;height:min(440px,calc(100vh - 260px))}}
+.mQ{width:40px;justify-self:end}
+.mMv{border:0;background:none;color:var(--az2);font-size:12px;cursor:pointer;padding:2px 0;margin-top:2px;text-decoration:underline}
+.inmR{border:1px solid var(--bo);border-radius:8px;padding:6px 8px;margin:4px 0;font-size:13.5px;background:#fff}
+.conc{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;border:1px solid var(--bo);border-radius:10px;padding:8px;background:#f7f9fd}
+.conc .cn{min-width:26px;height:26px;border-radius:6px;background:var(--az);color:#fff;font-weight:bold;display:flex;align-items:center;justify-content:center}
+.conc input{margin-bottom:4px;font-weight:bold}
+.fotos .fo{width:150px;border:1px solid var(--bo);border-radius:10px;padding:6px;background:#fff;display:flex;flex-direction:column;gap:4px}
+.fotos .fo img{width:100%;height:100px;object-fit:cover;border-radius:6px}
+.fotos .fo .fph{display:flex;align-items:center;justify-content:center;height:100px;background:var(--gr);border-radius:6px;text-decoration:none;font-weight:bold;color:var(--az);text-align:center}
+.fotos .fo input{font-size:12.5px;padding:6px}
+.fotos .fo .fob{display:flex;gap:4px;align-items:center;justify-content:space-between}
+.fotos .fo .fob button{border:1px solid var(--bo);background:#fff;border-radius:6px;cursor:pointer;padding:3px 8px}
+.vid,.vcola,.subida{border:1px solid var(--bo);border-radius:10px;padding:8px;margin-top:6px;background:#fff;display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13.5px}
+.vid input{flex:1;min-width:180px}
+.barraP{width:100%;height:8px;background:#e3e7ef;border-radius:4px;overflow:hidden}.barraP i{display:block;height:100%;width:0;background:var(--ve)}
+/* Asísteme */
+#asisP{position:fixed;right:10px;bottom:160px;width:min(420px,calc(100% - 20px));height:min(460px,calc(100vh - 240px));background:#fff;border:3px solid var(--az);border-radius:16px;z-index:25;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+#asisP.hide{display:none!important}
+#asisP .ah{background:var(--az);color:#fff;padding:8px 10px;display:flex;align-items:center;gap:8px;border-radius:12px 12px 0 0;font-weight:bold}
+#asisP .ah button{margin-left:auto;background:rgba(255,255,255,.2);border:0;color:#fff;border-radius:8px;padding:4px 10px;cursor:pointer;font-weight:bold}
+#asisLog{flex:1;overflow:auto;padding:8px;font-size:14px;background:#f6f8fc}
+#asisLog .m{margin:6px 0;padding:8px 10px;border-radius:12px;max-width:90%;line-height:1.35}
+#asisLog .m.yo{background:#e3ecfb;margin-left:auto;text-align:right}
+#asisLog .m.el{background:#fff;border:1px solid var(--bo)}
+#asisP .aq{display:flex;flex-wrap:wrap;gap:4px;padding:6px 8px;border-top:1px solid var(--bo)}
+#asisP .aq span{font-size:12px;border:1px solid #b7c9ea;background:#eef4ff;border-radius:12px;padding:3px 8px;cursor:pointer}
+#asisP .ain{display:flex;gap:6px;padding:8px;border-top:1px solid var(--bo)}
+#asisP .ain input{flex:1}
+#asisP .ain button{border:0;border-radius:10px;padding:0 12px;font-size:18px;cursor:pointer;background:var(--na);color:#fff}
+#asisP .ain button.oye{background:var(--ro);animation:pulso 1s infinite}
 </style>
 </head>
 <body>
@@ -229,13 +319,14 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 
 <div id="bannerG" class="hide"></div>
 <div id="manoMov" class="hide"><span>👉</span></div><button id="manoBorde" class="hide" type="button"></button><div id="manoInv" class="hide"><span>👉</span><i id="manoInvTx">aquí</i></div>
-<div class="guiaA" id="guiaA"><div class="bur"><div class="barG"><span class="grip" title="Mantén apretado y arrastra">✥ Arrástrame</span><button onclick="centrarG('guiaA','gA')" title="Volver a su lugar">⟲</button><button onclick="minG('guiaA','gA',true)" title="Minimizar">–</button></div><span id="guiaATx"></span><br><button id="bVozA" onclick="vozA()">🔇 Silenciar</button><button onclick="llevar(true)">👉 Llévame</button></div><button class="miniG" onclick="minG('guiaA','gA',false)" title="Mostrar la ayuda (puedes arrastrarla)">👉</button></div>
+<div class="guiaA" id="guiaA"><div class="bur"><span class="gav">👉</span><span id="guiaATx"></span><div class="gbt"><button id="bVozA" onclick="vozA()">🔇 Silenciar</button><button onclick="llevar(true)">👉 Llévame</button><button class="asisB" onclick="abrirAsis()">🎤 Asísteme</button><button onclick="minG('guiaA','gA',true)" title="Ocultar la guía">✕</button></div></div><button class="miniG" onclick="minG('guiaA','gA',false)" title="Mostrar la guía">👉 Guía</button></div>
 <main id="vNuevo">
 
   <!-- BARRA DE EDICIÓN -->
   <div class="card hide" id="cEstado"><div class="in" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
     <b id="edTitulo" style="font-size:16px"></b><span id="edEstado" class="est"></span>
-    <a id="edPdf" target="_blank" class="btn sm ve">Ver PDF</a>
+    <button class="btn sm na" onclick="descargarPDF()">⬇ Descargar informe PDF</button>
+    <a id="edPdf" target="_blank" class="btn sm ve">Ver PDF en Drive</a>
     <a id="edCarpeta" target="_blank" class="btn sm">Carpeta</a>
     <button id="edCerrar" class="btn sm na" onclick="cerrarCaso()">Cerrar caso</button>
     <button class="btn sm gr" onclick="nuevoCaso()">Salir de edición</button>
@@ -255,7 +346,7 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
       <ul style="margin:6px 0 0;padding-left:20px;color:#33435c"><li>Obliga a realizar maniobras de <b>reanimación</b> o de <b>rescate</b>.</li><li><b>Caída de altura</b> de más de 1,8 m.</li>
       <li><b>Amputación</b> o pérdida de cualquier parte del cuerpo, en forma inmediata.</li><li>Involucra a un número de trabajadores que afecta el desarrollo normal de la faena.</li><li>Ocurre en condiciones hiperbáricas.</li></ul></details>
     <div id="alertaGrave" class="alerta hide">⚠ ACCIDENTE GRAVE O FATAL: suspender de inmediato las faenas afectadas, evacuar si es necesario y avisar de inmediato a la Inspección del Trabajo y a la SEREMI de Salud (art. 76 Ley 16.744). Avisar también al organismo administrador.</div>
-    <div id="infoDiat" class="info hide">Recuerda: la DIAT (accidente) o DIEP (enfermedad) se emite dentro de las 24 horas de conocido el hecho.</div>
+    <div id="infoDiat" class="info hide"></div>
     <div id="infoKarin" class="info hide">Ley Karin: adoptar medidas de resguardo de inmediato, ofrecer atención psicológica del organismo administrador y, dentro de 3 días hábiles, informar a la Dirección del Trabajo si la investigación la hace la empresa o se remite a la DT. Este caso queda <b>reservado</b>: solo lo ve el administrador.</div>
   </div></div>
 
@@ -285,6 +376,7 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
         <div><label>Edad (auto)</label><input id="edad" readonly></div>
         <div><label>Antigüedad (auto)</label><input id="antiguedad" readonly></div>
       </div>
+      <div id="avisoNomina"></div>
     </div>
     <datalist id="empresas"><option>Constructor Center</option><option>Full Rental Ltda.</option><option>Sotraman Ltda.</option><option>Solintev</option><option>Sopreser Ltda.</option></datalist>
   </div></div>
@@ -293,7 +385,7 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
   <div class="card" id="cInicio"><h2><span class="n">★</span>Declaración del trabajador — punto de partida</h2><div class="in">
     <p style="margin:0 0 8px;font-size:14px">Todo el caso nace de la declaración del trabajador. ¿Cómo la quieres tomar?</p>
     <div class="grande">
-      <button class="opg" id="opYo" onclick="modoInicio('yo')"><b>✍ La lleno yo ahora</b>Con el trabajador al lado. Completas los datos de la DIAT aquí abajo.</button>
+      <button class="opg" id="opYo" onclick="modoInicio('yo')"><b>✍ La lleno yo ahora</b><span id="opYoTx">Con el trabajador al lado. Completas su declaración aquí abajo.</span></button>
       <button class="opg" id="opLink" onclick="modoInicio('link')"><b>📲 Enviarle un link</b>Él la llena en su celular, paso a paso, y firma con el dedo. Te llega una alerta al terminar.</button>
     </div>
     <div id="bLinkTrab" class="grid hide" style="margin-top:10px">
@@ -311,7 +403,7 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
       <div><label>Fecha del evento *</label><input type="date" id="fecha" onchange="calc()"></div>
       <div><label>Hora aproximada</label><input type="time" id="hora"></div>
       <div><label>Área / lugar exacto</label><input id="area" placeholder="Ej: bodega 2, patio de carga"></div>
-      <div><label>Dirección donde ocurrió (DIAT)</label><input id="lugarDireccion" placeholder="Calle, número, comuna"></div>
+      <div><label id="lLugarDir">Dirección donde ocurrió</label><input id="lugarDireccion" placeholder="Calle, número, comuna"></div>
       <div><label>Profesión u oficio</label><input id="oficio"></div>
       <div><label>Horario entrada</label><input type="time" id="horaEntrada"></div>
       <div><label>Horario salida</label><input type="time" id="horaSalida"></div>
@@ -319,8 +411,8 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
       <div style="grid-column:1/-1"><small id="dotInfo" style="color:#666"></small></div>
       <div><label>Dotación sucursal — hombres (auto)</label><input type="number" id="hombres" min="0"></div>
       <div><label>Dotación sucursal — mujeres (auto)</label><input type="number" id="mujeres" min="0"></div>
-      <div><label>Estatura (cm)</label><input type="number" id="estatura"></div>
-      <div><label>Peso (kg)</label><input type="number" id="peso"></div>
+      <div class="soloLes"><label>Estatura (cm)</label><input type="number" id="estatura"></div>
+      <div class="soloLes"><label>Peso (kg)</label><input type="number" id="peso"></div>
     </div>
   </div></div>
 
@@ -333,14 +425,24 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 
   <!-- 4 DECLARACIÓN -->
   <div class="card" id="cDeclaracion"><h2><span class="n">4</span>Declaración del trabajador</h2><div class="in">
-    <div class="info" style="margin-top:0">Se completa sola cuando el trabajador firma su declaración por enlace (sección 9). Puedes adelantar datos aquí.</div>
+    <div class="info" style="margin-top:0">Se completa sola cuando el trabajador firma su declaración por enlace. Si la tomas tú, escribe aquí lo que él cuenta, con sus palabras.</div>
     <div class="grid">
       <div><label>¿Qué labor realizaba?</label><input id="labor"></div>
       <div><label>¿Desarrollaba su trabajo habitual?</label><div class="si-no" data-campo="habitual" data-opc="SI,NO"></div></div>
       <div><label>¿Practica algún deporte? ¿Cuál?</label><input id="deporte" placeholder="Dejar vacío si no practica"></div>
     </div>
-    <label style="margin-top:10px">Relato en sus propias palabras (YO ... DECLARO QUE:)</label>
-    <textarea id="declaracion" placeholder="Qué estaba haciendo, cómo ocurrió, qué pasó después..."></textarea>
+    <label style="margin-top:10px">Qué pasó, en pocas palabras</label>
+    <input id="declQue" placeholder="Ej: se golpeó la mano con una carga / daño a un vehículo de un tercero">
+    <label style="margin-top:10px">Relato con sus propias palabras (YO ... DECLARO QUE:)</label>
+    <textarea id="declRelato" placeholder="Qué estaba haciendo, cómo ocurrió, qué pasó después..."></textarea>
+    <label style="margin-top:10px">¿Cómo se podría evitar? (opinión del trabajador)</label>
+    <textarea id="declSugerencia" placeholder="Opcional"></textarea>
+    <textarea id="declaracion" class="hide"></textarea>
+    <div class="grid" style="margin-top:10px">
+      <div><label>¿Quién recibe la declaración? (nombre)</label><input id="entrevistador" list="dlNomina" placeholder="Vacío = se firma a mano en el informe"></div>
+      <div><label>Cargo de quien la recibe</label><input id="entrevistadorCargo"></div>
+      <div><label>Fecha de la declaración</label><input type="date" id="fechaDeclaracion"></div>
+    </div>
   </div></div>
 
   <!-- 5 LESIÓN -->
@@ -350,7 +452,7 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
     <div class="grid" style="margin-top:10px">
       <div><label>Tipo de lesión</label><select id="tipoLesion"><option></option><option>Golpe / contusión</option><option>Corte / herida</option><option>Torcedura / esguince</option><option>Lumbago / sobreesfuerzo</option><option>Fractura (posible)</option><option>Quemadura</option><option>Cuerpo extraño en ojo</option><option>Atrapamiento</option><option>Dolor / molestia sin lesión visible</option><option>Otra</option></select><input id="tipoLesionOtro" class="otro hide" placeholder="✏️ Escribe cuál es..."></div>
       <div><label>Centro de atención / OAL</label><input id="centro" placeholder="Ej: Mutual, ACHS, ISL — sede"></div>
-      <div><label>N° folio DIAT / DIEP</label><input id="folioDiat"></div>
+      <div><label id="lFolio">N° folio DIAT / DIEP</label><input id="folioDiat"></div>
     </div>
     <label style="margin-top:12px">Escala del dolor EVA (toca un número)</label>
     <div class="eva" id="eva"></div>
@@ -386,10 +488,12 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
     <div class="grid">
       <div><label>Bien / equipo / vehículo afectado</label><input id="danoBien" placeholder="Ej: grúa horquilla, rack, rampla"></div>
       <div><label>Patente / código / N° interno</label><input id="danoCodigo"></div>
-      <div><label>Costo estimado ($)</label><input id="danoCosto"></div>
+      <div><label>Marca / modelo / año (si es vehículo o equipo)</label><input id="danoMarca" placeholder="Ej: Changan CS35 1.6 — 2022 — blanco"></div>
+      <div><label>Propietario (si es de un tercero)</label><input id="danoPropietario"></div>
+      <div><label>Costo estimado ($)</label><input id="danoCosto" placeholder="Ej: $350.000 o Por determinar"></div>
       <div><label>¿Involucra terceros?</label><div class="si-no" data-campo="danoTerceros" data-opc="SI,NO"></div></div>
     </div>
-    <label style="margin-top:10px">Descripción del daño</label><textarea id="danoDesc"></textarea>
+    <label style="margin-top:10px">Descripción del daño (cómo quedó)</label><textarea id="danoDesc"></textarea>
   </div></div>
 
   <!-- EP -->
@@ -422,25 +526,28 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
   </div></div>
 
   <!-- MEDIDAS INMEDIATAS -->
-  <div class="card" id="cInmediatas"><h2><span class="n">6</span>Medidas correctivas inmediatas</h2><div class="in">
+  <div class="card" id="cInmediatas"><h2><span class="n">6</span>Medidas inmediatas <small style="font-weight:normal">(lo que se hizo apenas pasó)</small></h2><div class="in">
     <div id="inmediatas"></div>
-    <button class="btn sm" onclick="addMedida('inmediatas')">+ Agregar medida</button>
+    <button class="btn sm" onclick="addMedida('inmediatas',null,true)">+ Agregar medida inmediata</button>
+    <small style="display:block;color:#666;margin-top:6px">No se vuelven a pedir en la investigación: en el paso 4 solo indicas a qué causa atiende cada una.</small>
   </div></div>
 
   <!-- INVESTIGACIÓN -->
-  <div class="card" id="cInvest"><h2><span class="n">7</span>Investigación <small style="font-weight:normal">(supervisor directo) — 4 pasos cortos</small></h2><div class="in">
-    <div id="coachInv"><div class="av">🧑‍🏫</div><div class="tx" id="coachTx">Te voy guiando.</div><div style="display:flex;flex-direction:column;gap:4px"><button type="button" id="coachVoz" onclick="coachVozT()">🔇 Callar</button><button type="button" onclick="coachLlevar()">👉 Llévame</button></div></div>
+  <div class="card" id="cInvest"><h2><span class="n">7</span>Investigación <small style="font-weight:normal">— 5 pasos cortos</small></h2><div class="in">
+    <div id="coachInv"><div class="av">🧑‍🏫</div><div class="tx" id="coachTx">Te voy guiando.</div><div class="cbt"><button type="button" id="coachVoz" onclick="coachVozT()">🔇 Callar</button><button type="button" onclick="coachLlevar()">👉 Llévame</button><button type="button" class="asisB" onclick="abrirAsis()">🎤 Asísteme</button></div></div>
     <div class="ipasos" id="ipasos"></div>
 
     <!-- PASO 1 -->
     <div class="ipaso" data-p="1">
-      <div class="ipreg">📝 Cuenta qué pasó, en orden: <b>antes</b>, <b>durante</b> y <b>después</b>.</div>
-      <div class="ej">Escribe como si se lo contaras a alguien que no estaba. Ej: "A las 10:30 Juan bajaba de la rampla con una caja. El piso tenía aceite. Se resbaló y se dobló el tobillo derecho. Lo llevaron a la Mutual."</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin:6px 0">
-        <button class="btn sm gr" type="button" onclick="invPlantilla()">🧩 Ayúdame con el formato (antes / durante / después)</button>
-        <button class="btn sm gr" type="button" id="bUsarDecl" onclick="invUsarDecl()">📋 Partir desde la declaración del trabajador</button>
+      <div class="ipreg">📝 Cuenta qué pasó, en orden. Escribe como si se lo contaras a alguien que no estaba.</div>
+      <div class="tl3">
+        <div class="tlc a"><label>⬅ ANTES <small>qué hacía, dónde, con qué</small></label><textarea id="dAntes" oninput="syncDesc()" placeholder="Ej: A las 10:30 Juan bajaba de la rampla con una caja grande."></textarea></div>
+        <div class="tlc d"><label>⚡ DURANTE <small>qué pasó exactamente</small></label><textarea id="dDurante" oninput="syncDesc()" placeholder="Ej: El piso tenía aceite, se resbaló y se dobló el tobillo derecho."></textarea></div>
+        <div class="tlc s"><label>➡ DESPUÉS <small>qué se hizo, cómo quedó</small></label><textarea id="dDespues" oninput="syncDesc()" placeholder="Ej: Lo llevaron a la Mutual. Se limpió el aceite."></textarea></div>
       </div>
-      <textarea id="descripcion" placeholder="ANTES: ...&#10;DURANTE: ...&#10;DESPUÉS: ..." style="min-height:130px"></textarea>
+      <div class="tlb"><button type="button" class="btn sm gr" onmousedown="event.preventDefault()" onclick="negrita()">𝐁 Destacar lo que seleccionaste</button><button type="button" class="btn sm gr" id="bUsarDecl" onclick="invUsarDecl()">📋 Copiar la declaración del trabajador en DURANTE</button></div>
+      <small style="color:#666">Lo destacado sale en negrita en el informe (por ejemplo, lo que muestra un video).</small>
+      <textarea id="descripcion" class="hide"></textarea>
     </div>
 
     <!-- PASO 2 -->
@@ -452,10 +559,8 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
         <ol style="font-size:13px;color:#33435c">
           <li>Relate en orden todo lo que recuerda desde que comenzó la actividad.</li>
           <li>¿Dónde estaba exactamente y qué hacía al momento del hecho?</li>
-          <li>¿Cómo hizo el trabajo, paso a paso?</li>
           <li>¿Cómo estaba el lugar, el equipo y el clima ese día?</li>
           <li>¿Cómo se hace normalmente este trabajo? ¿Se hizo igual esta vez?</li>
-          <li>¿Cómo estaban las herramientas y materiales?</li>
           <li>¿Quién estaba a cargo? ¿Qué instrucciones recibió?</li>
           <li>¿Ha pasado algo parecido antes?</li>
           <li>¿Por qué cree que pasó? ¿Qué se pudo hacer para evitarlo?</li>
@@ -465,42 +570,48 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
 
     <!-- PASO 3 -->
     <div class="ipaso hide" data-p="3">
-      <div class="ipreg">🔎 ¿Por qué pasó? Primero marca lo que aplique (toca los botones). Después armamos el árbol juntos.</div>
+      <div class="ipreg">🔎 ¿Por qué pasó? Primero marca lo que aplique (toca los botones). Después armas el árbol.</div>
       <div class="grupo">1) ¿Qué hizo la persona que no debía hacer? <small style="font-weight:normal;color:#666">(acciones inseguras)</small></div>
-      <div class="chips" data-append="accInseguras" data-opc="No usar EPP,Operar sin autorización,Posición o postura insegura,Levantar carga en forma incorrecta,Trabajar a velocidad inadecuada,Usar equipo defectuoso,Distracción / uso de celular,No respetar procedimiento,Subirse a racks,Viajar en horquillas,Exceso de confianza"></div>
+      <div class="chips" data-append="accInseguras" data-opc="No usar EPP,Operar sin autorización,Posición o postura insegura,Levantar carga en forma incorrecta,Trabajar a velocidad inadecuada,Usar equipo defectuoso,Distraerse / no mirar el entorno,Retroceder o maniobrar sin verificar,Saltarse un procedimiento,Subirse a racks o a las horquillas"></div>
       <textarea id="accInseguras" style="margin-top:6px" placeholder="Lo que toques arriba aparece aquí. También puedes escribir."></textarea>
       <div class="grupo">2) ¿Qué estaba mal en el lugar, el equipo o el material? <small style="font-weight:normal;color:#666">(condiciones inseguras)</small></div>
-      <div class="chips" data-append="condInseguras" data-opc="Piso resbaladizo o irregular,Orden y aseo deficiente,Iluminación insuficiente,Equipo o herramienta en mal estado,Bordes cortantes sin protección,Carga mal estibada,Falta de señalización,Espacio reducido,Protecciones ausentes,Condiciones climáticas"></div>
+      <div class="chips" data-append="condInseguras" data-opc="Piso resbaladizo o irregular,Orden y aseo deficiente,Iluminación insuficiente,Equipo o herramienta en mal estado,Bordes cortantes sin protección,Carga mal estibada,Espacio reducido,Falta de señalización,Vehículo o persona en zona prohibida,Clima (lluvia / barro / viento)"></div>
       <textarea id="condInseguras" style="margin-top:6px"></textarea>
       <div class="grupo">3) ¿Qué le pasaba a la persona? <small style="font-weight:normal;color:#666">(factores personales)</small></div>
-      <div class="chips" data-append="factPersonales" data-opc="Falta de conocimiento,Falta de habilidad / experiencia,Fatiga / cansancio,Motivación inadecuada,Capacidad física inadecuada,Estrés"></div>
+      <div class="chips" data-append="factPersonales" data-opc="Falta de conocimiento,Falta de habilidad / experiencia,Fatiga / cansancio,Motivación inadecuada,Capacidad física inadecuada,Estrés,Sin antecedentes que indiquen factores personales"></div>
       <textarea id="factPersonales" style="margin-top:6px"></textarea>
       <div class="grupo">4) ¿Qué falló en la organización del trabajo? <small style="font-weight:normal;color:#666">(factores del trabajo)</small></div>
-      <div class="chips" data-append="factTrabajo" data-opc="Supervisión insuficiente,Procedimiento inexistente o inadecuado,Mantención deficiente,Herramientas / equipos inadecuados,Capacitación insuficiente,Planificación deficiente,Compras / estándares inadecuados"></div>
+      <div class="chips" data-append="factTrabajo" data-opc="Supervisión insuficiente,Procedimiento inexistente o inadecuado,Mantención deficiente,Herramientas / equipos inadecuados,Capacitación insuficiente,Planificación deficiente,Falta de chequeo pre-uso"></div>
       <textarea id="factTrabajo" style="margin-top:6px"></textarea>
 
-      <div class="grupo" style="margin-top:18px">🌳 ÁRBOL DE CAUSAS <small style="font-weight:normal;color:#666">— solo responde "¿por qué?" hasta que no haya más</small></div>
+      <div class="grupo" style="margin-top:18px">🌳 ÁRBOL DE CAUSAS</div>
       <div class="acomo">
-        <div><b>1</b> A la derecha va <b>lo que pasó</b> (la lesión o el daño).</div>
-        <div><b>2</b> Tocas una caja y respondes <b>¿por qué pasó esto?</b> Cada respuesta es una caja nueva a la izquierda.</div>
-        <div><b>3</b> Las cajas <span style="background:#fff3c4;padding:0 4px;border-radius:4px">amarillas ❓</span> todavía esperan su "¿por qué?". Cuando ya no hay más, es <b>causa de fondo 🧱</b> y le pones una medida.</div>
-        <button class="btn sm gr" type="button" onclick="arbEjemplo()">👀 Ver un ejemplo armado</button>
+        <div>Arriba va <b>lo que pasó</b>. Debajo, cada causa responde <b>¿por qué pasó?</b></div>
+        <div>Puede haber <b>varias causas</b> (ramas) y cada una puede tener su propio <b>¿por qué?</b> más abajo.</div>
+        <div>Marca con ⭐ la <b>causa principal</b>. Las causas sin nada debajo son <b>causas de fondo</b>: cada una necesita una medida.</div>
       </div>
-      <div class="asis" id="arbAsis"></div>
-      <div class="arbol" id="arbolVis"></div>
-      <details style="margin-top:8px;font-size:13px"><summary style="cursor:pointer;color:#5a6780">✏️ Edición manual (solo si sabes lo que haces)</summary>
-        <div id="arbolEd"></div>
-        <button class="btn sm gr" onclick="addNodo()">+ Agregar hecho a mano</button></details>
+      <div id="arbolUI"></div>
     </div>
 
     <!-- PASO 4 -->
     <div class="ipaso hide" data-p="4">
-      <div class="ipreg">🛠 ¿Qué vamos a hacer para que no vuelva a pasar? Cada causa de fondo necesita una medida con <b>responsable</b> y <b>plazo</b>.</div>
-      <div id="medSug"></div>
-      <div class="grupo" style="margin-top:8px">Medidas correctivas <small style="font-weight:normal;color:#666">(marca "Cumplida" cuando se ejecute)</small></div>
+      <div class="ipreg">🛠 ¿Qué se va a hacer para que no vuelva a pasar? Cada causa del árbol necesita al menos una medida, con <b>responsable</b> y <b>plazo</b>.</div>
+      <div id="medCob"></div>
+      <div id="medInmRes"></div>
+      <div class="grupo" style="margin-top:8px">Medidas correctivas</div>
       <div id="medidas"></div>
-      <button class="btn sm" onclick="addMedida('medidas')">+ Escribir una medida</button>
+      <button class="btn sm" onclick="nuevaMedida()">+ Escribir una medida</button>
       <button class="btn sm na" id="bCursoMed" onclick="elegirCurso()">🎓 Agregar un curso del portal como medida</button>
+    </div>
+
+    <!-- PASO 5 -->
+    <div class="ipaso hide" data-p="5">
+      <div class="ipreg">🧾 Conclusiones del informe: puntos cortos que cualquiera entienda sin explicación. Toca el botón y te dejo una propuesta para revisar.</div>
+      <button class="btn sm na" type="button" onclick="proponerConcl()">✨ Proponer conclusiones con los datos del caso</button>
+      <div id="concl" style="margin-top:10px"></div>
+      <button class="btn sm" type="button" onclick="addConcl()">+ Agregar un punto</button>
+      <label style="margin-top:12px">Por confirmar (opcional: algo que todavía no está claro)</label>
+      <input id="porConfirmar" placeholder="Ej: la hora del evento difiere entre lo declarado y la cámara">
       <div class="grupo" style="margin-top:14px">¿Quiénes participaron en la investigación?</div>
       <div id="participantes"></div>
       <button class="btn sm" onclick="addParticipante()">+ Agregar participante</button>
@@ -512,10 +623,12 @@ table.lista tr.cl{cursor:pointer}table.lista tr.cl:hover td{background:var(--gr)
     </div>
   </div></div>
 
-  <!-- FOTOS -->
-  <div class="card" id="cFotos"><h2><span class="n">8</span>Fotos</h2><div class="in">
-    <input type="file" id="fotosIn" accept="image/*" multiple onchange="cargarFotos(this)">
+  <!-- FOTOS Y VIDEOS -->
+  <div class="card" id="cFotos"><h2><span class="n">8</span>Fotos y videos <small style="font-weight:normal">(medios de prueba)</small></h2><div class="in">
+    <label class="btn sm" style="display:inline-block;cursor:pointer">📷 Agregar fotos o videos<input type="file" id="fotosIn" accept="image/*,video/*" multiple onchange="cargarMedios(this)" style="display:none"></label>
+    <small style="display:block;color:#666;margin:6px 0">Escribe debajo de cada foto qué muestra; así sale en el informe. Usa ◀ ▶ para ordenarlas. Los videos se guardan en la carpeta del caso y el informe los menciona con su enlace.</small>
     <div class="fotos" id="fotosPrev"></div>
+    <div id="videosPrev"></div>
   </div></div>
 
   <!-- INVITAR A APORTAR -->
@@ -629,7 +742,7 @@ var PARTES={'Cabeza y cara':['Cabeza','Nuca','Cara','Ojo|','Oreja|','Nariz','Boc
   'Piernas y pies':['Muslo|','Rodilla|','Pantorrilla|','Canilla|','Tobillo|','Talón|','Pie|','Dedos pie|']};
 var EVAC=['#1b9e3e','#5cb85c','#8bc34a','#cddc39','#ffeb3b','#ffc107','#ff9800','#ff7043','#f4511e','#e53935','#b71c1c'];
 var FIELDS=['lugarDireccion','oficio','fecha','hora','area','horaEntrada','horaSalida','contrato','hombres','mujeres','estatura','peso','edad','antiguedad',
- 'labor','deporte','declaracion','tipoLesion','motivoNegativa','centro','folioDiat','reposoDesde','reposoHasta','diasPerdidos','fechaAlta',
+ 'labor','deporte','declaracion','declQue','declRelato','declSugerencia','entrevistador','entrevistadorCargo','fechaDeclaracion','danoMarca','danoPropietario','porConfirmar','tipoLesion','motivoNegativa','centro','folioDiat','reposoDesde','reposoHasta','diasPerdidos','fechaAlta',
  'trayectoSentido','trayectoOrigen','trayectoDestino','trayectoMedio','trayectoPrueba','danoBien','danoCodigo','danoCosto','danoDesc',
  'epInicio','epExposicion','epSintomas','epTareas','lkRecepcion','lkForma','lkInvestiga','lkAvisoDT','lkDenunciado','lkRelato',
  'descripcion','accInseguras','condInseguras','factPersonales','factTrabajo','charla'];
@@ -647,7 +760,7 @@ function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function hoyISO(){var h=new Date();return new Date(h-h.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
 function fDMA(iso){if(!iso)return '';var p=String(iso).split('-');return p.length===3&&p[0].length===4?p[2]+'-'+p[1]+'-'+p[0]:iso}
-function toast(t){var d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(function(){d.remove()},2500)}
+function toast(t){document.querySelectorAll('.toast.tt').forEach(function(x){x.remove()});var d=document.createElement('div');d.className='toast tt';d.textContent=t;document.body.appendChild(d);setTimeout(function(){d.remove()},2500)}
 function run(){return google.script.run.withFailureHandler(err)}
 function err(e){
   var m=(e&&e.message)||String(e);
@@ -784,19 +897,20 @@ function limpiar(){
     if(e.type==='checkbox'||e.type==='radio')e.checked=false;else e.value='';
   });
   $('decRol').value='Afectado';
-  ['inmediatas','medidas','participantes','testigos','fotosPrev','decLista','decRes','docs','resultado','arbolEd','invLista','invRes'].forEach(function(i){$(i).innerHTML=''});
+  ['inmediatas','medidas','participantes','testigos','fotosPrev','videosPrev','decLista','decRes','docs','resultado','invLista','invRes','concl','medCob','medInmRes','avisoNomina'].forEach(function(i){if($(i))$(i).innerHTML=''});
+  ARB=[];ARBED=null;VCOLA=[];
   PEND_F.forEach(function(id){var e=$(id);if(e&&e.dataset.tipo&&e.type!==e.dataset.tipo)e.type=e.dataset.tipo;marcarPend(id)});
   document.querySelectorAll('#protoFilas .proto').forEach(function(r){r.querySelector('[data-k="e"]').value='Pendiente'});
   MODO_INI='';AVISOS=null;$('opYo').classList.remove('on');$('opLink').classList.remove('on');$('bLinkTrab').classList.add('hide');
   $('avisos').innerHTML='Elige al trabajador para ver la lista.';$('dotInfo').textContent='';$('cFalta').classList.add('hide');$('cInv').classList.add('hide');
   $('trab').classList.add('hide');$('sug').classList.add('hide');
   MULTI.forEach(function(k){if(document.querySelector('[data-multi="'+k+'"]'))pintarMulti(k)});$('tipoLesionOtro').classList.add('hide');pintarPartes();
-  aplicarTipos();rolDecl();modoDecl();pintaProto();ASIS={foco:null,tipo:'',txt:'',aviso:''};IVISTO={};IPASO=1;GUARDAR_YA=false;COACH.msg='';COACH.dicho='';document.querySelectorAll('#cInvest .ipaso').forEach(function(d){d.classList.toggle('hide',d.dataset.p!=='1')});pintaArbol();
+  aplicarTipos();rolDecl();modoDecl();pintaProto();ASIS={};IVISTO={};IPASO=1;GUARDAR_YA=false;COACH.msg='';COACH.dicho='';document.querySelectorAll('#cInvest .ipaso').forEach(function(d){d.classList.toggle('hide',d.dataset.p!=='1')});pintaArbol();
 }
 function nuevoCaso(){
   limpiar();EDIT=null;
-  addMedida('inmediatas');addMedida('medidas');addParticipante();
-  $('fecha').value=hoyISO();
+  addMedida('inmediatas');addParticipante();
+  $('fecha').value=hoyISO();$('fechaDeclaracion').value=hoyISO();pintarFotos();setTimeout(autoTodo,50);
   ['cEstado','cDocs','bBtnDecl'].forEach(function(i){$(i).classList.add('hide')});
   $('cInicio').classList.remove('hide');modoInicio('');
   $('btnGuardar').textContent='💾 Guardar caso y generar PDF';
@@ -816,7 +930,14 @@ function aplicarTipos(){
   $('cEP').classList.toggle('hide',!has('Posible enfermedad profesional'));
   $('cKarin').classList.toggle('hide',!has('Ley Karin'));
   $('infoKarin').classList.toggle('hide',!has('Ley Karin'));
-  $('infoDiat').classList.toggle('hide',!(acc||has('Posible enfermedad profesional')));
+  var doc=docOAL();$('infoDiat').classList.toggle('hide',!doc);
+  $('infoDiat').innerHTML=doc==='DIAT'?'Recuerda: la <b>DIAT</b> (Denuncia Individual de Accidente del Trabajo) se presenta dentro de las 24 horas de conocido el accidente.':
+    doc==='DIEP'?'Recuerda: la <b>DIEP</b> (Denuncia Individual de Enfermedad Profesional) se presenta dentro de las 24 horas de conocida la posible enfermedad, y el trabajador va a evaluación al organismo administrador.':
+    doc?'Recuerda: la <b>DIAT</b> (accidente) y la <b>DIEP</b> (posible enfermedad) se presentan dentro de las 24 horas de conocido el hecho.':'';
+  $('opYoTx').textContent='Con el trabajador al lado. Completas aquí '+(doc?'su declaración y los datos de la '+doc+'.':'su declaración.');
+  $('lLugarDir').textContent='Dirección donde ocurrió'+(doc?' (la pide la '+doc+')':'');
+  $('lFolio').textContent='N° folio '+(doc||'DIAT / DIEP');
+  document.querySelectorAll('.soloLes').forEach(function(e){e.classList.toggle('hide',!lesionT())});
   $('cDeclaracion').classList.toggle('hide',has('Ley Karin')&&ST.tipos.length===1);
   ['cDeclaracion','cLesion','cTrayecto','cDano','cEP','cKarin'].forEach(function(i){if($(i).dataset.link==='1')$(i).classList.add('hide')});
   alertaGrave();if(AVISOS&&!EDIT)cargarAvisos();
@@ -882,7 +1003,8 @@ function sugerir(){
     :'<div><small>No está en la nómina. Debe inscribirse primero en el Formulario de Inscripción.</small></div>';
   box.classList.remove('hide');
 }
-function elegir(i){var w=NOMINA[i];CAMPOS_T.forEach(function(k){ponValor('t_'+k,w[k]||'')});$('sug').classList.add('hide');$('buscar').value=w.nombre;$('trab').classList.remove('hide');calc();
+function elegir(i){var w=NOMINA[i];CAMPOS_T.forEach(function(k){ponValor('t_'+k,w[k]||'')});$('sug').classList.add('hide');$('buscar').value=w.nombre;$('trab').classList.remove('hide');calc();revisarNomina();
+  var enc=encargado();if(enc)document.querySelectorAll('.med').forEach(function(r){if(!JSON.parse(r.dataset.resp||'[]').length){r.dataset.resp=JSON.stringify([enc]);pintaMed(r)}});
   if(w.situacion==='INACTIVO')toast('Ojo: aparece INACTIVO en la nómina');
   if(!$('oficio').value)$('oficio').value=w.cargo||'';
   dotacion(true);
@@ -926,13 +1048,6 @@ function calcDias(){
 
 // ---------- FILAS DINÁMICAS ----------
 function setK(row,o){row.querySelectorAll('[data-k]').forEach(function(e){if(o[e.dataset.k]!=null)e.value=o[e.dataset.k]})}
-function addMedida(cont,m){
-  var d=document.createElement('div');d.className='fila4';
-  d.innerHTML='<input placeholder="Medida" data-k="medida"><input placeholder="Responsable (de la nómina o escribe otro)" data-k="responsable" list="dlNomina"><input type="date" data-k="plazo" title="Plazo"><select data-k="estado" onchange="estMedida(this)"><option>Pendiente</option><option>Cumplida</option></select><input type="hidden" data-k="cumplida"><button class="x" onclick="this.parentNode.remove();pintaPasos();pintaMedSug()">✕</button>';
-  $(cont).appendChild(d);
-  if(m){setK(d,m);d.classList.toggle('ok',m.estado==='Cumplida')}
-}
-function estMedida(sel){var r=sel.parentNode,h=r.querySelector('[data-k="cumplida"]');h.value=sel.value==='Cumplida'?hoyISO():'';r.classList.toggle('ok',sel.value==='Cumplida')}
 function addParticipante(p){
   var d=document.createElement('div');d.className='fila3';
   d.innerHTML='<input placeholder="Nombre" data-k="nombre" list="dlNomina" onchange="autoPersona(this)"><input placeholder="RUN" data-k="run"><input placeholder="Cargo" data-k="cargo"><button class="x" onclick="this.parentNode.remove()">✕</button>';
@@ -983,219 +1098,261 @@ function filas(cont,sel){
     var o={};r.querySelectorAll('[data-k]').forEach(function(e){o[e.dataset.k]=e.value.trim()});return o});
 }
 
-// ---------- INVESTIGACIÓN EN 4 PASOS ----------
-var IPASO=1, IPASOS=[['1','📝','Qué pasó'],['2','👀','Quién lo vio'],['3','🔎','Por qué pasó'],['4','🛠','Qué haremos']];
-function invOk(n){var ns=leerArbol().filter(function(x){return x.txt});
-  if(n===1)return v('descripcion').replace(/(ANTES|DURANTE|DESPU[EÉ]S)[^:\n]*:/g,'').trim().length>30;
-  if(n===2)return filas('testigos','.testigo').some(function(t){return t.nombre})||IVISTO[2];
-  if(n===3)return ns.length>1&&!ns.some(function(x){return !x.fondo&&!hijosDe(ns,x.id).length});
-  if(n===4){var ll=filas('medidas','.fila4').filter(function(m){return m.medida||m.responsable||m.plazo});return ll.length>0&&ll.every(function(m){return m.medida&&m.responsable&&m.plazo})}return false}
+// ---------- INVESTIGACIÓN EN 5 PASOS ----------
+var IPASO=1, IPASOS=[['1','📝','Qué pasó'],['2','👀','Quién lo vio'],['3','🔎','Por qué pasó'],['4','🛠','Qué haremos'],['5','🧾','Conclusiones']];
 var IVISTO={};
+function invOk(n){
+  if(n===1)return (v('dAntes')+v('dDurante')+v('dDespues')).length>30;
+  if(n===2)return filas('testigos','.testigo').some(function(t){return t.nombre})||!!IVISTO[2];
+  if(n===3){var r=raizArb();return !!r&&hijosDe(leerArbol(),r.id).length>0}
+  if(n===4){var ll=leerMedidas('medidas').filter(function(m){return m.medida||m.plazo});
+    var inm=leerMedidas('inmediatas').filter(function(m){return m.medida});
+    return ll.every(function(m){return m.medida&&m.responsables.length&&m.plazo})&&(ll.length+inm.length)>0&&!sinMedida().length}
+  if(n===5)return leerConcl().length>0&&filas('participantes','.fila3').some(function(x){return x.nombre});
+  return false}
 function pintaPasos(){var c=$('ipasos');if(!c)return;
   c.innerHTML=IPASOS.map(function(p){var n=+p[0],ok=invOk(n);return '<div class="ip'+(n===IPASO?' act':'')+(ok?' ok':'')+'" data-p="'+n+'" onclick="invPaso('+n+')"><b>'+(ok?'✔':p[1])+'</b>Paso '+n+'<br>'+p[2]+'</div>'}).join('');
   $('iAtras').style.visibility=IPASO>1?'visible':'hidden';
-  $('iSig').textContent=IPASO<4?'Siguiente: '+IPASOS[IPASO][2]+' ➡':'✔ Listo, revisar y guardar abajo'}
-function invPaso(n){if(n<1)n=1;if(n>4){var g=$('btnGuardar');if(g)g.scrollIntoView({behavior:'smooth',block:'center'});return}
+  $('iSig').textContent=IPASO<5?'Siguiente: '+IPASOS[IPASO][2]+' ➡':'✔ Listo: guardar y generar el informe'}
+function invPaso(n){if(n<1)n=1;if(n>5){var g=$('btnGuardar');if(g)g.scrollIntoView({behavior:'smooth',block:'center'});return}
   IVISTO[IPASO]=1;IPASO=n;document.querySelectorAll('#cInvest .ipaso').forEach(function(d){d.classList.toggle('hide',+d.dataset.p!==n)});
-  pintaPasos();if(n===3)pintaArbol();if(n===4)pintaMedSug();
+  pintaPasos();if(n===3)pintaArbol();if(n===4)pintaMedCob();if(n===5&&!$('concl').children.length)CONC_T.slice(0,0).forEach(addConcl);
   var y=$('cInvest').getBoundingClientRect().top+window.scrollY-110;window.scrollTo({top:y,behavior:'smooth'});
-  if(typeof VOZA!=='undefined'&&VOZA){var t={1:'Paso 1. Cuenta qué pasó, en orden: antes, durante y después.',2:'Paso 2. Agrega a las personas que vieron lo que pasó.',3:'Paso 3. Vamos a buscar por qué pasó. Toca los botones que apliquen y después armamos el árbol.',4:'Paso 4. Pon una medida para cada causa de fondo, con responsable y plazo.'}[n];hablar(t,1);COACH_SIL=Date.now()}
+  setTimeout(autoTodo,60);
+  if(VOZA){var t={1:'Paso 1. Cuenta qué pasó: antes, durante y después.',2:'Paso 2. Agrega a las personas que vieron lo que pasó. Si nadie vio, toca siguiente.',3:'Paso 3. Marca las causas que apliquen y arma el árbol: lo que pasó arriba y sus porqués debajo.',4:'Paso 4. Cada causa del árbol necesita una medida, con responsable y plazo.',5:'Paso 5. Revisa las conclusiones y anota quiénes participaron.'}[n];hablar(t,1);COACH_SIL=Date.now()}
   try{guiaA()}catch(e){}}
-function invPlantilla(){var d=$('descripcion');if(d.value.trim()){toast('Ya tienes texto escrito; agrégale ANTES / DURANTE / DESPUÉS donde corresponda');d.focus();return}
-  d.value='ANTES (qué estaba haciendo, dónde, con qué): \n\nDURANTE (qué pasó exactamente): \n\nDESPUÉS (qué se hizo, a dónde lo llevaron): ';d.focus();d.setSelectionRange(d.value.indexOf(':')+2,d.value.indexOf(':')+2);pintaPasos()}
-function invUsarDecl(){var t=$('declaracion')?$('declaracion').value.trim():'';if(!t)return toast('Todavía no hay declaración del trabajador escrita');
-  var d=$('descripcion');if(d.value.trim()){confirma('📋 ¿Agregar la declaración?','Se agrega al final de lo que ya escribiste.','SÍ, agregar',function(){d.value+='\n\nSegún la declaración del trabajador: '+t;pintaPasos()});return}
-  d.value='Según la declaración del trabajador: '+t;pintaPasos()}
-document.addEventListener('input',function(e){if(e.target&&e.target.id==='descripcion')pintaPasos()});
 
-// ---------- ÁRBOL DE CAUSAS (asistente + dibujo) ----------
-var NID=0, ASIS={foco:null,tipo:'',txt:'',aviso:''};
-function addNodo(n){n=n||{};var d=document.createElement('div');d.className='nodo';d.dataset.id=n.id||('n'+Date.now().toString(36)+(NID++));d.dataset.fondo=n.fondo?'1':'';
-  d.innerHTML='<select data-k="tipo" onchange="pintaArbol()"><option value="V">Variación</option><option value="P">Permanente</option></select>'+
-    '<input data-k="txt" placeholder="Hecho (ej: el trabajador subió al rack)" oninput="pintaArbol()"><select data-k="padre" onchange="pintaArbol()"></select>'+
-    '<button class="x" onclick="this.parentNode.remove();pintaArbol()">✕</button>';
-  $('arbolEd').appendChild(d);d.querySelector('[data-k="tipo"]').value=n.tipo||'V';d.querySelector('[data-k="txt"]').value=n.txt||'';d.dataset.padre=n.padre||'';pintaArbol();
-  return d.dataset.id}
-function leerArbol(){return [].map.call($('arbolEd').querySelectorAll('.nodo'),function(r){var p=r.querySelector('[data-k="padre"]');
-  return {id:r.dataset.id,tipo:r.querySelector('[data-k="tipo"]').value,txt:r.querySelector('[data-k="txt"]').value.trim(),padre:p.value||r.dataset.padre||'',fondo:r.dataset.fondo==='1'}})}
-function filaNodo(id){return $('arbolEd').querySelector('.nodo[data-id="'+id+'"]')}
+// ---- Paso 1: antes / durante / después ----
+function partirDesc(t){var p={a:'',d:'',s:''},m=String(t||'').split(/\n?\s*(ANTES|DURANTE|DESPU[ÉE]S)\s*(?:\([^)]*\))?\s*:\s*/i);
+  if(m.length>1){for(var i=1;i<m.length;i+=2){var k=/^A/i.test(m[i])?'a':/^DU/i.test(m[i])?'d':'s';p[k]=(p[k]?p[k]+'\n':'')+String(m[i+1]||'').trim()}}
+  else p.d=String(t||'').trim();return p}
+function syncDesc(){var a=v('dAntes'),d=v('dDurante'),s=v('dDespues');$('descripcion').value=(a||d||s)?'ANTES: '+a+'\n\nDURANTE: '+d+'\n\nDESPUÉS: '+s:'';pintaPasos()}
+function cargaDesc(t){var p=partirDesc(t);$('dAntes').value=p.a;$('dDurante').value=p.d;$('dDespues').value=p.s;$('descripcion').value=t||''}
+var ULT_TA=null;document.addEventListener('focusin',function(e){if(e.target&&e.target.tagName==='TEXTAREA')ULT_TA=e.target});
+function negrita(){var t=ULT_TA;if(!t||!/^d(Antes|Durante|Despues)$/.test(t.id)){toast('Primero marca (selecciona) el texto que quieres destacar');return}
+  var a=t.selectionStart,b=t.selectionEnd;if(a===b){toast('Marca (selecciona) el texto que quieres destacar');return}
+  var x=t.value.slice(a,b).replace(/\*\*/g,'');t.value=t.value.slice(0,a)+'**'+x+'**'+t.value.slice(b);syncDesc();toast('Texto destacado: sale en negrita en el informe')}
+function invUsarDecl(){var t=v('declRelato');if(!t)return toast('Todavía no hay relato del trabajador');var d=$('dDurante');
+  var txt='Según la declaración del trabajador: '+t;if(d.value.trim()){if(d.value.indexOf(t)>-1)return toast('Ya está copiada');d.value+='\n'+txt}else d.value=txt;syncDesc();autoAlto(d)}
+
+// ---------- ÁRBOL DE CAUSAS: varias ramas, simple ----------
+var ARB=[],NID=0,ARBED=null,ASIS={};
+var CATS=['Acción insegura','Condición del equipo','Condición del entorno','Organización','Factor personal'];
+function leerArbol(){return ARB.filter(function(n){return n.txt})}
 function hijosDe(ns,pid){return ns.filter(function(n){return n.txt&&(n.padre||'')===pid})}
-// dibuja el árbol: lo que pasó a la derecha, las causas hacia la izquierda
-function dibujoArbol(ns,activo,ejemplo){
-  var caja=function(n,nivel,visto){if(visto[n.id])return '';visto[n.id]=1;var hs=hijosDe(ns,n.id),pend=!n.fondo&&!hs.length&&nivel>=0;
-    var cls='caja '+(nivel?n.tipo:'F')+(n.fondo?' fondo':pend?' espera':'')+(activo===n.id?' sel':'');
-    var et=nivel===0?'<small>⚠ lo que pasó</small>':n.fondo?'<small>🧱 causa de fondo</small>':pend?'<small>❓ toca: ¿por qué pasó esto?</small>':'';
-    var acc=ejemplo?'':'<span class="cacc" style="float:right;margin-left:4px"><span title="Corregir" onclick="event.stopPropagation();arbEditar(\''+n.id+'\')">✏️</span> <span title="Borrar" onclick="event.stopPropagation();arbBorrar(\''+n.id+'\')">🗑</span></span>';
-    var h='<div class="'+cls+'"'+(ejemplo?'':' onclick="arbFoco(\''+n.id+'\')"')+'>'+acc+esc(n.txt)+et+'</div>';
-    var sub=hs.map(function(x){return caja(x,nivel+1,visto)}).join('');
-    return '<div class="tv'+(nivel===0?' raiz':'')+'">'+h+(sub?'<div class="hijos">'+sub+'</div>':'')+'</div>'};
-  var vis={};return hijosDe(ns,'').map(function(r){return caja(r,0,vis)}).join('<div style="height:14px"></div>')}
-function pintaArbol(){
-  var ns=leerArbol(),ids={};ns.forEach(function(n){ids[n.id]=n});
-  $('arbolEd').querySelectorAll('.nodo').forEach(function(r){var sel=r.querySelector('[data-k="padre"]'),act=sel.value||r.dataset.padre||'';
-    sel.innerHTML='<option value="">⬆ Hecho final (arriba)</option>'+ns.filter(function(n){return n.id!==r.dataset.id&&n.txt}).map(function(n){return '<option value="'+n.id+'">explica a: '+esc(n.txt.slice(0,40))+'</option>'}).join('');
-    sel.value=ids[act]?act:'';r.dataset.padre=sel.value});
-  ns=leerArbol();
-  var h=dibujoArbol(ns,ASIS.foco,false);
-  $('arbolVis').innerHTML=h?'<div style="margin-bottom:4px;color:#5a6780;font-size:12.5px">👉 Toca cualquier caja para decir <b>por qué pasó</b>. Se lee de derecha (lo que pasó) a izquierda (por qué). ◆ borde naranjo = fue distinto ese día · borde punteado = siempre es así.</div><div class="lienzo">'+h+'</div>'
-    :'<small style="color:#666">El dibujo del árbol aparece aquí a medida que respondes las preguntas de arriba.</small>';
-  pintaAsis();pintaPasos()}
-
-// texto sugerido para el resultado final, con lo que ya se llenó en el caso
-function arbFinalSugerido(){var n=(v('t_nombre')||'El trabajador').split(' ').slice(0,2).join(' ');
+function raizArb(){return hijosDe(leerArbol(),'')[0]}
+function nodoArb(id){return ARB.find(function(n){return n.id===id})}
+function letras(){var ns=leerArbol(),r=hijosDe(ns,''),map={};if(!r[0])return map;var ABC='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  hijosDe(ns,r[0].id).forEach(function(n,i){var L=ABC[i]||'Z'+i;map[n.id]=L;(function rec(p,pref){hijosDe(ns,p.id).forEach(function(h,j){var k=pref+(/\d$/.test(pref)?'.':'')+(j+1);map[h.id]=k;rec(h,k)})})(n,L)});return map}
+function causasTodas(){var r=raizArb();return r?leerArbol().filter(function(n){return n.id!==r.id&&letras()[n.id]}):[]}
+function causasMedida(){var ns=leerArbol(),r=raizArb();if(!r)return [];var L=letras();return ns.filter(function(n){return L[n.id]&&(n.principal||!hijosDe(ns,n.id).length)})}
+function causasFondo(){return causasMedida()}
+function sinMedida(){var at={},r=raizArb();leerMedidas('medidas').concat(leerMedidas('inmediatas')).forEach(function(m){if(m.medida)(m.atiende||[]).forEach(function(a){at[a]=1})});
+  var cub=function(n){for(var k=0;n&&k<20;k++){if(at[n.id])return true;if(!n.padre||(r&&n.padre===r.id))return false;n=nodoArb(n.padre)}return false};
+  return causasMedida().filter(function(n){return !cub(n)})}
+function arbFinalSugerido(){var n=(v('t_nombre')||'El trabajador').split(' ').slice(0,1).join(' ');
   var les=$('tipoLesion')&&v('tipoLesion')?(v('tipoLesion')==='Otra'?v('tipoLesionOtro'):v('tipoLesion')).toLowerCase():'';
   var pt=(ST.partes||[]).map(function(p){return CUERPO.hablado(p)}).join(' y ');
-  if(les||pt)return n+' sufre '+(les||'una lesión')+(pt?' en '+pt:'');
-  var tp=ST.tipos||[];if(tp.indexOf('Daño material')>-1)return 'Se produce daño en (equipo / material / instalación)';
-  if(tp.indexOf('Ley Karin')>-1)return 'Se recibe denuncia por (acoso laboral / sexual / violencia) que involucra a '+n;
-  if(tp.indexOf('Posible enfermedad profesional')>-1)return n+' presenta (síntomas / molestias)';
-  if(tp.indexOf('Incidente / cuasi accidente')>-1)return 'Casi ocurre un accidente: (qué pudo pasar)';
-  return n+' sufre una lesión'}
-// ideas de causas sacadas de lo que ya se escribió
-function arbIdeas(){var usados={};leerArbol().forEach(function(n){usados[norm(n.txt)]=1});var out=[],vis={};
-  function add(t){t=String(t||'').replace(/\s+/g,' ').trim().replace(/^(ANTES|DURANTE|DESPUÉS|DESPUES)[^:]*:\s*/i,'').replace(/^[-•\d.)\s]+/,'');var k=norm(t);if(t.length<6||t.length>140||vis[k]||usados[k])return;vis[k]=1;out.push(t)}
-  ['accInseguras','condInseguras','factPersonales','factTrabajo'].forEach(function(id){if($(id))$(id).value.split(/\n|;/).forEach(add)});
-  ['descripcion','declaracion'].forEach(function(id){if($(id))$(id).value.split(/(?<=[.!?])\s+|\n/).slice(0,10).forEach(add)});
-  return out.slice(0,14)}
-var CULPA=/(descuid|no tuvo cuidado|falta de atenci|poca atenci|negligen|irresponsab|flojer|culpa|no se fij|imprudent|torpe|tonto|porfiad|mala suerte|accidente fortuito)/i;
-function arbHablar(t){if(VOZA){hablar(t.replace(/[«»]/g,''),1);COACH_SIL=Date.now()}}
-function pintaAsis(){var c=$('arbAsis');if(!c)return;var ns=leerArbol().filter(function(n){return n.txt}),h='';
-  if(!hijosDe(ns,'').length){
-    h='<div class="paso">EMPECEMOS</div><h4>¿Qué fue lo que pasó al final?</h4><div class="preg">Ya te dejé escrita una propuesta con los datos del caso. Si está bien, solo toca el botón verde.</div>'+
-      '<input class="grande" id="asTxt" value="'+esc(ASIS.txt||arbFinalSugerido())+'" oninput="ASIS.txt=this.value">'+
-      '<div class="acc"><button class="btn ve" onclick="arbCrearFinal()">✅ Sí, eso fue lo que pasó</button></div>';
-    c.innerHTML=h;return}
-  var pend=ns.filter(function(n){return !n.fondo&&!hijosDe(ns,n.id).length});
-  if(!ASIS.foco||!ns.some(function(n){return n.id===ASIS.foco}))ASIS.foco=pend.length?pend[0].id:null;
-  var f=ns.find(function(n){return n.id===ASIS.foco});
-  if(!f){ // terminado
-    h='<div class="paso">¡ÁRBOL TERMINADO!</div><h4>🎉 Listo. Ahora pasa al paso 4 para poner las medidas</h4>'+
-      (ns.length<4?'<div class="alerta">⚠️ El árbol quedó con muy pocas cajas. Casi siempre hay 4 o más. Toca una caja del dibujo para agregar otro "¿por qué?".</div>':'')+
-      '<div class="acc"><button class="btn ve" onclick="invPaso(4)">Ir al paso 4: medidas ➡</button><button class="btn sm gr" onclick="arbReabrir()">↩ Quiero agregar más causas</button></div>';
-    c.innerHTML=h;return}
-  var hs=hijosDe(ns,f.id),ideas=arbIdeas();
-  h='<div class="paso">FALTAN '+pend.length+' CAJA(S) AMARILLA(S) POR RESPONDER</div>'+
-    '<div class="preg" style="font-size:16px">¿Por qué pasó esto?<br><b>«'+esc(f.txt)+'»</b></div>'+
-    '<div class="ej">💡 Responde con <b>hechos</b> que se puedan ver, no con culpas. ✔ "el piso tenía aceite" · ✔ "llevaba una caja que le tapaba la vista" · ✘ "descuido del trabajador"</div>'+
-    (hs.length?'<div class="ok">Ya dijiste que pasó porque: '+hs.map(function(x){return '«'+esc(x.txt)+'»'}).join(' y ')+'.<br>¿Hay <b>otra razón más</b>? Si no, toca el botón verde.</div>':'')+
-    (ideas.length?'<div style="font-size:12.5px;color:#5a6780">Ideas de lo que ya escribiste (toca una):</div><div class="sug">'+ideas.map(function(t,i){return '<span class="chip" onclick="arbIdea('+i+')">'+esc(t)+'</span>'}).join('')+'</div>':'')+
-    '<input class="grande" id="asTxt" placeholder="Porque..." value="'+esc(ASIS.txt)+'" oninput="ASIS.txt=this.value" onkeydown="if(event.key===\'Enter\')arbAgregar()">'+
-    '<div style="font-size:13px;margin-top:8px">¿Eso pasa siempre? <small style="color:#666">(si no sabes, déjalo así)</small></div><div class="vp">'+
-    '<span class="chip'+(ASIS.tipo!=='P'?' on':'')+'" onclick="ASIS.tipo=\'V\';pintaAsis()">No, ese día fue distinto</span>'+
-    '<span class="chip'+(ASIS.tipo==='P'?' on':'')+'" onclick="ASIS.tipo=\'P\';pintaAsis()">Sí, siempre es así</span></div>'+
-    (ASIS.aviso?'<div class="alerta">'+ASIS.aviso+'</div>':'')+
-    '<div class="acc"><button class="btn" onclick="arbAgregar()">➕ Agregar esta razón</button>'+
-    (hs.length?'<button class="btn ve" onclick="arbSiguiente()">✔ No hay otra razón, sigamos</button>':(f.padre?'<button class="btn sm na" onclick="arbFondo()">🧱 Aquí ya no hay más "por qué" (causa de fondo)</button>':''))+'</div>';
-  c.innerHTML=h;ASIS._ideas=ideas}
-function arbCrearFinal(){var t=(v('asTxt')||'').trim();if(t.length<8)return toast('Escribe un poco más lo que pasó');
-  ASIS.txt='';ASIS.foco=addNodo({txt:t,padre:'',tipo:'V'});pintaArbol();
-  arbHablar('Bien. Ahora dime: por qué pasó esto: '+t)}
-function arbIdea(i){ASIS.txt=ASIS._ideas[i];pintaAsis();$('asTxt').focus()}
-function arbAgregar(forzar){var t=(v('asTxt')||'').trim().replace(/^porque\s+/i,'');ASIS.txt=t;
-  if(t.length<6){ASIS.aviso='✏️ Escribe la razón con un poco más de detalle.';return pintaAsis()}
-  if(!forzar&&CULPA.test(t)){ASIS.aviso='🤔 «'+esc(t)+'» suena a <b>culpa</b>, no a un hecho. ¿Qué se vio pasar? Ej: en vez de "descuido" escribe "caminaba mirando el celular". <button class="btn sm gr" onclick="arbAgregar(true)">Dejarlo igual</button>';return pintaAsis()}
-  var ns=leerArbol();if(ns.some(function(n){return norm(n.txt)===norm(t)})){ASIS.aviso='Esa razón ya está en el árbol.';return pintaAsis()}
-  addNodo({txt:t,tipo:ASIS.tipo==='P'?'P':'V',padre:ASIS.foco});
-  var f=leerArbol().find(function(n){return n.id===ASIS.foco});
-  ASIS.txt='';ASIS.tipo='';ASIS.aviso='';pintaArbol();toast('✔ Agregado');
-  setTimeout(function(){if($('asTxt'))$('asTxt').focus()},100);
-  arbHablar('Anotado. Hay otra razón más para '+(f?f.txt:'')+'? Si no, toca el botón verde.')}
-function arbSiguiente(){var ns=leerArbol().filter(function(n){return n.txt});
-  var pend=ns.filter(function(n){return !n.fondo&&!hijosDe(ns,n.id).length});ASIS.foco=pend.length?pend[0].id:null;ASIS.txt='';ASIS.tipo='';ASIS.aviso='';pintaArbol();
-  var f=ns.find(function(n){return n.id===ASIS.foco});arbHablar(f?'Ahora: por qué pasó esto: '+f.txt+'?':'Listo el árbol. Pasa al paso 4 para poner las medidas.');
-  $('arbAsis').scrollIntoView({behavior:'smooth',block:'center'})}
-function arbFondo(){var r=filaNodo(ASIS.foco);if(r&&r.dataset.padre)r.dataset.fondo='1';arbSiguiente()}
-function arbFoco(id){var r=filaNodo(id);if(r)r.dataset.fondo='';ASIS.foco=id;ASIS.txt='';ASIS.tipo='';ASIS.aviso='';pintaArbol();$('arbAsis').scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){if($('asTxt'))$('asTxt').focus()},400)}
-function arbReabrir(){var ns=leerArbol().filter(function(n){return n.txt});var h=ns.filter(function(n){return n.fondo})[0]||ns[0];if(h)arbFoco(h.id)}
-function arbEditar(id){var r=filaNodo(id);if(!r)return;var i=r.querySelector('[data-k="txt"]');var t=prompt('Corrige el texto:',i.value);if(t&&t.trim()){i.value=t.trim();pintaArbol()}}
+  if(les||pt)return n+' sufre '+(les||'una lesión')+(pt?' en '+pt:'')+'.';
+  var tp=ST.tipos||[];
+  if(tp.indexOf('Daño material')>-1){var b=v('danoBien'),c=v('danoCodigo');return b?'Daño a '+b.charAt(0).toLowerCase()+b.slice(1)+(c?' (patente / código '+c+')':'')+'.':''}
+  if(tp.indexOf('Posible enfermedad profesional')>-1)return n+' presenta '+(v('epSintomas')||'molestias que relaciona con su trabajo')+'.';
+  if(tp.indexOf('Incidente / cuasi accidente')>-1)return v('declQue')?'Casi ocurre un accidente: '+v('declQue')+'.':'';
+  return ''}
+function causasMarcadas(){var out=[],ya={};leerArbol().forEach(function(n){ya[norm(n.txt)]=1});
+  [['accInseguras','Acción insegura'],['condInseguras',''],['factPersonales','Factor personal'],['factTrabajo','Organización']].forEach(function(x){
+    v(x[0]).split('\n').forEach(function(l){l=l.trim();if(!/^•/.test(l))return;var t=l.replace(/^•\s*/,'').replace(/^["“]|["”]$/g,'').trim();if(t.length<4||ya[norm(t)])return;ya[norm(t)]=1;
+      var cat=x[1]||(/equipo|herramienta|gr[uú]a|veh[ií]culo|m[aá]quina/i.test(t)?'Condición del equipo':'Condición del entorno');out.push({t:t,cat:cat})})});return out}
+var CULPA=/(descuid|no tuvo cuidado|falta de atenci|poca atenci|negligen|irresponsab|flojer|culpa|no se fij|imprudent|torpe|tonto|porfiad|mala suerte|fortuito)/i;
+function pintaArbol(){var c=$('arbolUI');if(!c)return;var ns=leerArbol(),r=hijosDe(ns,'')[0],L=letras(),h='';
+  if(!r||(ARBED&&ARBED.modo==='raiz')){var sug=ARBED&&ARBED.modo==='raiz'?ARBED.txt:arbFinalSugerido();
+    h='<div class="arbN raiz"><div class="aet">1) LO QUE PASÓ AL FINAL (hecho final)</div><textarea id="arbTx" rows="2" placeholder="Ej: Daño a un vehículo de un tercero (patente RDYB16-8). / Juan sufre un esguince en el tobillo derecho.">'+esc(sug)+'</textarea>'+
+      '<div class="acc"><button class="btn ve" onclick="arbGuardarRaiz()">✅ Listo, eso fue lo que pasó</button>'+(r?'<button class="btn gr" onclick="ARBED=null;pintaArbol()">Cancelar</button>':'')+'</div>'+
+      '<small style="color:#666">Escribe un hecho concreto: qué se dañó o qué lesión hubo.</small></div>';
+    c.innerHTML=h;autoTodo();pintaPasos();return}
+  h+='<div class="arbN raiz"><div class="aet">HECHO FINAL <span class="aacc"><button onclick="arbEditar(\''+r.id+'\')">✏️ Corregir</button></span></div><div class="atx">'+esc(r.txt)+'</div></div>';
+  var ramas=hijosDe(ns,r.id);
+  h+='<div class="arbFl">↓ ¿por qué pasó?</div><div class="arbRamas">'+ramas.map(function(n){return nodoHtml(n,ns,L,1)}).join('')+
+    (ARBED&&ARBED.modo==='nuevo'&&ARBED.padre===r.id?editorCausa():'')+'</div>';
+  if(!(ARBED&&ARBED.modo==='nuevo'&&ARBED.padre===r.id))h+='<button class="btn '+(ramas.length?'sm':'na')+'" style="margin-top:8px" onclick="arbNuevo(\''+r.id+'\')">➕ '+(ramas.length?'Agregar otra causa directa (otra rama)':'Agregar la primera causa: ¿por qué pasó?')+'</button>';
+  c.innerHTML=h;autoTodo();pintaPasos()}
+function nodoHtml(n,ns,L,prof){var hs=hijosDe(ns,n.id),fondo=!hs.length,ed=ARBED&&ARBED.modo==='editar'&&ARBED.id===n.id;
+  var h='<div class="arbR'+(prof>1?' sub':'')+'"><div class="arbN'+(fondo&&!n.principal?' fondo':'')+(n.tipo==='P'?' perm':'')+(n.principal?' princ':'')+'">'+
+    '<div class="aet">CAUSA '+L[n.id]+(n.cat?' · '+esc(n.cat).toUpperCase():'')+' <span class="vtag">'+(n.tipo==='P'?'Permanente':'Variación')+'</span>'+
+    (n.principal?' <span class="pill">⭐ CAUSA PRINCIPAL</span>':fondo?' <span class="pill gr">CAUSA DE FONDO</span>':'')+'</div>';
+  if(ed)h+=editorCausa(n);
+  else h+='<div class="atx">'+esc(n.txt)+'</div><div class="aacc"><button onclick="arbNuevo(\''+n.id+'\')">➕ ¿Por qué pasó esto?</button>'+
+    '<button onclick="arbPrincipal(\''+n.id+'\')">'+(n.principal?'☆ Quitar principal':'⭐ Es la principal')+'</button><button onclick="arbEditar(\''+n.id+'\')">✏️ Corregir</button><button onclick="arbBorrar(\''+n.id+'\')">🗑</button></div>';
+  h+='</div>';
+  hs.forEach(function(x){h+='<div class="arbFl">↓ ¿por qué?</div>'+nodoHtml(x,ns,L,prof+1)});
+  if(ARBED&&ARBED.modo==='nuevo'&&ARBED.padre===n.id)h+='<div class="arbFl">↓ ¿por qué?</div>'+editorCausa();
+  return h+'</div>'}
+function editorCausa(n){var e=ARBED,p=nodoArb(n?n.padre:e.padre),picks=n?[]:causasMarcadas();ASIS._picks=picks;
+  return '<div class="arbEd" id="arbEd"><div class="preg">'+(n?'Corrige la causa':'¿Por qué pasó <b>«'+esc(p?p.txt:'')+'»</b>?')+'</div>'+
+    (picks.length?'<div style="font-size:12.5px;color:#5a6780;margin-top:6px">Toca una de las que marcaste arriba (puedes corregirla después) o escribe la tuya:</div><div class="chips" style="margin:4px 0 6px">'+picks.map(function(x,i){return '<span class="chip" onclick="arbPick('+i+')">'+esc(x.t)+'</span>'}).join('')+'</div>':'')+
+    '<textarea id="arbTx" rows="2" placeholder="Porque... (un hecho que se pueda ver o comprobar, no una culpa)">'+esc(e.txt||'')+'</textarea>'+
+    '<div class="grupo">¿Qué tipo de causa es?</div><div class="chips">'+CATS.map(function(c){return '<span class="chip'+(e.cat===c?' on':'')+'" onclick="arbCat(\''+c+'\')">'+c+'</span>'}).join('')+'</div>'+
+    '<div class="grupo">¿Ese día fue distinto a lo habitual?</div><div class="chips"><span class="chip'+(e.tipo!=='P'?' on':'')+'" onclick="arbTipo(\'V\')">Sí, fue distinto (variación)</span><span class="chip'+(e.tipo==='P'?' on':'')+'" onclick="arbTipo(\'P\')">No, siempre es así (permanente)</span></div>'+
+    (e.aviso?'<div class="alerta">'+e.aviso+'</div>':'')+
+    '<div class="acc"><button class="btn ve" onclick="arbGuardar()">✔ Guardar causa</button><button class="btn gr" onclick="ARBED=null;pintaArbol()">Cancelar</button></div></div>'}
+function arbFoco(){setTimeout(function(){var t=$('arbTx');if(t){t.scrollIntoView({behavior:'smooth',block:'center'});t.focus()}},80)}
+function arbNuevo(pid){ARBED={modo:'nuevo',padre:pid,txt:'',cat:'',tipo:'V'};pintaArbol();arbFoco();
+  var p=nodoArb(pid);arbHablar('¿Por qué pasó esto?: '+(p?p.txt:''))}
+function arbEditar(id){var n=nodoArb(id);if(!n)return;ARBED=!n.padre?{modo:'raiz',id:id,txt:n.txt}:{modo:'editar',id:id,txt:n.txt,cat:n.cat||'',tipo:n.tipo||'V'};pintaArbol();arbFoco()}
+function arbTxt(){var t=$('arbTx');if(t&&ARBED)ARBED.txt=t.value}
+function arbCat(c){arbTxt();ARBED.cat=ARBED.cat===c?'':c;pintaArbol()}
+function arbTipo(t){arbTxt();ARBED.tipo=t;pintaArbol()}
+function arbPick(i){var x=(ASIS._picks||[])[i];if(!x)return;ARBED.txt=x.t.charAt(0).toUpperCase()+x.t.slice(1);ARBED.cat=x.cat;pintaArbol();arbFoco()}
+function arbGuardarRaiz(){var t=(v('arbTx')||'').trim();if(t.length<8)return toast('Escribe un poco más lo que pasó');
+  if(/\((equipo|s[ií]ntomas|qu[eé] pudo)/i.test(t))return toast('Cambia lo que está entre paréntesis por lo que realmente pasó');
+  if(ARBED&&ARBED.modo==='raiz'&&ARBED.id){nodoArb(ARBED.id).txt=t}else ARB.push({id:'n'+Date.now().toString(36)+(NID++),txt:t,padre:'',tipo:'V'});
+  ARBED=null;pintaArbol();arbHablar('Bien. Ahora agrega la primera causa: por qué pasó.')}
+function arbGuardar(forzar){arbTxt();var t=String(ARBED.txt||'').trim().replace(/^porque\s+/i,'');
+  if(t.length<6){ARBED.aviso='✏️ Escribe la causa con un poco más de detalle.';return pintaArbol()}
+  if(!forzar&&CULPA.test(t)){ARBED.aviso='🤔 «'+esc(t)+'» suena a <b>culpa</b>, no a un hecho. ¿Qué se vio pasar? <button class="btn sm gr" onclick="arbGuardar(true)">Dejarlo igual</button>';return pintaArbol()}
+  if(leerArbol().some(function(n){return norm(n.txt)===norm(t)&&(!ARBED.id||n.id!==ARBED.id)})){ARBED.aviso='Esa causa ya está en el árbol.';return pintaArbol()}
+  if(ARBED.modo==='editar'){var n=nodoArb(ARBED.id);n.txt=t;n.cat=ARBED.cat||'';n.tipo=ARBED.tipo==='P'?'P':'V'}
+  else ARB.push({id:'n'+Date.now().toString(36)+(NID++),txt:t,padre:ARBED.padre,tipo:ARBED.tipo==='P'?'P':'V',cat:ARBED.cat||''});
+  ARBED=null;pintaArbol();pintaMedCob();toast('✔ Causa guardada');arbHablar('Anotado. Si hay otra causa, agrégala. Si no, sigue al paso 4.')}
+function arbPrincipal(id){ARB.forEach(function(n){n.principal=n.id===id?!n.principal:false});pintaArbol();pintaMedCob()}
 function arbBorrar(id){var ns=leerArbol(),borrar=[id],k=0;while(k<borrar.length){hijosDe(ns,borrar[k]).forEach(function(h){borrar.push(h.id)});k++}
-  var n=ns.find(function(x){return x.id===id})||{};
-  confirma('🗑 ¿Borrar esta caja?','«'+esc(n.txt||'')+'»'+(borrar.length>1?' y las '+(borrar.length-1)+' caja(s) que salen de ella':''),'SÍ, borrar',function(){borrar.forEach(function(b){var r=filaNodo(b);if(r)r.remove()});if(borrar.indexOf(ASIS.foco)>-1)ASIS.foco=null;pintaArbol()},true)}
-function causasFondo(){var ns=leerArbol().filter(function(n){return n.txt});return ns.filter(function(n){return n.padre&&!hijosDe(ns,n.id).length})}
-function pintaMedSug(){var c=$('medSug');if(!c)return;var hojas=causasFondo();
-  if(!hojas.length){c.innerHTML='<div class="alerta">Primero arma el árbol en el paso 3; aquí aparecerán las causas de fondo para ponerles medida. <button class="btn sm" onclick="invPaso(3)">Ir al paso 3</button></div>';return}
-  var meds=filas('medidas','.fila4').map(function(m){return norm(m.medida)}).join(' | ');
-  c.innerHTML='<div class="asis" style="margin:0"><div class="paso">CAUSAS DE FONDO DEL ÁRBOL</div><ul class="lista">'+hojas.map(function(n){var tiene=meds.indexOf(norm(n.txt).slice(0,25))>-1;
-    return '<li style="margin:4px 0">'+esc(n.txt)+' '+(tiene?'<b style="color:var(--ve)">✔ tiene medida</b>':'<button class="btn sm na" onclick="arbMedida(\''+n.id+'\')">➕ Ponerle medida</button> <button class="btn sm" onclick="elegirCurso(\''+n.id+'\')">🎓 Curso</button>')+'</li>'}).join('')+'</ul></div>'}
-function arbMedida(id){var n=leerArbol().find(function(x){return x.id===id});if(!n)return;addMedida('medidas',{medida:'Corregir: '+n.txt,estado:'Pendiente'});pintaMedSug();pintaPasos();toast('Medida creada: ahora ponle responsable y plazo');
-  var u=$('medidas').lastChild;if(u){u.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){var e=u.querySelector('[data-k="responsable"]');if(e)e.focus()},500)}}
-document.addEventListener('input',function(e){if(e.target&&e.target.closest&&e.target.closest('#medidas')){pintaPasos();pintaMedSug()}});
-function arbEjemplo(){var ns=[{id:'a',txt:'Juan se esguinza el tobillo derecho',padre:'',tipo:'V'},{id:'b',txt:'Se resbaló al bajar de la rampla',padre:'a',tipo:'V'},{id:'c',txt:'Llevaba una caja que le tapaba la vista',padre:'a',tipo:'V'},
-  {id:'d',txt:'Había aceite en la rampla',padre:'b',tipo:'V'},{id:'e',txt:'El camión tenía una fuga de aceite',padre:'d',tipo:'P',fondo:true},{id:'f',txt:'No se revisan los camiones antes de descargar',padre:'e',tipo:'P',fondo:true},
-  {id:'g',txt:'No había carro para mover cajas grandes',padre:'c',tipo:'P',fondo:true}];
-  ns=ns.filter(function(n){return n.id!=='e'}).concat([{id:'e',txt:'El camión tenía una fuga de aceite',padre:'d',tipo:'P'}]);
-  var d=document.createElement('div');d.className='modal';
-  d.innerHTML='<div class="cx" style="max-width:900px;width:96%"><h3>👀 Ejemplo de árbol de causas</h3><p style="font-size:13.5px">Se lee de <b>derecha a izquierda</b>: a la derecha lo que pasó, y cada caja a la izquierda responde <b>¿por qué?</b> a la caja de su derecha. Las cajas del borde izquierdo son las <b>causas de fondo</b>: cada una lleva su medida (ej: "revisar fugas antes de descargar", "comprar carro de arrastre").</p><div class="arbol"><div class="lienzo">'+dibujoArbol(ns,null,true)+'</div></div><div class="bt"><button style="background:var(--az);color:#fff">Entendido</button></div></div>';
-  d.querySelector('button').onclick=function(){d.remove()};d.onclick=function(e){if(e.target===d)d.remove()};document.body.appendChild(d)}
+  var n=nodoArb(id)||{};
+  confirma('🗑 ¿Borrar esta causa?','«'+esc(n.txt||'')+'»'+(borrar.length>1?' y las '+(borrar.length-1)+' que salen de ella':''),'SÍ, borrar',function(){ARB=ARB.filter(function(x){return borrar.indexOf(x.id)<0});
+    document.querySelectorAll('.med').forEach(function(r){r.dataset.atiende=JSON.stringify(JSON.parse(r.dataset.atiende||'[]').filter(function(a){return borrar.indexOf(a)<0}))});ARBED=null;pintaArbol();pintaMedCob()},true)}
+function arbHablar(t){if(VOZA){hablar(t.replace(/[«»]/g,''),1);COACH_SIL=Date.now()}}
 
-// ---------- ASISTENTE EXPERTO DE LA INVESTIGACIÓN (habla y apunta con la mano) ----------
+// ---------- MEDIDAS: una sola lista por tipo, varios responsables, atiende a causas ----------
+function norm2(s){return String(s||'').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Z0-9 ]/g,' ').replace(/\s+/g,' ').trim()}
+function buscaNomTok(q){var t=norm2(q).split(' ').filter(function(x){return x.length>1});if(t.length<2)return null;
+  return NOMINA.find(function(w){var n=' '+norm2(w.nombre)+' ';return t.every(function(k){return n.indexOf(' '+k+' ')>-1})})||null}
+// Responsable por defecto: el encargado de la sucursal (jefatura directa del trabajador), nunca el asesor
+function encargado(){var j=v('t_jefatura'),w=j?buscaNomTok(j):null;if(w)return w.nombre;if(j)return j;
+  var a=AVISOS&&AVISOS.jefes&&AVISOS.jefes[0];return a?String(a.nombre).replace(/\s*\([^)]*\)\s*$/,''):''}
+function addMedida(cont,m,foco){m=m||{};var d=document.createElement('div');d.className='med';
+  var rs=m.responsables&&m.responsables.length?m.responsables.slice():(m.responsable?String(m.responsable).split(/\s*;\s*|\n/).filter(String):(!m.medida?[encargado()].filter(String):[]));
+  d.dataset.atiende=JSON.stringify(m.atiende||[]);d.dataset.resp=JSON.stringify(rs);d.dataset.estado=m.estado==='Cumplida'?'Cumplida':'Pendiente';d.dataset.cumplida=m.cumplida||'';
+  d.innerHTML='<textarea data-k="medida" rows="2" placeholder="'+(cont==='inmediatas'?'¿Qué se hizo apenas pasó? Ej: se sacó de servicio la grúa':'¿Qué se va a hacer? Ej: instalar espejo y alarma de retroceso en la grúa')+'"></textarea>'+
+    '<div class="mAt"></div><div class="mRow"><div class="mResp"><label>Responsable(s)</label><div class="rlist"></div><input class="radd" list="dlNomina" placeholder="+ Agregar responsable"></div>'+
+    (cont==='inmediatas'?'':'<div class="mPlazo"><label>Plazo</label><input type="date" data-k="plazo"></div>')+
+    '<div class="mEst"><label>Estado</label><div class="chips"><span class="chip" data-e="Pendiente">Pendiente</span><span class="chip" data-e="Cumplida">Cumplida</span></div></div>'+
+    '<button type="button" class="x mQ" title="Quitar medida">✕</button></div>'+
+    '<button type="button" class="mMv">↕ Pasar a '+(cont==='inmediatas'?'medidas correctivas':'medidas inmediatas')+'</button>';
+  $(cont).appendChild(d);d.querySelector('[data-k="medida"]').value=m.medida||'';var pz=d.querySelector('[data-k="plazo"]');if(pz)pz.value=m.plazo||'';
+  pintaMed(d);autoAlto(d.querySelector('textarea'));
+  if(foco)setTimeout(function(){d.scrollIntoView({behavior:'smooth',block:'center'});d.querySelector('textarea').focus()},120);
+  return d}
+function pintaMed(d){var at=JSON.parse(d.dataset.atiende||'[]'),rs=JSON.parse(d.dataset.resp||'[]'),L=letras(),cs=causasTodas();
+  d.querySelector('.mAt').innerHTML=cs.length?'<label>¿A qué causa del árbol atiende?</label><div class="chips">'+cs.map(function(n){return '<span class="chip'+(at.indexOf(n.id)>-1?' on':'')+'" data-at="'+n.id+'" title="'+esc(n.txt)+'">Causa '+L[n.id]+'</span>'}).join('')+'</div>':'';
+  d.querySelector('.rlist').innerHTML=rs.length?rs.map(function(r,i){return '<span class="rchip">'+esc(r)+' <b data-ri="'+i+'" title="Quitar">✕</b></span>'}).join(''):'<small style="color:var(--ro);font-weight:bold">Falta el responsable</small>';
+  d.querySelectorAll('.mEst .chip').forEach(function(c){c.classList.toggle('on',c.dataset.e===d.dataset.estado)});
+  d.classList.toggle('ok',d.dataset.estado==='Cumplida')}
+function addResp(d,val){val=String(val||'').trim();if(!val)return;var w=buscaW(val)||NOMINA.find(function(x){return rutN(x.run)&&rutN(x.run)===rutN(val)});if(w)val=w.nombre;
+  var rs=JSON.parse(d.dataset.resp||'[]');if(rs.indexOf(val)<0)rs.push(val);d.dataset.resp=JSON.stringify(rs);pintaMed(d);pintaPasos();pintaMedCob()}
+document.addEventListener('click',function(e){var d=e.target.closest&&e.target.closest('.med');if(!d)return;
+  var at=e.target.closest('[data-at]'),ri=e.target.closest('[data-ri]'),es=e.target.closest('.mEst .chip');
+  if(at){var a=JSON.parse(d.dataset.atiende||'[]'),k=a.indexOf(at.dataset.at);if(k>-1)a.splice(k,1);else a.push(at.dataset.at);d.dataset.atiende=JSON.stringify(a);pintaMed(d);pintaMedCob()}
+  else if(ri){var r=JSON.parse(d.dataset.resp||'[]');r.splice(+ri.dataset.ri,1);d.dataset.resp=JSON.stringify(r);pintaMed(d);pintaPasos()}
+  else if(es){d.dataset.estado=es.dataset.e;d.dataset.cumplida=es.dataset.e==='Cumplida'?(d.dataset.cumplida||hoyISO()):'';pintaMed(d);toast(es.dataset.e==='Cumplida'?'Marcada como cumplida':'Marcada como pendiente')}
+  else if(e.target.closest('.mMv')){var cont=d.parentNode.id,m=leerMedidas(cont)[[].indexOf.call(d.parentNode.querySelectorAll('.med'),d)];d.remove();
+    var nd=addMedida(cont==='inmediatas'?'medidas':'inmediatas',m,true);pintaMedCob();toast(cont==='inmediatas'?'Pasada a medidas correctivas: ponle plazo':'Pasada a medidas inmediatas')}
+  else if(e.target.closest('.mQ')){var tx=d.querySelector('[data-k="medida"]').value.trim();if(!tx){d.remove();pintaMedCob();return}
+    confirma('¿Quitar esta medida?','«'+esc(tx.slice(0,120))+'»','SÍ, quitar',function(){d.remove();pintaMedCob();pintaPasos()},true)}});
+document.addEventListener('change',function(e){if(e.target.classList&&e.target.classList.contains('radd')){var d=e.target.closest('.med');addResp(d,e.target.value);e.target.value=''}});
+document.addEventListener('keydown',function(e){if(e.key==='Enter'&&e.target.classList&&e.target.classList.contains('radd')){e.preventDefault();var d=e.target.closest('.med');addResp(d,e.target.value);e.target.value=''}});
+document.addEventListener('input',function(e){if(e.target&&e.target.closest&&e.target.closest('.med')){pintaPasos()}});
+function leerMedidas(cont){var c=$(cont);if(!c)return [];return [].map.call(c.querySelectorAll('.med'),function(r){var rs=JSON.parse(r.dataset.resp||'[]'),pz=r.querySelector('[data-k="plazo"]');
+  return {medida:r.querySelector('[data-k="medida"]').value.trim(),responsables:rs,responsable:rs.join('; '),plazo:pz?pz.value:'',estado:r.dataset.estado||'Pendiente',
+    cumplida:r.dataset.estado==='Cumplida'?(r.dataset.cumplida||hoyISO()):'',atiende:JSON.parse(r.dataset.atiende||'[]')}})}
+function nuevaMedida(causaId){addMedida('medidas',{atiende:causaId?[causaId]:[]},true);pintaMedCob();pintaPasos()}
+function pintaMedCob(){var c=$('medCob');if(!c)return;var cs=causasMedida(),L=letras(),falt=sinMedida().map(function(n){return n.id});
+  c.innerHTML=!raizArb()?'<div class="alerta">Primero arma el árbol en el paso 3. <button class="btn sm" onclick="invPaso(3)">Ir al paso 3</button></div>':
+    '<div class="asis" style="margin:0"><div class="paso">CAUSAS QUE NECESITAN MEDIDA</div><ul class="lista">'+cs.map(function(n){var ok=falt.indexOf(n.id)<0;
+      return '<li style="margin:5px 0"><b>Causa '+L[n.id]+'</b>: '+esc(n.txt)+' '+(ok?'<b style="color:var(--ve)">✔ tiene medida</b>':'<br><button class="btn sm na" onclick="nuevaMedida(\''+n.id+'\')">➕ Ponerle medida</button> <button class="btn sm" onclick="elegirCurso(\''+n.id+'\')">🎓 Curso del portal</button>')+'</li>'}).join('')+'</ul></div>';
+  var inm=[].slice.call($('inmediatas').querySelectorAll('.med')).filter(function(r){return r.querySelector('[data-k="medida"]').value.trim()});
+  $('medInmRes').innerHTML=inm.length&&causasTodas().length?'<div class="grupo" style="margin-top:12px">Medidas inmediatas ya registradas (tarjeta 6): indica a qué causa atiende cada una</div>'+inm.map(function(r,i){var at=JSON.parse(r.dataset.atiende||'[]');
+      return '<div class="inmR"><div>'+esc(r.querySelector('[data-k="medida"]').value.trim())+'</div><div class="chips">'+causasTodas().map(function(n){return '<span class="chip'+(at.indexOf(n.id)>-1?' on':'')+'" onclick="inmAt('+i+',\''+n.id+'\')">Causa '+L[n.id]+'</span>'}).join('')+'</div></div>'}).join(''):'';
+  document.querySelectorAll('.med').forEach(pintaMed);pintaPasos()}
+function inmAt(i,id){var inm=[].slice.call($('inmediatas').querySelectorAll('.med')).filter(function(r){return r.querySelector('[data-k="medida"]').value.trim()}),r=inm[i];if(!r)return;
+  var a=JSON.parse(r.dataset.atiende||'[]'),k=a.indexOf(id);if(k>-1)a.splice(k,1);else a.push(id);r.dataset.atiende=JSON.stringify(a);pintaMedCob()}
+function pintaMedSug(){pintaMedCob()}
+
+// ---------- CONCLUSIONES ----------
+var CONC_T=['El evento','Causa principal','Condiciones presentes en el equipo y el entorno','Antecedentes del trabajador','Medidas'];
+function addConcl(c){c=c||{};var d=document.createElement('div');d.className='conc';
+  d.innerHTML='<div class="cn"></div><div style="flex:1"><input data-k="t" placeholder="Título del punto (ej: Causa principal)"><textarea data-k="x" rows="2" placeholder="Texto del punto"></textarea></div><button type="button" class="x" title="Quitar" onclick="this.parentNode.remove();numConcl();pintaPasos()">✕</button>';
+  $('concl').appendChild(d);setK(d,c);numConcl();autoTodo()}
+function numConcl(){[].forEach.call($('concl').querySelectorAll('.conc .cn'),function(e,i){e.textContent=i+1})}
+function leerConcl(){return filas('concl','.conc').filter(function(c){return c.x})}
+function minus(t){t=String(t||'').trim().replace(/\.$/,'');return t.charAt(0).toLowerCase()+t.slice(1)}
+function propuestaConcl(){var ns=leerArbol(),r=raizArb(),L=letras(),out=[];
+  var suc=titulo(v('t_sucursal')),area=v('area'),f=fDMA(v('fecha')),nom=v('t_nombre').split(' ');var corto=nom.length>=4?nom[0]+' '+nom[2]:nom.slice(0,2).join(' ');
+  var les=has('Accidente del trabajo')||has('Accidente de trayecto');
+  out.push({t:'El evento',x:'El '+f+(suc?', en la sucursal '+suc:'')+(area?' ('+minus(area)+')':'')+', ocurrió lo siguiente: '+(r?minus(r.txt):'(describe el hecho)')+'.'+
+    (les?' El trabajador '+corto+' resultó con '+(v('tipoLesion')?minus(v('tipoLesion')):'una lesión')+((ST.partes||[]).length?' en '+ST.partes.map(CUERPO.hablado).join(' y '):'')+'.':has('Daño material')?' Hubo daño material y no se reportan lesionados.':'')});
+  var pr=ns.find(function(n){return n.principal})||(r?hijosDe(ns,r.id)[0]:null);
+  if(pr)out.push({t:'Causa principal',x:'La causa principal del evento es que '+minus(pr.txt).replace(/\s*\(([^)]*)\)$/,', $1')+' (causa '+L[pr.id]+' del árbol).'});
+  var otras=r?hijosDe(ns,r.id).filter(function(n){return !pr||n.id!==pr.id}):[];
+  if(otras.length)out.push({t:'Condiciones presentes en el equipo y el entorno',x:otras.map(function(n){var hs=hijosDe(ns,n.id);return n.txt.replace(/\.$/,'')+(hs.length?', porque '+hs.map(function(h){return minus(h.txt)}).join(' y '):'')}).join('. ')+'.'});
+  var fp=v('factPersonales').split('\n').map(function(x){return x.replace(/^•\s*/,'').replace(/^["“]|["”]$/g,'').trim()}).filter(String).join(' ');
+  out.push({t:'Antecedentes del trabajador',x:fp||'Sin antecedentes registrados sobre habilitación o capacitación del trabajador.'});
+  var ms=leerMedidas('inmediatas').concat(leerMedidas('medidas')).filter(function(m){return m.medida});
+  if(ms.length){var ca={};ms.forEach(function(m){m.atiende.forEach(function(a){if(L[a])ca['la causa '+L[a]]=1})});var ks=Object.keys(ca).sort();ca={};ks.forEach(function(k){ca[k]=1});
+    out.push({t:'Medidas',x:'Se definieron '+ms.length+(ms.length===1?' medida':' medidas')+(Object.keys(ca).length?' que atienden '+Object.keys(ca).join(', ').replace(/, ([^,]*)$/,' y $1'):'')+' del árbol (sección de causas), cada una con responsable y plazo.'})}
+  return out}
+function proponerConcl(){var p=propuestaConcl(),pinta=function(){$('concl').innerHTML='';p.forEach(addConcl);pintaPasos();toast('Propuesta lista: revísala y corrige lo que haga falta')};
+  if(leerConcl().length)confirma('✨ ¿Reemplazar las conclusiones?','Se borra lo que escribiste en las conclusiones y se pone una propuesta nueva con los datos del caso.','SÍ, reemplazar',pinta);else pinta()}
+
+// ---------- ASISTENTE DE LA INVESTIGACIÓN (habla y apunta) ----------
 var COACH={el:null,msg:'',dicho:''},COACH_SIL=0;
-function chipsMarcados(){return ['accInseguras','condInseguras','factPersonales','factTrabajo'].some(function(id){return $(id)&&$(id).value.trim()})}
 function coachEstado(){var q=function(s){return document.querySelector(s)};
-  if(IPASO===1){var d=v('descripcion');
-    if(!d)return [q('#cInvest .ipaso[data-p="1"] .btn'),'Toca este botón','<b>Paso 1:</b> cuenta qué pasó. Toca <b>"Ayúdame con el formato"</b> y te dejo escrito ANTES, DURANTE y DESPUÉS para que solo completes.','Paso 1. Cuenta qué pasó. Toca el botón ayúdame con el formato y completa antes, durante y después.'];
-    if(d.length<=30||/:\s*$/m.test(d)&&d.replace(/(ANTES|DURANTE|DESPU[EÉ]S)[^:]*:/g,'').trim().length<30)return [$('descripcion'),'Escribe aquí','Completa lo que pasó <b>antes</b>, <b>durante</b> y <b>después</b>. Escribe como si se lo contaras a alguien que no estaba: dónde, qué hacía, qué pasó y qué se hizo.','Completa lo que pasó antes, durante y después, como si se lo contaras a alguien que no estaba.'];
-    return [$('iSig'),'Siguiente','¡Bien! El relato está. Toca <b>Siguiente</b> para anotar a los testigos.','Bien. Toca siguiente para anotar a los testigos.']}
-  if(IPASO===2){var ts=[].slice.call(document.querySelectorAll('#testigos .testigo'));
-    var sin=ts.filter(function(t){return !t.querySelector('[data-k="nombre"]').value.trim()})[0];
-    if(sin)return [sin.querySelector('[data-k="nombre"]'),'Nombre','Escribe el <b>nombre o RUT</b> del testigo. Si está en la nómina aparece solo; si no está (cliente, contratista), escríbelo igual y marca "Externo".','Escribe el nombre o RUT del testigo. Si no está en la nómina, escríbelo igual y marca externo.'];
-    if(!ts.length)return [q('#cInvest .ipaso[data-p="2"] > .btn'),'Agregar','<b>Paso 2:</b> ¿alguien vio lo que pasó o llegó justo después? Toca <b>+ Agregar testigo</b>. Si nadie vio, toca <b>Siguiente</b>.<small>Consejo de experto: entrevista a cada testigo por separado y lo antes posible.</small>','Paso 2. Si alguien vio lo que pasó, toca agregar testigo. Si nadie vio, toca siguiente.'];
-    return [$('iSig'),'Siguiente','Testigos anotados. Puedes mandarles el link para que declaren con <b>📲 Pedirle su declaración</b>. Cuando termines, toca <b>Siguiente</b>.','Testigos anotados. Puedes pedirles su declaración por link. Después toca siguiente.']}
-  if(IPASO===3){var ns=leerArbol().filter(function(n){return n.txt});
-    if(!chipsMarcados()&&!ns.length)return [q('#cInvest .ipaso[data-p="3"] .chips'),'Toca los que apliquen','<b>Paso 3:</b> marca las causas que apliquen tocando los botones de cada pregunta (puedes marcar varias). Esto me sirve para darte ideas en el árbol.','Paso 3. Toca los botones de las causas que apliquen. Puedes marcar varios.'];
-    if(!ns.length){var b=q('#arbAsis .btn.ve');return [b||$('arbAsis'),'Toca aquí','Ahora el árbol. Arriba te dejé escrito <b>lo que pasó</b>. Si está bien, toca el botón verde <b>"Sí, eso fue lo que pasó"</b>.','Ahora armamos el árbol. Si la frase de lo que pasó está bien, toca el botón verde.']}
-    var pend=ns.filter(function(n){return !n.fondo&&!hijosDe(ns,n.id).length}),f=ns.find(function(n){return n.id===ASIS.foco});
-    if(f){var hs=hijosDe(ns,f.id),t=v('asTxt');
-      if(!t&&!hs.length)return [$('asTxt'),'Escribe el porqué','Pregúntate: <b>¿por qué pasó «'+esc(f.txt)+'»?</b> Escribe la razón aquí o toca una de las ideas celestes.<small>Experto: escribe hechos que se puedan ver o comprobar, nunca culpas ("descuido").</small>','Pregúntate: por qué pasó '+f.txt+'. Escribe la razón o toca una de las ideas.'];
-      if(t&&document.activeElement===$('asTxt')&&Date.now()-ULT_TECLA<2500)return [$('asTxt'),'Sigue escribiendo','✍️ Sigue escribiendo la razón. Cuando termines, toca <b>➕ Agregar esta razón</b>.',''];
-      if(t)return [q('#arbAsis .acc .btn'),'Agregar','Bien escrito. Ahora toca <b>➕ Agregar esta razón</b>.','Ahora toca agregar esta razón.'];
-      return [q('#arbAsis .btn.ve'),'¿No hay más?','¿Hay <b>otra razón</b> para «'+esc(f.txt)+'»? Escríbela. Si ya no hay más, toca el botón verde <b>"No hay otra razón, sigamos"</b>.<small>Experto: casi siempre hay 2 razones: algo que hizo la persona y algo del lugar, equipo u organización.</small>','Hay otra razón más? Si no hay más, toca el botón verde.']}
-    return [q('#arbAsis .btn.ve')||$('iSig'),'Paso 4','¡Árbol listo! Las cajas del borde izquierdo son las <b>causas de fondo</b>. Toca <b>"Ir al paso 4"</b> para ponerles medida.','Árbol listo. Toca ir al paso cuatro para ponerle medidas a las causas de fondo.']}
-  if(IPASO===4){var bm=q('#medSug .btn.na');
-    if(bm)return [bm,'Ponle medida','Cada <b>causa de fondo</b> necesita una medida. Toca <b>"➕ Ponerle medida"</b> o, si se corrige capacitando, <b>"🎓 Curso"</b>.<small>Experto: la mejor medida elimina el peligro; capacitar sola es la más débil, úsala junto a otra.</small>','Cada causa de fondo necesita una medida. Toca ponerle medida, o curso si se corrige capacitando.'];
-    var ms=[].slice.call(document.querySelectorAll('#medidas .fila4')),llenas=ms.filter(function(r){return ['medida','responsable','plazo'].some(function(k){var e=r.querySelector('[data-k="'+k+'"]');return e&&e.value.trim()})});
-    if(llenas.length)ms=llenas;
-    for(var i=0;i<ms.length;i++){var r=ms[i],g=function(k){return r.querySelector('[data-k="'+k+'"]')};
-      if(!g('medida').value.trim())return [g('medida'),'Escribe la medida','Escribe <b>qué se va a hacer</b>, concreto. Ej: "Instalar bandeja antiderrame bajo el camión".','Escribe qué se va a hacer, concreto.'];
-      if(!g('responsable').value.trim())return [g('responsable'),'Responsable','¿<b>Quién</b> lo hace? Elige de la nómina o escribe el nombre si no está.','Quién es el responsable? Elige de la nómina o escribe el nombre.'];
+  if(IPASO===1){if((v('dAntes')+v('dDurante')+v('dDespues')).length<=30){var vac=['dAntes','dDurante','dDespues'].filter(function(i){return !v(i)})[0]||'dDurante';
+      return [$(vac),'Escribe aquí','<b>Paso 1:</b> cuenta qué pasó <b>antes</b>, <b>durante</b> y <b>después</b>, como si se lo contaras a alguien que no estaba.','Paso 1. Cuenta qué pasó: antes, durante y después.']}
+    return [$('iSig'),'Siguiente','¡Bien! El relato está. Si algo es clave (por ejemplo, lo que muestra un video), márcalo y toca <b>𝐁 Destacar</b>. Después toca <b>Siguiente</b>.','Bien. Toca siguiente para anotar a los testigos.']}
+  if(IPASO===2){var ts=[].slice.call(document.querySelectorAll('#testigos .testigo')),sin=ts.filter(function(t){return !t.querySelector('[data-k="nombre"]').value.trim()})[0];
+    if(sin)return [sin.querySelector('[data-k="nombre"]'),'Nombre','Escribe el <b>nombre o RUT</b> del testigo. Si no está en la nómina (cliente, contratista), escríbelo igual y marca "Externo".','Escribe el nombre o RUT del testigo.'];
+    if(!ts.length)return [q('#cInvest .ipaso[data-p="2"] > .btn'),'Agregar','<b>Paso 2:</b> ¿alguien vio lo que pasó? Toca <b>+ Agregar testigo</b>. Si nadie vio, toca <b>Siguiente</b>.','Paso 2. Si alguien vio lo que pasó, agrégalo. Si nadie vio, toca siguiente.'];
+    return [$('iSig'),'Siguiente','Testigos anotados. Puedes pedirles su declaración por link con <b>📲</b>. Después toca <b>Siguiente</b>.','Testigos anotados. Después toca siguiente.']}
+  if(IPASO===3){var r=raizArb();
+    if(!r)return [$('arbTx')||$('arbolUI'),'Lo que pasó','<b>Paso 3:</b> marca arriba las causas que apliquen. Después escribe en el árbol <b>lo que pasó al final</b> y toca el botón verde.','Paso 3. Marca las causas que apliquen y escribe lo que pasó al final.'];
+    if(ARBED)return [$('arbTx'),'Escribe la causa','Escribe la causa (o toca una de las que marcaste), elige el tipo y toca <b>✔ Guardar causa</b>.<small>Escribe hechos que se puedan ver o comprobar, nunca culpas ("descuido").</small>','Escribe la causa y toca guardar causa.'];
+    var ns=leerArbol();if(!hijosDe(ns,r.id).length)return [q('#arbolUI > .btn'),'Agregar causa','Ahora toca <b>➕ Agregar la primera causa</b>: ¿por qué pasó?','Toca agregar la primera causa.'];
+    if(!ns.some(function(n){return n.principal}))return [q('#arbolUI .aacc button:nth-child(2)'),'Principal','¿Hay <b>otra causa</b>? Agrégala como otra rama, o toca <b>➕ ¿Por qué pasó esto?</b> en una causa para ir más al fondo. Marca con <b>⭐</b> la causa principal.','Si hay otra causa, agrégala. Marca con estrella la causa principal.'];
+    return [$('iSig'),'Paso 4','Árbol listo. Si ya no hay más porqués, toca <b>Siguiente</b> para ponerle medidas.','Árbol listo. Toca siguiente para poner las medidas.']}
+  if(IPASO===4){var bm=q('#medCob .btn.na');
+    if(bm)return [bm,'Ponle medida','Cada causa marcada necesita una medida. Toca <b>➕ Ponerle medida</b> o <b>🎓 Curso</b>.<small>Las medidas inmediatas que ya registraste también cuentan: indica a qué causa atienden.</small>','Cada causa necesita una medida. Toca ponerle medida.'];
+    var ms=[].slice.call(document.querySelectorAll('#medidas .med'));
+    for(var i=0;i<ms.length;i++){var m=ms[i],g=function(k){return m.querySelector('[data-k="'+k+'"]')};
+      if(!g('medida').value.trim())return [g('medida'),'Medida','Escribe <b>qué se va a hacer</b>, concreto.','Escribe qué se va a hacer.'];
+      if(!JSON.parse(m.dataset.resp||'[]').length)return [m.querySelector('.radd'),'Responsable','¿<b>Quién</b> lo hace? Por defecto va el encargado de la sucursal. Puedes poner a más de uno.','Quién es el responsable?'];
       if(!g('plazo').value)return [g('plazo'),'Plazo','¿<b>Para cuándo</b>? Pon la fecha límite.','Para cuándo? Pon la fecha límite.']}
-    if(!ms.length)return [q('#cInvest .ipaso[data-p="4"] > .btn'),'Agregar','Agrega al menos una medida con responsable y plazo.','Agrega al menos una medida con responsable y plazo.'];
-    if(!filas('participantes','.fila3').some(function(x){return x.nombre})){var pv=document.querySelector('#participantes .fila3 [data-k="nombre"]');return [pv||q('#cInvest .ipaso[data-p="4"] .btn[onclick^="addParticipante"]'),'Participantes','Medidas listas ✔. Anota <b>quiénes participaron</b> de la investigación (jefatura, comité paritario, prevencionista).','Medidas listas. Anota quiénes participaron de la investigación.'];}
-    return [$('btnGuardar')||$('iSig'),'Guardar','🎉 ¡Investigación completa! Revisa y toca <b>Guardar caso y generar PDF</b>.','Investigación completa. Toca guardar caso y generar PDF.']}
+    return [$('iSig'),'Siguiente','Medidas listas ✔. Toca <b>Siguiente</b> para las conclusiones.','Medidas listas. Toca siguiente para las conclusiones.']}
+  if(IPASO===5){if(!leerConcl().length)return [q('#cInvest .ipaso[data-p="5"] > .btn.na'),'Proponer','<b>Paso 5:</b> toca <b>✨ Proponer conclusiones</b>: te dejo una propuesta con los datos del caso para que la revises.','Paso 5. Toca proponer conclusiones y revísalas.'];
+    if(!filas('participantes','.fila3').some(function(x){return x.nombre})){var pv=document.querySelector('#participantes .fila3 [data-k="nombre"]');return [pv||q('#cInvest .ipaso[data-p="5"] .btn[onclick^="addParticipante"]'),'Participantes','Anota <b>quiénes participaron</b> de la investigación.','Anota quiénes participaron de la investigación.']}
+    return [$('btnGuardar')||$('iSig'),'Guardar','🎉 ¡Investigación completa! Toca <b>Guardar</b>: se genera el informe PDF con el formato aprobado.','Investigación completa. Toca guardar.']}
   return [null,'','','']}
 function coach(){var c=$('coachTx');if(!c||$('cInvest').closest('.hide'))return;
   var a=document.activeElement,e;
-  if(a&&a.closest&&a.closest('#cInvest')&&a.id!=='asTxt'&&a.matches('textarea,input:not([type=date]):not([type=button])')&&escribiendo()&&COACH.el)e=[a,'Sigue escribiendo','✍️ Tómate tu tiempo, sigue escribiendo. Cuando termines, toca fuera del cuadro y te digo qué sigue.',''];
+  if(a&&a.closest&&a.closest('#cInvest')&&a.matches('textarea,input:not([type=date]):not([type=button])')&&escribiendo()&&COACH.el)e=[a,'Sigue escribiendo','✍️ Tómate tu tiempo, sigue escribiendo. Cuando termines te digo qué sigue.',''];
   else e=coachEstado();
   if(!e[0]||!e[0].offsetParent)e[0]=$('iSig');
   var el=e[0],m=e[2];
-  if(m!==COACH.msg){c.innerHTML=m;COACH.msg=m;if(VOZA&&e[3]&&e[3]!==COACH.dicho&&invEnPantalla()&&Date.now()-COACH_SIL>2500){COACH.dicho=e[3];hablar(e[3],1)}}
+  if(m!==COACH.msg){c.innerHTML=m;COACH.msg=m;if(VOZA&&e[3]&&e[3]!==COACH.dicho&&invEnPantalla()&&Date.now()-COACH_SIL>2500&&!ASISV.abierto){COACH.dicho=e[3];hablar(e[3],1)}}
   $('coachVoz').textContent=VOZA?'🔇 Callar':'🔊 Háblame';
   if(COACH.el!==el){if(COACH.el)COACH.el.classList.remove('cfoco');COACH.el=el;if(el)el.classList.add('cfoco')}
   $('manoInvTx').textContent=e[1]||'aquí';manoInv()}
+function hayMargen(r){return r.left>=58}
 function manoInv(){var m=$('manoInv'),o=COACH.el;if(!o||!o.offsetParent||$('cInvest').closest('.hide')){m.classList.add('hide');return}
-  var r=o.getBoundingClientRect(),x=r.left+window.scrollX-48,y=r.top+window.scrollY+Math.min(r.height,44)/2-24;if(x<2)x=2;
-  m.style.left=x+'px';m.style.top=y+'px';m.classList.remove('hide')}
+  var r=o.getBoundingClientRect();if(!hayMargen(r)){m.classList.add('hide');return}
+  var x=r.left+window.scrollX-52,y=r.top+window.scrollY+Math.min(r.height,44)/2-24;m.style.left=x+'px';m.style.top=y+'px';m.classList.remove('hide')}
 function coachLlevar(){var o=COACH.el;if(!o)return;o.scrollIntoView({behavior:'smooth',block:'center'});if(o.matches('input,textarea'))setTimeout(function(){o.focus()},450)}
 function coachVozT(){VOZA=!VOZA;$('coachVoz').textContent=VOZA?'🔇 Callar':'🔊 Háblame';if(VOZA){var e=coachEstado();hablar(e[3],1)}else try{speechSynthesis.cancel()}catch(e){}try{guiaA()}catch(e){}}
 function invEnPantalla(){var c=$('cInvest');if(!c||c.closest('.hide'))return false;var r=c.getBoundingClientRect();return r.top<window.innerHeight*0.6&&r.bottom>140}
+function chipsMarcados(){return ['accInseguras','condInseguras','factPersonales','factTrabajo'].some(function(id){return $(id)&&$(id).value.trim()})}
 setInterval(function(){try{coach()}catch(e){}},700);
 window.addEventListener('scroll',function(){try{manoInv()}catch(e){}},{passive:true});window.addEventListener('resize',function(){try{manoInv()}catch(e){}});
 
-
-// ---------- La manito NUNCA desaparece: se reubica sola y, si lo que sigue está fuera de la pantalla, aparece un aviso "Baja / Sube" ----------
-function manoBorde(){var b=$('manoBorde');if(!b)return;var t=null;
-  if($('app').classList.contains('hide')||!$('vNuevo')||$('vNuevo').classList.contains('hide')){b.classList.add('hide');return}
-  if(OBJ&&OBJ.closest&&OBJ.closest('#cInvest'))t=(COACH.el&&COACH.el.offsetParent)?COACH.el:OBJ;else t=OBJ;
-  if(invEnPantalla()&&COACH.el&&COACH.el.offsetParent)t=COACH.el;
-  if(!t||!t.offsetParent){b.classList.add('hide');return}
-  var r=t.getBoundingClientRect();
-  if(r.bottom<90){b.textContent='☝ Sube: aquí sigue';b.style.top='104px';b.style.bottom='auto';b.classList.remove('hide')}
-  else if(r.top>window.innerHeight-70){b.textContent='👇 Baja: aquí sigue';b.style.bottom='84px';b.style.top='auto';b.classList.remove('hide')}
-  else b.classList.add('hide');
-  b.onclick=function(){t.scrollIntoView({behavior:'smooth',block:'center'});if(t.matches&&t.matches('input,textarea'))setTimeout(function(){t.focus()},450)}}
-setInterval(function(){try{var o=objetivoA();if(o!==OBJ||!OBJ||!OBJ.offsetParent)guiaA();else moverMano();manoInv();manoBorde()}catch(e){}},600);
-window.addEventListener('scroll',function(){try{manoBorde()}catch(e){}},{passive:true});
+// ---------- La manito se reubica sola (sin tapar nada: si no hay margen, solo se marca el campo) ----------
+setInterval(function(){try{var o=objetivoA();if(o!==OBJ||!OBJ||!OBJ.offsetParent)guiaA();else moverMano();manoInv()}catch(e){}},600);
 
 // ---------- NÓMINA en todos los campos de nombre (con opción de persona que no está) ----------
 function nomTag(inp){if(!inp||inp.getAttribute('list')!=='dlNomina')return;var t=inp.nextElementSibling;if(!t||!t.classList||!t.classList.contains('nomTag')){t=document.createElement('small');t.className='nomTag';inp.insertAdjacentElement('afterend',t)}
@@ -1220,9 +1377,9 @@ function elegirCurso(causaId){var cs=cursosLista();if(!cs.length)return toast('N
     '<input id="cuBus" placeholder="🔎 Buscar curso..." style="width:100%;padding:10px;border:2px solid var(--bo);border-radius:10px;box-sizing:border-box"><div class="cursoL" id="cuL">'+lista('')+'</div><div class="bt"><button style="background:#e0e4ec;color:#33435c">Cancelar</button></div></div>';
   document.body.appendChild(d);
   var pick=function(e){var b=e.target.closest('.cu');if(!b)return;var n=b.dataset.n;d.remove();
-    addMedida('medidas',{medida:'Capacitación: «'+n+'» (curso del portal de capacitaciones)'+(causa?' — para corregir: '+causa:''),estado:'Pendiente'});
+    addMedida('medidas',{medida:'Capacitación «'+n+'» a los trabajadores que corresponda, realizada por el portal de capacitaciones, con registro automático de aprobación.',estado:'Pendiente',atiende:causaId?[causaId]:[],responsables:[encargado()].filter(String)});
     if($('charla')&&!$('charla').value){var o=[].slice.call($('charla').options).find(function(x){return x.text===n});if(o)$('charla').value=o.value}
-    pintaMedSug();pintaPasos();toast('Curso agregado como medida: ponle responsable y plazo');var u=$('medidas').lastChild;if(u)setTimeout(function(){u.scrollIntoView({behavior:'smooth',block:'center'})},100)};
+    pintaMedCob();pintaPasos();toast('Curso agregado como medida: revisa el texto y ponle plazo');var u=$('medidas').lastChild;if(u)setTimeout(function(){u.scrollIntoView({behavior:'smooth',block:'center'})},100)};
   d.querySelector('#cuL').onclick=pick;d.querySelector('#cuBus').oninput=function(){d.querySelector('#cuL').innerHTML=lista(this.value)};
   d.querySelector('.bt button').onclick=function(){d.remove()};d.onclick=function(e){if(e.target===d)d.remove()}}
 
@@ -1261,14 +1418,14 @@ function escribiendo(){var a=document.activeElement;return (a&&a.matches&&a.matc
 // En modo "La lleno yo ahora": guía campo por campo por la DIAT y la declaración
 var CAMPOS_YO=[['fecha','📅 la <b>fecha</b> en que pasó'],['hora','🕐 la <b>hora</b> aproximada'],['area','📍 el <b>lugar exacto</b> (ej: bodega 2, patio de carga)'],
   ['lugarDireccion','🏠 la <b>dirección</b> donde ocurrió (calle, número, comuna)'],['labor','🔧 <b>qué estaba haciendo</b> el trabajador'],['#habitual','✅ si era su <b>trabajo habitual</b> (toca SÍ o NO)'],
-  ['declaracion','✍ el <b>relato del trabajador</b>, con sus palabras: qué hacía, cómo pasó y qué pasó después'],['#partes','🧍 la <b>parte del cuerpo</b> lesionada (toca el monito)'],
+  ['declRelato','✍ el <b>relato del trabajador</b>, con sus palabras: qué hacía, cómo pasó y qué pasó después'],['#partes','🧍 la <b>parte del cuerpo</b> lesionada (toca el monito)'],
   ['tipoLesion','🩹 el <b>tipo de lesión</b>'],['centro','🏥 <b>dónde lo atendieron</b> (ej: Mutual Los Ángeles)'],
   ['trayectoSentido','🚌 el <b>sentido del trayecto</b> (de la casa al trabajo o al revés)'],['trayectoOrigen','🏠 desde <b>dónde venía</b>'],['trayectoDestino','📍 hacia <b>dónde iba</b>'],['trayectoMedio','🚗 en qué <b>medio de transporte</b>'],
   ['danoBien','🔧 qué <b>bien, equipo o vehículo</b> se dañó'],['danoCodigo','🔢 la <b>patente o código</b> del equipo'],['danoCosto','💲 el <b>costo estimado</b> del daño'],['danoDesc','📝 <b>cómo quedó</b> el daño'],
   ['epInicio','📅 cuándo <b>empezaron los síntomas</b>'],['epExposicion','⏱ cuánto tiempo lleva <b>expuesto</b> en el puesto'],['epSintomas','🤒 qué <b>síntomas</b> tiene'],['epTareas','🔧 qué <b>tareas</b> hace que podrían causarlo'],
   ['lkRecepcion','📅 la <b>fecha en que se recibió</b> la denuncia'],['lkForma','📨 <b>cómo llegó</b> la denuncia'],['lkDenunciado','👤 a <b>quién se denuncia</b>'],['lkRelato','✍ el <b>relato de los hechos</b> denunciados']];
-function invPendiente(){var c=$('cInvest');if(!c||c.classList.contains('hide'))return 0;for(var n=1;n<=4;n++)if(!invOk(n))return n;return 0}
-function inmPendiente(){var c=$('cInmediatas');return c&&!c.classList.contains('hide')&&!filas('inmediatas','.fila4').some(function(m){return m.medida})}
+function invPendiente(){var c=$('cInvest');if(!c||c.classList.contains('hide'))return 0;for(var n=1;n<=5;n++)if(!invOk(n))return n;return 0}
+function inmPendiente(){var c=$('cInmediatas');return c&&!c.classList.contains('hide')&&!leerMedidas('inmediatas').some(function(m){return m.medida})}
 function pasoYo(){for(var i=0;i<CAMPOS_YO.length;i++){var k=CAMPOS_YO[i][0],el,ok;
     if(k==='#habitual'){el=document.querySelector('.si-no[data-campo="habitual"]');ok=!!ST.habitual}
     else if(k==='#partes'){el=$('partes');ok=(ST.partes||[]).length>0}
@@ -1288,7 +1445,7 @@ function textoGuiaA(){
     if(MODO_INI==='yo'){var py=pasoYo();if(py)return '✍ <b>Llenando la declaración con el trabajador</b> (paso '+(py[2]+1)+' de '+CAMPOS_YO.length+'): ahora completa '+py[1]+'.<br><small>Si no lo sabes todavía, toca <b>Pendiente</b> o <b>No sé</b> debajo del campo (si no aparecen, escribe "no sé") y sigue.</small>';
       var salto=' <br><a href="#" onclick="GUARDAR_YA=true;guiaA();llevar(true);return false" style="font-size:12px">💾 Prefiero guardar ya y terminar después</a>';
       if(!GUARDAR_YA&&inmPendiente())return '✅ Declaración lista. Ahora las <b>medidas inmediatas</b>: ¿qué se hizo apenas pasó? (ej: se limpió el aceite, se señalizó). Escríbela en el cuadro <b>Medida</b> (o toca <b>+ Agregar medida</b>).'+salto;
-      if(!GUARDAR_YA&&invPendiente())return '🔎 Ahora la <b>investigación</b> (paso '+invPendiente()+' de 4). Te guía el asistente azul que está en la investigación.'+salto;
+      if(!GUARDAR_YA&&invPendiente())return '🔎 Ahora la <b>investigación</b> (paso '+invPendiente()+' de 5). Te guía el asistente azul que está en la investigación.'+salto;
       return '🎉 ¡Todo listo! Revisa y toca <b>💾 Guardar caso y generar PDF</b> abajo.'}
     return 'Listo. Toca <b>Crear caso y generar link</b> abajo y envíaselo por WhatsApp.';
   }
@@ -1309,7 +1466,7 @@ function objetivoA(){
     return $('btnGuardar');
   }
   var f=(EDIT._faltan||[])[0]||'';
-  var M=[[/Declaraci/,'cInv'],[/DIAT/,'cDocs'],[/alta/,'fechaAlta'],[/Descripci/,'descripcion'],[/rbol/,'arbAsis'],[/Protocolo/,'protoFilas'],[/No sé|Pendiente/,'cDeclaracion'],[/medida/i,'medidas']];
+  var M=[[/Declaraci/,'cInv'],[/DIAT/,'cDocs'],[/alta/,'fechaAlta'],[/Descripci/,'descripcion'],[/rbol/,'arbolUI'],[/Conclusiones/,'concl'],[/Protocolo/,'protoFilas'],[/No sé|Pendiente/,'cDeclaracion'],[/medida/i,'medidas']];
   var vis=function(e){var h=e.closest('.hide');return !h||(h.classList.contains('ipaso')&&!h.parentNode.closest('.hide'))};
   for(var i=0;i<M.length;i++)if(M[i][0].test(f)&&$(M[i][1])&&vis($(M[i][1])))return $(M[i][1]);
   return f?($('cFalta')&&!$('cFalta').classList.contains('hide')?$('cFalta'):$('btnGuardar')):$('edCerrar');
@@ -1320,7 +1477,7 @@ function guiaA(){if(!$('guiaATx'))return;$('guiaATx').innerHTML=textoGuiaA();$('
   if(cambio&&o){o.classList.add('foco');if(!PRIMERA&&!escribiendo()&&Date.now()-ULT_MOV>4000)llevar(false);if(VOZA&&!escribiendo()&&!(o.closest&&o.closest('#cInvest')))leerA()}PRIMERA=false}
 function moverMano(){var m=$('manoMov'),o=OBJ;if(!o||!o.offsetParent||$('app').classList.contains('hide')||(o.closest&&o.closest('#cInvest'))){m.classList.add('hide');return}
   var r=o.getBoundingClientRect(),x=r.left+window.scrollX-52,y=r.top+window.scrollY+Math.min(r.height,48)/2-26;
-  if(x<2)x=2;m.style.left=x+'px';m.style.top=y+'px';m.classList.remove('hide')}
+  if(r.left<58){m.classList.add('hide');return}m.style.left=x+'px';m.style.top=y+'px';m.classList.remove('hide')}
 function llevar(siempre){var o=OBJ;if(!o)return;var ip=o.closest&&o.closest('.ipaso.hide');if(ip){invPaso(+ip.dataset.p);setTimeout(function(){llevar(siempre)},400);return}var r=o.getBoundingClientRect();
   if(siempre||r.top<70||r.bottom>window.innerHeight-90){o.scrollIntoView({behavior:'smooth',block:'center'})}
   var f=o.matches('input,textarea,select')?o:null;if(siempre&&f)setTimeout(function(){f.focus()},500)}
@@ -1364,7 +1521,7 @@ function arrastrable(cont,key){
 function minG(id,key,si){var c=document.getElementById(id);c.classList.toggle('min',si);lsG(key+'Min',si?'1':'0');
   if(c.classList.contains('movida')){var r=c.getBoundingClientRect();c.style.left=Math.max(4,Math.min(window.innerWidth-c.offsetWidth-4,r.left))+'px';c.style.top=Math.max(4,Math.min(window.innerHeight-c.offsetHeight-4,r.top))+'px'}}
 function centrarG(id,key){var c=document.getElementById(id);c.classList.remove('movida');c.style.left=c.style.top=c.style.right=c.style.bottom='';lsG(key+'Pos','')}
-arrastrable($('guiaA'),'gA');
+try{if(lsG('gAMin')==='1')$('guiaA').classList.add('min')}catch(e){}
 
 // ---------- CONFIRMACIÓN SÍ / NO ----------
 function confirma(tit,msg,si,cb,rojo){var d=document.createElement('div');d.className='modal';
@@ -1385,25 +1542,6 @@ function plazoDT(){
   var v=$('lkRecepcion').value;if(!v){$('lkPlazo').textContent='';return}
   var d=new Date(v+'T12:00'),n=0;while(n<3){d.setDate(d.getDate()+1);if(d.getDay()!==0&&d.getDay()!==6)n++}
   $('lkPlazo').textContent='Plazo máximo aprox.: '+d.toLocaleDateString('es-CL')+' (3 días hábiles; revisa feriados)';
-}
-
-// ---------- FOTOS ----------
-function cargarFotos(inp){
-  Array.prototype.forEach.call(inp.files,function(f){
-    var rd=new FileReader();rd.onload=function(){
-      var img=new Image();img.onload=function(){
-        var max=1400,w=img.width,h=img.height;if(w>max||h>max){var k=max/Math.max(w,h);w=Math.round(w*k);h=Math.round(h*k)}
-        var c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
-        var url=c.toDataURL('image/jpeg',0.75);ST.fotosNuevas.push({data:url.split(',')[1],url:url});pintarFotos();
-      };img.src=rd.result;
-    };rd.readAsDataURL(f);
-  });
-  inp.value='';
-}
-function pintarFotos(){
-  var h=ST.fotos.map(function(f,i){return '<a class="chip" target="_blank" href="'+f.url+'">📷 Foto '+(i+1)+'</a><button class="x" style="height:30px" title="Quitar del reporte" onclick="ST.fotos.splice('+i+',1);pintarFotos()">✕</button>'}).join('');
-  $('fotosPrev').innerHTML=h;
-  ST.fotosNuevas.forEach(function(f,i){var im=document.createElement('img');im.src=f.url;im.title='Toca para quitar';im.onclick=function(){ST.fotosNuevas.splice(i,1);pintarFotos()};$('fotosPrev').appendChild(im)});
 }
 
 // ---------- DECLARACIÓN ----------
@@ -1455,7 +1593,11 @@ function pintarDecl(decls){
 // ---------- DOCUMENTOS ----------
 function pintarDocs(docs){
   SUBS=docs.map(function(x){return x.sub});
-  $('docs').innerHTML=docs.map(function(x,i){
+  var dt=(EDIT&&EDIT._srv&&EDIT._srv.docsTrab)||null;
+  var cab='<div class="info" style="margin:0 0 10px">📥 <b>Documentos del trabajador</b> (ficha, inducciones, IRL, licencia): '+
+    (dt?(dt.estado==='OK'?'copiados a la carpeta 3 el '+esc(dt.fecha)+(dt.copiados&&dt.copiados.length?' ('+dt.copiados.length+' archivo(s))':'')+'.':esc(dt.estado)+'.'):'todavía no se han traído.')+
+    ' <button class="btn sm" id="bDocsTrab" onclick="traerDocs()">📥 '+(dt?'Volver a revisar y traer lo nuevo':'Traer documentos del trabajador')+'</button></div>';
+  $('docs').innerHTML=cab+docs.map(function(x,i){
     return '<div class="grupo">'+esc(x.sub)+'</div>'+
       (x.files.length?x.files.map(function(f){return '<div class="doc">📄 <a target="_blank" href="'+f.url+'">'+esc(f.nombre)+'</a></div>'}).join(''):'<div class="doc" style="color:#999">Sin archivos</div>')+
       '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 8px"><input type="file" id="up'+i+'" style="max-width:260px" onchange="subir('+i+',this)">'+
@@ -1481,52 +1623,66 @@ function guardar(){
   if(!v('t_nombre')){alert('Busca y elige al trabajador en la nómina.');return}
   if(!EDIT&&!MODO_INI){alert('Elige cómo se toma la declaración del trabajador: la llenas tú ahora o le envías un link.');$('cInicio').scrollIntoView({behavior:'smooth'});return}
   if(!v('fecha')){alert('Ingresa la fecha del evento.');return}
+  syncDesc();
+  var q=v('declQue'),rl=v('declRelato'),sg=v('declSugerencia');
+  $('declaracion').value=(q?'Qué pasó: '+q.replace(/\.$/,'')+'.\n\n':'')+rl+(sg?'\n\nCómo se podría evitar (opinión del trabajador): '+sg:'');
+  if((rl||q)&&!v('fechaDeclaracion'))$('fechaDeclaracion').value=hoyISO();
   var d=EDIT?JSON.parse(JSON.stringify(EDIT)):{};
   d.id=EDIT?EDIT.id:'';
   d.tipos=ST.tipos.slice();
   d.gravedad=$('bGravedad').classList.contains('hide')?'':(ST.gravedad||'');
-  d.trabajador={};CAMPOS_T.forEach(function(k){d.trabajador[k]=v('t_'+k)});
+  d.trabajador=Object.assign({},(EDIT||{}).trabajador||{});CAMPOS_T.forEach(function(k){d.trabajador[k]=v('t_'+k)});
   d.sucursal=d.trabajador.sucursal;
-  FIELDS.forEach(function(k){d[k]=v(k)});
+  FIELDS.forEach(function(k){if($(k))d[k]=v(k)});
   SINGLE.forEach(function(k){d[k]=ST[k]||''});
   MULTI.forEach(function(k){d[k]=multiConOtro(k)});
   if(v('tipoLesion')==='Otra'&&v('tipoLesionOtro'))d.tipoLesion='Otra: '+v('tipoLesionOtro');
+  if(!lesionT()){d.estatura='';d.peso=''}
   d.partes=ST.partes.slice();d.eva=ST.eva;
-  d.arbol=leerArbol().filter(function(n){return n.txt});
+  d.arbol=leerArbol().map(function(n){return {id:n.id,txt:n.txt,padre:n.padre||'',tipo:n.tipo||'V',cat:n.cat||'',principal:!!n.principal}});
   if(esGrave())d.protocolo=leerProto();
   var conTexto=function(k){return function(o){return String(o[k]||'').trim()}};
-  d.inmediatas=filas('inmediatas','.fila4').filter(conTexto('medida'));d.medidas=filas('medidas','.fila4').filter(conTexto('medida'));
+  d.inmediatas=leerMedidas('inmediatas').filter(conTexto('medida'));d.medidas=leerMedidas('medidas').filter(conTexto('medida'));
+  d.conclusiones=leerConcl();
   d.participantes=filas('participantes','.fila3').filter(conTexto('nombre'));d.testigos=filas('testigos','.testigo').filter(conTexto('nombre'));
-  d.fotos=ST.fotos.slice();d.fotosNuevas=ST.fotosNuevas.map(function(f){return {data:f.data}});
+  d.fotos=ST.fotos.map(function(f){return {id:f.id,url:f.url,nota:f.nota||''}});d.fotosNuevas=ST.fotosNuevas.map(function(f){return {data:f.data,nota:f.nota||''}});
   if(!EDIT){
     d.registradoPor=USR.nombre;
     var s=solicitud();if(s===false)return;if(s)d.solicitud=s;
     d._avisar=v('avisarExtra').split(/[,;\s]+/).filter(function(x){return x.indexOf('@')>0});
     if(MODO_INI==='link')d._invitarTrabajador={correo:v('invCorreo'),telefono:v('invFono')};
   }
-  delete d._faltan;
-  delete d._estado;
+  delete d._faltan;delete d._estado;
   var b=$('btnGuardar');b.disabled=true;b.textContent='Guardando... (puede tardar unos segundos)';
+  var eraNuevo=!EDIT,modo=MODO_INI;
   run().withSuccessHandler(function(r){
     b.disabled=false;
-    if(EDIT){toast('Caso '+r.id+' actualizado');editar(r.id,true);cargarBanner();return}
+    if(!eraNuevo){toast('Caso '+r.id+' guardado. Armando el informe PDF...');editar(r.id,true,function(){subirCola();informePDF(EDIT,{subir:true})});cargarBanner();return}
     b.textContent='💾 Guardar caso y generar PDF';
-    $('resultado').innerHTML='<div class="res"><b>✔ Caso '+r.id+' guardado.</b><br>'+
-      '<a class="btn sm ve" target="_blank" href="'+r.pdf+'">Ver PDF</a>'+
+    var res=$('resultado');
+    res.innerHTML='<div class="res"><b>✔ Caso '+r.id+' guardado.</b><br>'+
+      '<a class="btn sm ve" target="_blank" id="resPdf" href="'+r.pdf+'">Ver PDF en Drive</a>'+
+      '<button class="btn sm na" onclick="descargarCaso(\''+r.id+'\')">⬇ Descargar informe PDF</button>'+
       '<a class="btn sm" target="_blank" href="'+r.carpeta+'">Abrir carpeta del caso</a>'+
-      (r.registro?'<a class="btn sm na" target="_blank" href="'+r.registro+'">Planilla de registro</a>':'')+
+      (r.registro?'<a class="btn sm gr" target="_blank" href="'+r.registro+'">Planilla de registro</a>':'')+
       '<p style="margin:8px 0 0"><button class="btn sm" onclick="editar(\''+r.id+'\')">Seguir completando este caso</button><button class="btn sm gr" onclick="nuevoCaso()">Registrar otro caso</button></p></div>'+
-      (r.linkTrab?'<div class="info"><b>📲 Ahora envíale el link al trabajador.</b> Cuando lo complete y firme, el caso se actualiza solo y te llega una alerta. A él le llega un resumen con los datos que le piden en la Mutual.</div>'+invBox(r.linkTrab,d.trabajador.nombre,'trabajador',v('invFono')):'')+
+      (r.linkTrab?'<div class="info"><b>📲 Ahora envíale el link al trabajador.</b> Cuando lo complete y firme, el caso se actualiza solo y te llega una alerta.'+(docOAL()?' A él le llega un resumen con los datos que le piden en la Mutual para la '+docOAL()+'.':'')+'</div>'+invBox(r.linkTrab,d.trabajador.nombre,'trabajador',v('invFono')):'')+
       linkBox(r.link,(d.solicitud&&d.solicitud.rol==='Testigo')?d.solicitud.nombre:d.trabajador.nombre,r.id);
     cargarBanner();
-    $('resultado').scrollIntoView({behavior:'smooth'});
+    res.scrollIntoView({behavior:'smooth'});
+    var cola=VCOLA.slice();
+    // carga el caso recién creado (sin cambiar la pantalla) para subir videos y armar el informe con el formato aprobado
+    run().withSuccessHandler(function(x){var dd=x.d;
+      if(cola.length){EDIT_TMP=dd;subirCola(dd,cola)}
+      if(modo!=='link')informePDF(dd,{subir:true,silencioso:true})}).getCaso(TOKEN,r.id);
   }).guardarCaso(TOKEN,d);
 }
 
 // ---------- EDITAR ----------
-function editar(id,quieto){
+function editar(id,quieto,luego){
   if(!quieto)toast('Abriendo caso '+id+'...');
-  run().withSuccessHandler(function(r){cargarEnForm(r.d,r.docs);if(!quieto)window.scrollTo(0,0)}).getCaso(TOKEN,id);
+  run().withSuccessHandler(function(r){cargarEnForm(r.d,r.docs);if(!quieto)window.scrollTo(0,0);if(luego)luego();
+    else if(r.d._srv&&r.d._srv.informeDesact)informePDF(r.d,{subir:true,silencioso:true})}).getCaso(TOKEN,id);
 }
 function cargarEnForm(d,docs){
   limpiar();EDIT=d;modoInicio('');vista('nuevo');
@@ -1536,23 +1692,25 @@ function cargarEnForm(d,docs){
   ST.partes=(d.partes||[]).slice();pintarPartes();
   if(d.eva!==''&&d.eva!=null)setEva(+d.eva);
   FIELDS.forEach(function(k){if($(k))ponValor(k,d[k])});
+  // declaración separada en sus partes (los casos antiguos traen todo junto)
+  if(d.declRelato==null&&d.declaracion){var p=partirDecl(d.declaracion);ponValor('declQue',p.que);ponValor('declRelato',p.relato);ponValor('declSugerencia',p.sug)}
+  cargaDesc(d.descripcion||'');
   CAMPOS_T.forEach(function(k){ponValor('t_'+k,(d.trabajador||{})[k]||'')});
   $('tipoLesionOtro').classList.toggle('hide',$('tipoLesion').value!=='Otra');
   marcarAppend();cargaProto(d.protocolo);
-  var arb=(d.arbol||[]).map(function(n){return Object.assign({},n)});
-  if(arb.length&&!arb.some(function(n){return 'fondo' in n}))arb.forEach(function(n){n.fondo=!!n.padre&&!arb.some(function(m){return m.padre===n.id})});
-  var hecho={},ord=[];while(ord.length<arb.length){var pr=arb.filter(function(n){return !hecho[n.id]&&(!n.padre||hecho[n.padre]||!arb.some(function(m){return m.id===n.padre}))});if(!pr.length)pr=arb.filter(function(n){return !hecho[n.id]}).slice(0,1);pr.forEach(function(n){hecho[n.id]=1;ord.push(n)})}
-  ord.forEach(function(n){addNodo(n)});pintaArbol();
+  ARB=(d.arbol||[]).filter(function(n){return n.txt}).map(function(n){return {id:n.id,txt:n.txt,padre:n.padre||'',tipo:n.tipo||'V',cat:n.cat||'',principal:!!n.principal}});
+  var raices=ARB.filter(function(n){return !n.padre});if(raices.length>1)raices.slice(1).forEach(function(n){n.padre=raices[0].id});
+  pintaArbol();
   $('cInicio').classList.add('hide');$('cInv').classList.remove('hide');pintarInv(d._srv.invitaciones);
   var fl=d._faltan||[];$('cFalta').classList.toggle('hide',!fl.length);$('faltaLista').innerHTML=fl.map(function(x){return '<li>'+esc(x)+'</li>'}).join('');
   $('trab').classList.remove('hide');$('buscar').value=(d.trabajador||{}).nombre||'';calc();
-  if(d.edad)$('edad').value=d.edad;if(d.antiguedad)$('antiguedad').value=d.antiguedad;
   (d.inmediatas&&d.inmediatas.length?d.inmediatas:[{}]).forEach(function(m){addMedida('inmediatas',m)});
-  (d.medidas&&d.medidas.length?d.medidas:[{}]).forEach(function(m){addMedida('medidas',m)});
+  (d.medidas||[]).forEach(function(m){addMedida('medidas',m)});
   (d.participantes&&d.participantes.length?d.participantes:[{}]).forEach(addParticipante);
+  (d.conclusiones||[]).forEach(addConcl);
   (d.testigos||[]).forEach(addTestigo);
   if((d.testigos||[]).length)$('testigos').insertAdjacentHTML('afterbegin','<div class="info" style="margin-top:0">👇 Para no escribir dos veces: toca <b>📲 Pedirle su declaración por link</b> en cada testigo. Su relato llega solo a este caso.</div>');
-  ST.fotos=(d.fotos||[]).slice();pintarFotos();
+  ST.fotos=(d.fotos||[]).map(function(f){return Object.assign({},f)});pintarFotos();pintarVideos();
   plazoDT();
   pintarDecl(d._srv.declaraciones);pintarDocs(docs);
   $('cEstado').classList.remove('hide');$('cDocs').classList.remove('hide');
@@ -1561,9 +1719,15 @@ function cargarEnForm(d,docs){
   $('edPdf').href=d._srv.pdfUrl;$('edCarpeta').href=d._srv.carpetaUrl;
   $('edCerrar').classList.toggle('hide',USR.rol!=='ADMIN');
   $('edCerrar').textContent=est==='CERRADO'?'Reabrir caso':'Cerrar caso';
-  $('btnGuardar').textContent='💾 Guardar cambios y regenerar PDF';
+  $('btnGuardar').textContent='💾 Guardar cambios y generar el informe PDF';
+  revisarNomina();cargarAvisos(true);pintaMedCob();setTimeout(autoTodo,80);
   guiaA();
 }
+function partirDecl(t){var dec=String(t||''),que='',sug='';
+  var m1=dec.match(/^Qué pasó:\s*(.+?)\.?\s*(\n|$)/i);if(m1){que=m1[1];dec=dec.replace(m1[0],'')}
+  var m3=dec.match(/Cómo se podría evitar \(opinión del trabajador\):\s*([\s\S]+)$/i);if(m3){sug=m3[1].trim();dec=dec.replace(m3[0],'')}
+  dec=dec.replace(/^Qué pudo haber pasado:.*$/im,function(x){que=que?que+'. '+x:x;return ''});
+  return {que:que,relato:dec.trim(),sug:sug}}
 function cerrarCaso(){
   var est=EDIT._estado==='CERRADO'?'ABIERTO':'CERRADO';
   run().withSuccessHandler(function(r){
@@ -1574,6 +1738,181 @@ function cerrarCaso(){
     toast(est==='CERRADO'?'Caso cerrado':'Caso reabierto');editar(EDIT.id,true);
   }).cambiarEstado(TOKEN,EDIT.id,est,false);
 }
+
+// ---------- UTILIDADES NUEVAS ----------
+function titulo(x){return String(x||'').toLowerCase().replace(/(^|\s|-)(\S)/g,function(a,b,c){return b+c.toUpperCase()})}
+function lesionT(){return has('Accidente del trabajo')||has('Accidente de trayecto')||has('Posible enfermedad profesional')}
+// DIAT para accidente (del trabajo o de trayecto), DIEP para posible enfermedad profesional; nada si solo hay daño, incidente o Ley Karin
+function docOAL(){var a=has('Accidente del trabajo')||has('Accidente de trayecto'),e=has('Posible enfermedad profesional');return a&&e?'DIAT y DIEP':a?'DIAT':e?'DIEP':''}
+function llamar(fn){var args=[].slice.call(arguments,1);return new Promise(function(ok,ko){var r=google.script.run.withSuccessHandler(ok).withFailureHandler(ko);r[fn].apply(r,args)})}
+// Cajas de texto que crecen solas al escribir
+function autoAlto(t){if(!t||t.tagName!=='TEXTAREA'||!t.offsetParent)return;var y=window.scrollY;t.style.height='auto';t.style.height=Math.max(t.scrollHeight+2,parseInt(getComputedStyle(t).minHeight)||0)+'px';if(window.scrollY!==y)window.scrollTo(0,y)}
+function autoTodo(){document.querySelectorAll('textarea').forEach(autoAlto)}
+document.addEventListener('input',function(e){if(e.target&&e.target.tagName==='TEXTAREA')autoAlto(e.target)});
+document.addEventListener('focusin',function(e){if(e.target&&e.target.tagName==='TEXTAREA')autoAlto(e.target)});
+
+// ---------- Revisión de los datos que vienen de la nómina (posibles errores) ----------
+function revisarNomina(){var box=$('avisoNomina');if(!box)return;var f=$('fecha').value?new Date($('fecha').value+'T12:00'):new Date(),hoy=new Date(),ms=[];
+  var n=dma($('t_nacimiento').value),ing=dma($('t_ingreso').value);
+  ['t_nacimiento','t_ingreso'].forEach(function(i){$(i).classList.remove('malo')});
+  if($('t_nacimiento').value&&!n){ms.push('La fecha de nacimiento no tiene el formato DD-MM-AAAA.');$('t_nacimiento').classList.add('malo')}
+  if(n){var e=f.getFullYear()-n.getFullYear();if(f<new Date(f.getFullYear(),n.getMonth(),n.getDate()))e--;
+    if(e<18){ms.push('La fecha de nacimiento ('+$('t_nacimiento').value+') da <b>'+e+(e===1?' año':' años')+'</b>: menor de 18. Probablemente es un error en la nómina.');$('t_nacimiento').classList.add('malo')}
+    else if(e>80){ms.push('La fecha de nacimiento da <b>'+e+' años</b>. Revisa si está bien escrita.');$('t_nacimiento').classList.add('malo')}}
+  if(ing){if(ing>hoy){ms.push('La fecha de ingreso ('+$('t_ingreso').value+') está en el <b>futuro</b>.');$('t_ingreso').classList.add('malo')}
+    else if(ing>f){ms.push('La fecha de ingreso ('+$('t_ingreso').value+') es <b>posterior al evento</b>.');$('t_ingreso').classList.add('malo')}
+    if(n&&ing<new Date(n.getFullYear()+15,n.getMonth(),n.getDate())){ms.push('La fecha de ingreso es anterior a que cumpliera 15 años: alguna de las dos fechas está mal.');$('t_ingreso').classList.add('malo')}}
+  box.innerHTML=ms.length?'<div class="alerta" style="margin:10px 0 0">⚠ <b>Posible error en los datos de la nómina</b><ul style="margin:6px 0 0;padding-left:18px">'+ms.map(function(x){return '<li>'+x+'</li>'}).join('')+
+    '</ul><span style="font-weight:normal">Corrígelo aquí (campo marcado en rojo) y avisa para corregirlo también en la nómina. Mientras no se corrija, el informe lo muestra como "por confirmar".</span></div>':''}
+document.addEventListener('input',function(e){if(e.target&&(e.target.id==='t_nacimiento'||e.target.id==='t_ingreso'||e.target.id==='fecha'))revisarNomina()});
+
+// ---------- FOTOS Y VIDEOS ----------
+var VCOLA=[],EDIT_TMP=null;
+function cargarMedios(inp){[].forEach.call(inp.files,function(f){if(/^video\//.test(f.type))colaVideo(f);else if(/^image\//.test(f.type))leerFoto(f);else toast('Ese archivo no es foto ni video: '+f.name)});inp.value=''}
+function leerFoto(f){var rd=new FileReader();rd.onload=function(){var img=new Image();img.onload=function(){
+    var max=1600,w=img.width,h=img.height;if(w>max||h>max){var k=max/Math.max(w,h);w=Math.round(w*k);h=Math.round(h*k)}
+    var c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+    var url=c.toDataURL('image/jpeg',0.8);ST.fotosNuevas.push({data:url.split(',')[1],url:url,nota:''});pintarFotos()};img.src=rd.result};rd.readAsDataURL(f)}
+function moverFoto(i,dlt){var j=i+dlt;if(j<0||j>=ST.fotos.length)return;var x=ST.fotos[i];ST.fotos[i]=ST.fotos[j];ST.fotos[j]=x;pintarFotos()}
+function pintarFotos(){var h='';
+  ST.fotos.forEach(function(f,i){h+='<div class="fo"><a class="fph" target="_blank" href="'+f.url+'">📷<br>Foto '+(i+1)+'</a><input value="'+esc(f.nota||'')+'" placeholder="¿Qué muestra? (sale en el informe)" oninput="ST.fotos['+i+'].nota=this.value">'+
+    '<div class="fob"><button type="button" onclick="moverFoto('+i+',-1)" title="Antes">◀</button><button type="button" onclick="moverFoto('+i+',1)" title="Después">▶</button><button type="button" class="x" title="Quitar del informe" onclick="ST.fotos.splice('+i+',1);pintarFotos()">✕</button></div></div>'});
+  ST.fotosNuevas.forEach(function(f,i){h+='<div class="fo nueva"><img src="'+f.url+'"><input value="'+esc(f.nota||'')+'" placeholder="¿Qué muestra? (sale en el informe)" oninput="ST.fotosNuevas['+i+'].nota=this.value">'+
+    '<div class="fob"><small>Se guarda al guardar el caso</small><button type="button" class="x" title="Quitar" onclick="ST.fotosNuevas.splice('+i+',1);pintarFotos()">✕</button></div></div>'});
+  $('fotosPrev').innerHTML=h}
+function colaVideo(f){if(f.size>2e9)return alert('El video es muy grande (máximo 2 GB).');
+  var d=EDIT||EDIT_TMP;if(!d||!d.id){VCOLA.push(f);toast('El video se subirá apenas guardes el caso');pintarVideos();return}
+  subirVideo(f,d)}
+function blobB64(b){return new Promise(function(ok,ko){var r=new FileReader();r.onload=function(){ok(String(r.result).split(',')[1]||'')};r.onerror=ko;r.readAsDataURL(b)})}
+async function subirVideo(f,d){var id='up'+Date.now(),box=document.createElement('div');box.className='subida';box.id=id;
+  box.innerHTML='⏳ Subiendo <b>'+esc(f.name)+'</b> ('+(f.size/1048576).toFixed(1)+' MB): <span>0%</span><div class="barraP"><i></i></div>';$('videosPrev').prepend(box);
+  try{var r=await llamar('iniciarSubida',TOKEN,d.id,f.name,f.type||'video/mp4',f.size),CH=8*1024*1024,st=0,res=null;
+    while(st<f.size){var fin=Math.min(f.size,st+CH),b64=await blobB64(f.slice(st,fin)),ok=false,err=null;
+      for(var k=0;k<3&&!ok;k++){try{res=await llamar('subirTrozo',TOKEN,r.up,st,b64,'');ok=true}catch(e){err=e;await new Promise(function(z){setTimeout(z,1500)})}}
+      if(!ok)throw err;st=fin;var pc=Math.round(st/f.size*100);box.querySelector('span').textContent=pc+'%';box.querySelector('i').style.width=pc+'%'}
+    if(res&&res.videos){if(EDIT&&EDIT.id===d.id)EDIT._srv.videos=res.videos;d._srv.videos=res.videos}
+    box.remove();pintarVideos();toast('✔ Video guardado en la carpeta del caso')}
+  catch(e){box.innerHTML='❌ No se pudo subir '+esc(f.name)+': '+esc(e.message||e)+' <button class="btn sm" onclick="this.parentNode.remove()">OK</button>'}}
+function subirCola(d,cola){cola=cola||VCOLA.slice();VCOLA=[];d=d||EDIT;if(!d)return;cola.forEach(function(f){subirVideo(f,d)})}
+function pintarVideos(){var c=$('videosPrev');if(!c)return;[].slice.call(c.querySelectorAll('.vid,.vcola')).forEach(function(x){x.remove()});
+  var vs=(EDIT&&EDIT._srv&&EDIT._srv.videos)||[];
+  vs.forEach(function(x,i){var el=document.createElement('div');el.className='vid';el.innerHTML='🎬 <a target="_blank" href="'+x.url+'">'+esc(x.nombre||('Video '+(i+1)))+'</a>'+
+    '<input value="'+esc(x.nota||'')+'" placeholder="¿Qué muestra el video? (sale en el informe)" onchange="notaVideo(\''+x.id+'\',this.value)"><button type="button" class="x" title="Quitar del caso" onclick="quitarVideo(\''+x.id+'\')">✕</button>';c.appendChild(el)});
+  VCOLA.forEach(function(f){var el=document.createElement('div');el.className='vcola';el.textContent='⏳ '+f.name+' — se sube al guardar el caso';c.appendChild(el)})}
+function notaVideo(id,t){llamar('notaMedio',TOKEN,EDIT.id,id,t).then(function(vs){EDIT._srv.videos=vs;toast('Descripción guardada')}).catch(err)}
+function quitarVideo(id){confirma('¿Quitar este video del caso?','El archivo queda en la carpeta del caso, pero ya no aparece en el informe.','SÍ, quitar',function(){llamar('quitarMedio',TOKEN,EDIT.id,id).then(function(vs){EDIT._srv.videos=vs;pintarVideos()}).catch(err)},true)}
+
+// ---------- INFORME PDF CON EL FORMATO APROBADO (se arma aquí y se guarda en Drive) ----------
+var BASE_PUB='https://danielzunino.github.io/reporte-eventos-constructor/',LIBS=null;
+function cargaScript(src){return new Promise(function(ok,ko){var s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=function(){ko(new Error('No se pudo cargar '+src))};document.head.appendChild(s)})}
+function bufB64(buf){var u=new Uint8Array(buf),s='',k=0x8000;for(var i=0;i<u.length;i+=k)s+=String.fromCharCode.apply(null,u.subarray(i,i+k));return btoa(s)}
+function cargarLibsInforme(){if(LIBS)return LIBS;
+  LIBS=(async function(){
+    if(!window.pdfMake)await cargaScript('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/pdfmake.min.js');
+    if(!window.PDFLib)await cargaScript('https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js');
+    if(!window.Informe)await cargaScript(BASE_PUB+'informe.js?v=5');
+    var FU='https://cdn.jsdelivr.net/npm/@fontsource/lato@5.0.20/files/lato-latin-';
+    var F={normal:'400-normal.woff',bold:'700-normal.woff',italics:'400-italic.woff',bolditalics:'700-italic.woff'},vfs={},buf={};
+    await Promise.all(Object.keys(F).map(function(k){return fetch(FU+F[k]).then(function(r){if(!r.ok)throw new Error('No se pudo cargar la letra del informe');return r.arrayBuffer()}).then(function(b){buf[k]=b;vfs[F[k]]=bufB64(b)})}));
+    pdfMake.vfs=vfs;pdfMake.fonts={Lato:F};
+    // medidor de texto con la misma letra del PDF (para dibujar las cajas del árbol)
+    try{var fa=new FontFace('LatoPDF',buf.normal),fb=new FontFace('LatoPDF',buf.bold,{weight:'700'});await fa.load();await fb.load();document.fonts.add(fa);document.fonts.add(fb)}catch(e){}
+    var cv=document.createElement('canvas').getContext('2d');
+    Informe.setMedidor(function(t,sz,b){cv.font=(b?'700 ':'400 ')+sz*10+'px LatoPDF';return cv.measureText(String(t)).width/10});
+    return true})();
+  LIBS.catch(function(){LIBS=null});return LIBS}
+function medidasImg(u){return new Promise(function(ok){var i=new Image();i.onload=function(){ok({w:i.naturalWidth,h:i.naturalHeight})};i.onerror=function(){ok({w:1,h:1})};i.src=u})}
+var GENERANDO=false;
+async function informePDF(d,op){op=op||{};if(!d||!d.id)return;if(GENERANDO){if(!op.silencioso)toast('Ya estoy armando el informe, espera un momento');return}
+  GENERANDO=true;var aviso=op.silencioso?null:avisoFijo('📄 Armando el informe PDF del caso '+d.id+'...');
+  try{await cargarLibsInforme();
+    var X=await llamar('datosInforme',TOKEN,d.id);
+    for(var i=0;i<X.fotos.length;i++){var f=X.fotos[i];f.data='data:'+(f.mime||'image/jpeg')+';base64,'+f.b64;var m=await medidasImg(f.data);f.w=m.w;f.h=m.h;delete f.b64}
+    if(X.firmaTrab)X.firmaTrab.data='data:'+X.firmaTrab.mime+';base64,'+X.firmaTrab.b64;
+    if(X.firmaTom)X.firmaTom.data='data:'+X.firmaTom.mime+';base64,'+X.firmaTom.b64;
+    var bytes=await Informe.generar(d,X,{});
+    var nombre=Informe.nombreArchivo(d);
+    if(op.descargar)bajarArchivo(bytes,nombre);
+    if(op.subir){var r=await llamar('guardarInforme',TOKEN,d.id,bufB64(bytes));
+      d._srv.pdfUrl=r.url;d._srv.informeId=r.id;delete d._srv.informeDesact;
+      if(EDIT&&EDIT.id===d.id){EDIT._srv.pdfUrl=r.url;$('edPdf').href=r.url}
+      if($('resPdf'))$('resPdf').href=r.url;
+      if(!op.silencioso||op.descargar)toast('✔ Informe guardado en la carpeta del caso: '+r.nombre)}
+  }catch(e){console.error(e);alert('No se pudo armar el informe PDF: '+(e.message||e))}
+  finally{GENERANDO=false;if(aviso)aviso.remove()}}
+function avisoFijo(t){var d=document.createElement('div');d.className='toast';d.style.background='var(--az)';d.textContent=t;document.body.appendChild(d);return d}
+function bajarArchivo(bytes,nombre){var b=new Blob([bytes],{type:'application/pdf'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=nombre;a.rel='noopener';document.body.appendChild(a);a.click();
+  setTimeout(function(){a.remove();URL.revokeObjectURL(u)},60000)}
+function descargarPDF(){if(!EDIT)return;informePDF(EDIT,{descargar:true,subir:true})}
+function descargarCaso(id){if(EDIT&&EDIT.id===id)return descargarPDF();toast('Preparando el informe del caso '+id+'...');
+  llamar('getCaso',TOKEN,id).then(function(r){informePDF(r.d,{descargar:true,subir:true})}).catch(err)}
+
+// ---------- Documentos del trabajador a la carpeta del caso ----------
+function traerDocs(){if(!EDIT)return;var b=$('bDocsTrab');if(b){b.disabled=true;b.textContent='Buscando y copiando documentos...'}
+  llamar('traerDocsTrab',TOKEN,EDIT.id).then(function(r){toast(r.estado==='OK'?(r.copiados.length?'✔ Copiados '+r.copiados.length+' documento(s)':'✔ Ya estaban todos los documentos'):r.estado);editar(EDIT.id,true)}).catch(function(e){if(b){b.disabled=false;b.textContent='📥 Traer documentos del trabajador'}err(e)})}
+
+// ---------- ASÍSTEME: asistente de voz y chat dentro del portal (solo usuarios con acceso: encargados y jefaturas) ----------
+var ASISV={abierto:false,rec:null,oyendo:false,dictar:false,campo:null};
+document.addEventListener('focusin',function(e){var t=e.target;if(t&&t.matches&&t.matches('input:not([type=date]):not([type=time]):not([type=checkbox]):not([type=file]),textarea')&&!t.closest('#asisP'))ASISV.campo=t});
+function abrirAsis(){var p=$('asisP');
+  if(!p){p=document.createElement('div');p.id='asisP';p.className='hide';
+    p.innerHTML='<div class="ah">🧑‍🏫 Asísteme <small style="font-weight:normal;opacity:.85">háblame o escríbeme</small><button onclick="cerrarAsis()">✕ Cerrar</button></div><div id="asisLog"></div>'+
+      '<div class="aq">'+['¿Qué hago ahora?','Llévame','¿Cómo armo el árbol?','¿Qué es causa de fondo?','¿Qué medida pongo?','¿Corresponde DIAT?','✍ Dictar en el campo','Descargar el PDF'].map(function(x){return '<span onclick="asisPreguntar(this.textContent)">'+x+'</span>'}).join('')+'</div>'+
+      '<div class="ain"><input id="asisIn" placeholder="Escribe tu pregunta..." onkeydown="if(event.key===\'Enter\'){asisPreguntar(this.value);this.value=\'\'}"><button id="asisMic" title="Hablar" onclick="asisOir()">🎤</button><button title="Enviar" onclick="asisPreguntar($(\'asisIn\').value);$(\'asisIn\').value=\'\'">➤</button></div>';
+    document.body.appendChild(p)}
+  p.classList.remove('hide');ASISV.abierto=true;
+  if(!$('asisLog').children.length){var g=guiaActual();asisMsg('Hola '+String((USR&&USR.nombre)||'').split(' ')[0]+'. Estoy aquí para guiarte paso a paso. '+g,'el')}
+  else asisMsg(guiaActual(),'el')}
+function cerrarAsis(){var p=$('asisP');if(p)p.classList.add('hide');ASISV.abierto=false;asisParar()}
+function sinHtml(h){var d=document.createElement('div');d.innerHTML=h;return (d.textContent||'').replace(/[\u{1F300}-\u{1FAFF}☀-➿️]/gu,'').replace(/\s+/g,' ').trim()}
+function guiaActual(){if(invEnPantalla()||(!$('cInvest').classList.contains('hide')&&IPASO>1)){var e=coachEstado();return 'Estás en la investigación, paso '+IPASO+' de 5. '+sinHtml(e[2])}return sinHtml(textoGuiaA())}
+function asisMsg(t,q){var d=document.createElement('div');d.className='m '+q;d.innerHTML=t;$('asisLog').appendChild(d);$('asisLog').scrollTop=1e6;if(q==='el'&&VOZA)hablar(sinHtml(t),1)}
+function asisPreguntar(q){q=String(q||'').trim();if(!q)return;asisMsg(esc(q),'yo');var r=asisResponder(q);asisMsg(r.t,'el');if(r.a)setTimeout(r.a,300)}
+function asisResponder(q){var n=norm2(q),doc=docOAL(),tp=ST.tipos||[];
+  var R=function(t,a){return {t:t,a:a}};
+  if(/DICTA|ESCRIBE LO QUE DIGO/.test(n)){if(!ASISV.campo)return R('Primero toca el cuadro donde quieres escribir y después vuelve a tocar <b>✍ Dictar en el campo</b>.');ASISV.dictar=true;return R('Te escucho: habla y lo escribo en el campo que tocaste. Para terminar toca 🎤 de nuevo.',function(){asisOir(true)})}
+  if(/CALLA|SILENCIO|NO HABLES/.test(n)){VOZA=false;try{speechSynthesis.cancel()}catch(e){}return R('Listo, me quedo en silencio. Si quieres que vuelva a hablar, dime "háblame".')}
+  if(/HABLAME|ACTIVA LA VOZ/.test(n)){VOZA=true;return R('Listo, vuelvo a hablarte.')}
+  if(/PASO\s*(\d)/.test(n)){var k=+n.match(/PASO\s*(\d)/)[1];if(k>=1&&k<=5)return R('Vamos al paso '+k+'.',function(){invPaso(k)})}
+  if(/^(SIGUIENTE|AVANZA|AVANZAR|SIGAMOS)/.test(n))return R('Avanzamos al paso '+Math.min(IPASO+1,5)+'.',function(){invPaso(IPASO+1)});
+  if(/^(ATRAS|VOLVER|RETROCEDE)/.test(n))return R('Volvemos al paso '+Math.max(IPASO-1,1)+'.',function(){invPaso(IPASO-1)});
+  if(/LLEVAME|DONDE (ESTA|SIGO|VOY)|MUESTRAME/.test(n))return R('Te llevo a lo que sigue (queda marcado en naranjo).',function(){if(invEnPantalla())coachLlevar();else llevar(true)});
+  if(/QUE HAGO|QUE SIGUE|AYUDA|COMO SIGO|NO SE QUE|ESTOY PERDIDO|AHORA QUE/.test(n))return R(guiaActual()+' <br><small>Si quieres, dime "llévame".</small>');
+  if(/DESCARGA|BAJAR|PDF|INFORME/.test(n)){if(EDIT)return R('Armo el informe con el formato aprobado y lo descargo. También queda guardado en la carpeta del caso.',descargarPDF);
+    return R('Primero guarda el caso con el botón verde de abajo. Después aparece el botón <b>⬇ Descargar informe PDF</b>.')}
+  if(/ARBOL/.test(n))return R('El árbol se arma así: <ol><li>Arriba escribes <b>lo que pasó al final</b> (el daño o la lesión).</li><li>Tocas <b>➕ Agregar causa</b> y respondes <b>¿por qué pasó?</b>. Cada causa directa es una <b>rama</b> (A, B, C...).</li><li>Si una causa tiene a su vez un porqué, tocas <b>➕ ¿Por qué pasó esto?</b> en esa caja (queda como B1, B2...).</li><li>Marcas con ⭐ la causa principal.</li></ol>Las causas que no tienen nada debajo son <b>causas de fondo</b> y cada una necesita una medida.',function(){invPaso(3)});
+  if(/CAUSA PRINCIPAL/.test(n))return R('La <b>causa principal</b> es la que, según la evidencia (video, testigos, inspección), explica mejor por qué pasó el evento. Se marca con ⭐ en el árbol y aparece destacada en el informe y en las conclusiones.');
+  if(/FONDO|RAIZ/.test(n))return R('Una <b>causa de fondo</b> es la última respuesta al "¿por qué?": cuando ya no hay otro porqué que se pueda comprobar. Suele ser algo de la organización: falta de mantención, de procedimiento, de supervisión o de capacitación. Cada causa de fondo necesita una medida.');
+  if(/ACCION(ES)? INSEGURA/.test(n))return R('Una <b>acción insegura</b> es algo que hizo la persona y que no debía hacer, o que hizo de forma riesgosa. Ej: retroceder sin mirar, no usar EPP, subirse a un rack. Escríbela como un hecho, nunca como culpa ("descuido").');
+  if(/CONDICION(ES)? INSEGURA|CONDICION DEL/.test(n))return R('Una <b>condición insegura</b> es algo que estaba mal en el lugar, el equipo o el material. Ej: grúa sin frenos, piso con aceite, poca luz, carga mal estibada.');
+  if(/VARIACION|PERMANENTE/.test(n))return R('<b>Variación</b>: algo que ese día fue distinto a lo habitual (ej: la grúa venía fallando). <b>Permanente</b>: una condición que siempre está así (ej: el portón siempre queda abierto). Si no sabes, déjalo como variación.');
+  if(/FACTOR(ES)? PERSONAL/.test(n))return R('<b>Factores personales</b>: lo que le pasaba a la persona (falta de conocimiento, cansancio, estrés). Si no hay antecedentes, marca "Sin antecedentes que indiquen factores personales" y anota su inducción, IRL y licencia.');
+  if(/FACTOR(ES)? DEL TRABAJO|ORGANIZACION/.test(n))return R('<b>Factores del trabajo</b>: lo que falló en la organización: supervisión, procedimiento, mantención, equipos, capacitación, planificación.');
+  if(/RESPONSABLE/.test(n))return R('Por defecto el responsable de cada medida es el <b>encargado de la sucursal</b> (no el asesor). Puedes agregar a más de una persona: escribe el nombre en "+ Agregar responsable" y presiona Enter. Para quitar a alguien toca la ✕ de su nombre.');
+  if(/MEDIDA|QUE HAGO PARA QUE NO|CORRECTIV/.test(n))return R('Cada causa del árbol necesita una medida con <b>responsable</b> y <b>plazo</b>. Las mejores medidas, en orden: <ol><li>Eliminar el peligro.</li><li>Cambiar el equipo o el método por uno más seguro.</li><li>Controles de ingeniería (protecciones, alarmas, espejos).</li><li>Procedimientos, señalización y supervisión.</li><li>Capacitación y EPP (sola es la más débil: úsala junto a otra).</li></ol>Las <b>medidas inmediatas</b> que ya anotaste también cuentan: en el paso 4 solo indicas a qué causa atienden.',function(){invPaso(4)});
+  if(/DIAT/.test(n))return R('La <b>DIAT</b> es la denuncia de <b>accidente</b> (del trabajo o de trayecto) ante la Mutual, dentro de 24 horas. '+(doc.indexOf('DIAT')>-1?'En este caso <b>sí corresponde</b>.':tp.length?'En este caso <b>no corresponde</b>, porque no se marcó un accidente con persona lesionada.':'Corresponde solo si marcas accidente del trabajo o de trayecto.'));
+  if(/DIEP|ENFERMEDAD/.test(n))return R('La <b>DIEP</b> es la denuncia de <b>posible enfermedad profesional</b>; el trabajador va a evaluación a la Mutual. '+(doc.indexOf('DIEP')>-1?'En este caso <b>sí corresponde</b>.':tp.length?'En este caso <b>no corresponde</b>.':'Corresponde solo si marcas posible enfermedad profesional.'));
+  if(/GRAVE|FATAL/.test(n))return R('Es <b>grave</b> si obliga a reanimación o rescate, hay caída de más de 1,8 m, amputación, o afecta a varios trabajadores. Si es grave o fatal: suspender la faena, avisar de inmediato a la Inspección del Trabajo y a la SEREMI de Salud, y registrar cada aviso en la tarjeta roja.');
+  if(/KARIN|ACOSO|VIOLENCIA/.test(n))return R('En <b>Ley Karin</b>: medidas de resguardo de inmediato, ofrecer atención psicológica de la Mutual y avisar a la Dirección del Trabajo dentro de 3 días hábiles. El caso es reservado: solo lo ve el administrador.');
+  if(/TESTIGO/.test(n))return R('En el paso 2 toca <b>+ Agregar testigo</b>, escribe su nombre o RUT y toca <b>📲 Pedirle su declaración por link</b>: le llega un enlace, responde desde su celular y firma con el dedo. Su relato entra solo al caso.',function(){invPaso(2)});
+  if(/FOTO|VIDEO|EVIDENCIA|PRUEBA|GRABACION|CAMARA/.test(n))return R('En la tarjeta <b>8. Fotos y videos</b> toca <b>📷 Agregar fotos o videos</b>. Escribe debajo de cada foto qué muestra y ordénalas con ◀ ▶. Los videos se suben a la carpeta del caso y el informe los menciona con su enlace.',function(){$('cFotos').scrollIntoView({behavior:'smooth',block:'center'})});
+  if(/CONCLUSION/.test(n))return R('En el paso 5 toca <b>✨ Proponer conclusiones</b>: te dejo 5 puntos armados con los datos del caso (el evento, la causa principal, las condiciones, los antecedentes del trabajador y las medidas). Revísalos y corrige lo que haga falta.',function(){invPaso(5)});
+  if(/FIRMA/.test(n))return R('El trabajador firma con el dedo cuando responde su declaración por link, o en la toma presencial (tarjeta 9). Su firma aparece en el informe junto a su declaración, y la declaración original firmada va como Anexo 1.');
+  if(/NOMINA|NO APARECE|INSCRI/.test(n))return R('Solo se pueden registrar personas inscritas en la nómina. Si no aparece, debe completar primero el Formulario de Inscripción. Si sus datos están mal (por ejemplo la fecha de nacimiento), corrígelos aquí y avisa para corregir la nómina.');
+  if(/GUARDA/.test(n))return R('Para guardar toca el botón verde <b>💾 Guardar</b> de abajo. Al guardar se genera el informe PDF y queda en la carpeta del caso.',function(){$('btnGuardar').scrollIntoView({behavior:'smooth',block:'center'})});
+  return R('No te entendí bien. Puedes preguntarme, por ejemplo: <i>¿qué hago ahora?</i>, <i>¿cómo armo el árbol?</i>, <i>¿qué medida pongo?</i>, <i>¿corresponde DIAT?</i>, o decirme <i>siguiente</i>, <i>atrás</i> o <i>llévame</i>.<br><br>'+guiaActual())}
+function asisOir(dictar){var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){asisMsg('Este navegador no permite hablarme. Escribe tu pregunta (en el celular puedes usar el micrófono del teclado).','el');return}
+  if(ASISV.oyendo){asisParar();return}
+  var r=new SR();r.lang='es-CL';r.interimResults=false;r.continuous=!!dictar;ASISV.rec=r;ASISV.oyendo=true;ASISV.dictar=!!dictar;$('asisMic').classList.add('oye');
+  try{speechSynthesis.cancel()}catch(e){}
+  r.onresult=function(ev){for(var i=ev.resultIndex;i<ev.results.length;i++){if(!ev.results[i].isFinal)continue;var t=ev.results[i][0].transcript.trim();
+    if(ASISV.dictar&&ASISV.campo){var c=ASISV.campo;c.value=(c.value&&!/\s$/.test(c.value)?c.value+' ':c.value)+t;c.dispatchEvent(new Event('input',{bubbles:true}));autoAlto(c);asisMsg('✍ '+esc(t),'yo')}
+    else asisPreguntar(t)}};
+  r.onend=function(){ASISV.oyendo=false;ASISV.dictar=false;if($('asisMic'))$('asisMic').classList.remove('oye')};
+  r.onerror=function(e){if(e.error==='not-allowed')asisMsg('No tengo permiso para usar el micrófono. Acéptalo en el navegador o escríbeme.','el')};
+  try{r.start()}catch(e){ASISV.oyendo=false}}
+function asisParar(){try{ASISV.rec&&ASISV.rec.stop()}catch(e){}ASISV.oyendo=false;ASISV.dictar=false;if($('asisMic'))$('asisMic').classList.remove('oye')}
 
 // ---------- VISTAS ----------
 function vista(x){
@@ -1602,7 +1941,7 @@ function pintarCasos(){
       '<td>'+(dcl?'<span class="est '+dcl+'">'+esc(dec.split(' — ')[0].split(' · ')[0])+'</span>':'<small>—</small>')+'</td>'+
       '<td style="text-align:center;font-weight:bold;color:'+(mp?'var(--ro)':'var(--ve)')+'">'+(c['Datos']?mp:'—')+'</td>'+
       '<td><span class="est '+esc(c['Estado'])+'">'+esc(c['Estado'])+'</span>'+(/^PENDIENTE/.test(c['Alerta grave']||'')?'<br><span class="est SIN">🚨 GRAVE</span>':'')+'</td>'+
-      '<td class="acc" onclick="event.stopPropagation()">'+(adm?(c['Estado']==='ARCHIVADO'?'<button style="background:#e3f0ff;color:#0b3d91" onclick="archivar(\''+c['ID']+'\',false)">↩ Desarchivar</button>'
+      '<td class="acc" onclick="event.stopPropagation()">'+(c['Datos']?'<button style="background:#e8f5e9;color:#1b5e20" onclick="descargarCaso(\''+c['ID']+'\')">⬇ PDF</button>':'')+(adm?(c['Estado']==='ARCHIVADO'?'<button style="background:#e3f0ff;color:#0b3d91" onclick="archivar(\''+c['ID']+'\',false)">↩ Desarchivar</button>'
         :'<button style="background:#eceff1;color:#37474f" onclick="archivar(\''+c['ID']+'\',true)">🗄 Archivar</button>')+
         '<button style="background:#ffcdd2;color:#8e0000" onclick="eliminar(\''+c['ID']+'\')">🗑 Eliminar</button>':'<small>—</small>')+'</td></tr>'}).join('')
     :'<tr><td colspan="9">Sin casos.</td></tr>';
