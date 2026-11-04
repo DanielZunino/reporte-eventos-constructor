@@ -51,6 +51,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 .per .g div{background:var(--gr);border-radius:8px;padding:6px 8px;font-size:12.5px;min-height:52px}
 .per .g div i{display:block;font-style:normal;font-weight:700;font-size:11px;color:var(--mu);text-transform:uppercase}
 .ok{color:var(--ve);font-weight:700}.mal{color:var(--ro);font-weight:700}.med{color:var(--am);font-weight:700}
+.firma{display:block;width:100%;height:150px;background:#fff;border:2px dashed var(--bo);border-radius:10px;touch-action:none;margin:6px 0}.fbox{margin-bottom:14px}.fbox .fh{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .fotos{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.fotos img{width:78px;height:78px;object-fit:cover;border-radius:8px;border:1px solid var(--bo)}
 .msg{min-height:1.3em;margin:8px 0 0;font-weight:700}.msg.e{color:var(--ro)}.msg.o{color:var(--ve)}
 .item{display:grid;grid-template-columns:6px 1fr;background:#fff;border:1px solid var(--bo);border-radius:12px;overflow:hidden;margin-bottom:10px;cursor:pointer;width:100%;text-align:left;font:inherit;padding:0}
@@ -143,6 +144,11 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
         <div class="fotos" id="fots"></div>
       </div>
       <div class="card">
+        <span class="l">Firmas</span>
+        <p class="hint">Firme con el dedo dentro de cada recuadro. Si la persona revisada no quiere firmar, déjelo en blanco y el PDF dirá "No firmó".</p>
+        <div id="firmas"></div>
+      </div>
+      <div class="card">
         <label style="display:flex;gap:10px;align-items:flex-start;font-weight:600"><input type="checkbox" id="avi" checked style="width:22px;height:22px;margin:1px 0 0">Avisar a la jefatura de cada persona por correo (con el PDF)</label>
         <p class="hint" id="aviTxt"></p>
         <p class="msg e" id="fmsg"></p>
@@ -208,7 +214,7 @@ function iniciar(){cargando(true);apiS('obsInicio').then(function(r){S.ini=r;$('
 
 /* ---------- nueva ---------- */
 $$('.tipo').forEach(function(b){b.onclick=function(){S.tipo=b.dataset.t;S.cat='';$$('.tipo').forEach(function(x){x.classList.toggle('on',x===b)});$('#form').classList.remove('hide');$('#hecho').classList.add('hide');
-  var neg=S.tipo==='Negativa';$('#prioBox').classList.toggle('hide',!neg);$('#accBox').classList.toggle('hide',!neg);pintarCats();pintarFrec();setPrio(S.prio)}});
+  var neg=S.tipo==='Negativa';$('#prioBox').classList.toggle('hide',!neg);$('#accBox').classList.toggle('hide',!neg);pintarCats();pintarFrec();setPrio(S.prio);pintarFirmas()}});
 function pintarCats(){var c=(S.ini.categorias[S.tipo]||[]);$('#cats').innerHTML=c.map(function(t){return '<button class="chip'+(t===S.cat?' on':'')+'" data-c="'+esc(t)+'">'+esc(t)+'</button>'}).join('');
   $$('#cats .chip').forEach(function(b){b.onclick=function(){S.cat=b.dataset.c;$$('#cats .chip').forEach(function(x){x.classList.toggle('on',x===b)})}})}
 function pintarFrec(){var f=S.ini.frecuentes||{},s=$('#suc').value,lst=((f.porSucursal||{})[s]||[]).concat(f.general||[]),vis={},out=[];
@@ -243,7 +249,19 @@ function pintarP(){$('#pers').innerHTML=S.pers.map(function(p,i){var f=p.ficha,c
   return '<div class="per"><button class="x" data-i="'+i+'" aria-label="Quitar">×</button><b>'+esc(p.nombre)+'</b><span class="hint">'+esc([p.cargo,p.sucursal].filter(String).join(' · '))+'</span>'+
    '<div class="g"><div><i>Charlas</i>'+capT+'</div><div><i>EPP</i>'+eppT+'</div><div><i>Antecedentes</i>'+antT+'</div></div>'+
    (f&&f.jefaturas&&f.jefaturas.length?'<p class="hint">Jefatura: '+esc(f.jefaturas.map(function(j){return j.nombre}).join(', '))+'</p>':(f?'<p class="hint mal">Sin jefatura con correo en la nómina</p>':''))+'</div>'}).join('');
-  $$('#pers .x').forEach(function(b){b.onclick=function(){S.pers.splice(+b.dataset.i,1);pintarP()}});pintarAvisos()}
+  $$('#pers .x').forEach(function(b){b.onclick=function(){S.pers.splice(+b.dataset.i,1);pintarP()}});pintarAvisos();pintarFirmas()}
+/* firmas */
+var FK='';
+function pintarFirmas(forzar){var k=S.pers.map(function(p){return p.nombre}).join('|');if(!forzar&&k===FK&&$('#firmas').children.length)return;FK=k;
+  var caja=function(id,tit,sub,dato){return '<div class="fbox"><div class="fh"><span><b>'+esc(tit)+'</b><br><span class="hint">'+esc(sub)+'</span></span><button class="btn gh sm" data-b="'+id+'">Borrar</button></div><canvas class="firma" width="600" height="200" data-k="'+id+'"></canvas></div>'};
+  $('#firmas').innerHTML=caja('I','Quien inspecciona',(S.ini&&S.ini.u&&S.ini.u.nombre)||'Prevención de Riesgos')+S.pers.map(function(p,i){return caja(i,p.nombre,'Persona revisada')}).join('');
+  $$('#firmas canvas').forEach(function(c){var k=c.dataset.k,x=c.getContext('2d'),dib=false,ul=null;x.lineWidth=3.2;x.lineCap='round';x.lineJoin='round';x.strokeStyle='#102a5c';
+    var prev=k==='I'?S.firmaI:(S.pers[+k]||{}).firma;if(prev){var im=new Image();im.onload=function(){x.drawImage(im,0,0)};im.src='data:image/png;base64,'+prev}
+    var pt=function(e){var r=c.getBoundingClientRect();return [(e.clientX-r.left)*c.width/r.width,(e.clientY-r.top)*c.height/r.height]};
+    c.onpointerdown=function(e){e.preventDefault();c.setPointerCapture(e.pointerId);dib=true;ul=pt(e);x.beginPath();x.arc(ul[0],ul[1],1.5,0,7);x.fillStyle='#102a5c';x.fill()};
+    c.onpointermove=function(e){if(!dib)return;e.preventDefault();var p=pt(e);x.beginPath();x.moveTo(ul[0],ul[1]);x.lineTo(p[0],p[1]);x.stroke();ul=p};
+    c.onpointerup=c.onpointercancel=function(){if(!dib)return;dib=false;var b=c.toDataURL('image/png').split(',')[1];if(k==='I')S.firmaI=b;else if(S.pers[+k])S.pers[+k].firma=b}});
+  $$('#firmas [data-b]').forEach(function(b){b.onclick=function(){var k=b.dataset.b;if(k==='I')S.firmaI='';else if(S.pers[+k])S.pers[+k].firma='';var c=$('#firmas canvas[data-k="'+k+'"]');c.getContext('2d').clearRect(0,0,c.width,c.height)}})}
 function pintarAvisos(){var j={};S.pers.forEach(function(p){(p.ficha&&p.ficha.jefaturas||[]).forEach(function(x){j[x.nombre]=1})});var n=Object.keys(j);
   $('#aviTxt').textContent=n.length?'Se avisará a: '+n.join(', ')+' (con copia a usted).':'Sin personas con jefatura: el aviso le llegará solo a usted.'}
 
@@ -256,11 +274,12 @@ function alertaF(t){$('#fmsg').textContent=t}
 /* guardar */
 $('#guardar').onclick=function(){alertaF('');if(!S.tipo){alertaF('Indique si es algo bueno o malo.');return}if(!S.cat){alertaF('Elija el tema.');return}
   if($('#des').value.trim().length<5){alertaF('Describa lo que vio.');return}
+  if(!S.firmaI){alertaF('Falta la firma de quien inspecciona (recuadro de firmas).');return}
   var o={tipo:S.tipo,categoria:S.cat,prioridad:S.tipo==='Negativa'?S.prio:'',sucursal:$('#suc').value,lugar:$('#lug').value.trim(),descripcion:$('#des').value.trim(),
     accion:$('#acc').value.trim(),responsable:$('#resp').value.trim(),plazo:S.tipo==='Negativa'?aDMA($('#pla').value):'',avisar:$('#avi').checked,fotos:S.fotos,
-    personas:S.pers.map(function(p){return {run:p.run,nombre:p.nombre,cargo:p.cargo}}),logo:LOGO};
+    personas:S.pers.map(function(p){return {run:p.run,nombre:p.nombre,cargo:p.cargo,firma:p.firma||''}}),firmaInspector:S.firmaI,logo:LOGO};
   var b=this;b.disabled=true;cargando(true);apiS('obsGuardar',[o]).then(function(r){mostrarHecho(r,o);limpiar()}).catch(function(e){alertaF(e.message)}).finally(function(){b.disabled=false;cargando(false)})};
-function limpiar(){S.cat='';S.pers=[];S.fotos=[];['#lug','#des','#acc','#resp'].forEach(function(s){$(s).value=''});pintarP();pintarF();$('#form').classList.add('hide');$$('.tipo').forEach(function(x){x.classList.remove('on')});S.tipo=''}
+function limpiar(){S.cat='';S.pers=[];S.fotos=[];S.firmaI='';['#lug','#des','#acc','#resp'].forEach(function(s){$(s).value=''});pintarP();pintarF();pintarFirmas(true);$('#form').classList.add('hide');$$('.tipo').forEach(function(x){x.classList.remove('on')});S.tipo=''}
 function mostrarHecho(r,o){var h=$('#hecho');h.classList.remove('hide');
   h.innerHTML='<div class="card" style="border-left:6px solid '+(o.tipo==='Positiva'?'var(--ve)':'var(--na)')+'"><h2>✅ Observación '+esc(r.id)+' guardada</h2>'+
    '<p>Estado: <b>'+esc(r.estado)+'</b>'+(r.prioridad?' · Prioridad <b>'+esc(r.prioridad)+'</b> · Plazo '+esc(r.plazo):'')+'</p>'+
