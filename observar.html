@@ -38,6 +38,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 .chip.fr{border-style:dashed;border-color:var(--na);background:#fff7ef}
 .chip small{color:var(--mu);font-size:12px}
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+#hayP{grid-template-columns:1fr 1fr}#hayP .on{border-color:var(--az);background:#e8eefb;color:var(--az)}.dos label.btn{text-align:center}
 .seg button{min-height:54px;border:2px solid var(--bo);border-radius:10px;background:#fff;font:inherit;font-weight:700;cursor:pointer}
 .seg .on.Alta{border-color:var(--ro);background:#ffebee;color:var(--ro)}.seg .on.Media{border-color:var(--am);background:#fff3e0;color:var(--am)}.seg .on.Baja{border-color:#c0a000;background:#fffde7;color:#827717}
 .hint{font-size:13px;color:var(--mu);margin:6px 0 0}
@@ -52,6 +53,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 .per .g div i{display:block;font-style:normal;font-weight:700;font-size:11px;color:var(--mu);text-transform:uppercase}
 .ok{color:var(--ve);font-weight:700}.mal{color:var(--ro);font-weight:700}.med{color:var(--am);font-weight:700}
 .firma{display:block;width:100%;height:150px;background:#fff;border:2px dashed var(--bo);border-radius:10px;touch-action:none;margin:6px 0}.fbox{margin-bottom:14px}.fbox .fh{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.dg{font-size:12px;font-weight:800;color:var(--mu);text-transform:uppercase;margin:12px 0 4px}.dr{display:flex;gap:10px;align-items:flex-start;padding:9px 4px;border-bottom:1px solid var(--gr)}.dr input{width:22px;height:22px;margin:1px 0 0;flex:none}.dr small{display:block;color:var(--mu);font-weight:400}.dr.off{opacity:.5}
+.firma.req{border-color:var(--ro);background:#fff5f5}
 .fotos{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.fotos img{width:78px;height:78px;object-fit:cover;border-radius:8px;border:1px solid var(--bo)}
 .msg{min-height:1.3em;margin:8px 0 0;font-weight:700}.msg.e{color:var(--ro)}.msg.o{color:var(--ve)}
 .item{display:grid;grid-template-columns:6px 1fr;background:#fff;border:1px solid var(--bo);border-radius:12px;overflow:hidden;margin-bottom:10px;cursor:pointer;width:100%;text-align:left;font:inherit;padding:0}
@@ -117,13 +120,17 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
           <p class="hint" id="plazoTxt"></p></div>
       </div>
       <div class="card">
-        <span class="l">Personas involucradas (opcional)</span>
+        <span class="l">¿Hay personas involucradas?</span>
+        <div class="seg" id="hayP"><button data-h="si" class="on">👷 Sí, hay personas</button><button data-h="no">📦 No, es una condición</button></div>
+        <p class="hint hide" id="sinPTxt" style="margin-top:8px">Sin personas: la observación queda para la sucursal y el aviso va a la jefatura de la sucursal.</p>
+        <div id="conP" style="margin-top:10px">
         <input type="search" id="bus" placeholder="Escriba nombre o RUT" autocomplete="off">
         <div class="res hide" id="res"></div>
         <div id="pers"></div>
         <button class="btn gh sm" id="manual" style="margin-top:10px">+ Agregar persona que no está en la nómina</button>
         <div id="manBox" class="hide" style="margin-top:10px"><div class="dos"><input type="text" id="manN" placeholder="Nombre y apellido"><input type="text" id="manC" placeholder="Cargo o empresa"></div>
           <button class="btn sm" id="manOk" style="margin-top:8px">Agregar</button></div>
+        </div>
       </div>
       <div class="card">
         <label class="l" for="lug">Lugar</label><input type="text" id="lug" placeholder="Por ejemplo: patio de carga, bodega 2">
@@ -135,12 +142,19 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
           <div style="height:12px"></div>
           <label class="l" for="acc">Acción que debe hacerse</label><input type="text" id="acc" placeholder="Por ejemplo: entregar guantes y retirar el material">
           <div style="height:10px"></div>
-          <div class="dos"><div><label class="l" for="resp">Responsable</label><input type="text" id="resp" placeholder="Nombre"></div>
+          <div class="dos"><div style="position:relative"><label class="l" for="resp">Responsable</label><input type="search" id="resp" placeholder="Nombre o RUT" autocomplete="off"><div class="res hide" id="respRes"></div></div>
             <div><label class="l" for="pla">Plazo</label><input type="date" id="pla"></div></div>
+          <div id="respBox" class="hide" style="margin-top:10px">
+            <label class="l" for="respMail">Correo del responsable</label><input type="text" inputmode="email" id="respMail" placeholder="correo@empresa.cl">
+            <div style="height:8px"></div>
+            <label class="l" for="respTel">WhatsApp del responsable</label><input type="text" inputmode="tel" id="respTel" placeholder="9 1234 5678">
+            <input type="checkbox" id="respAvi" checked class="hide">
+          </div>
         </div>
         <div style="height:12px"></div>
         <span class="l">Fotos</span>
-        <label class="btn gh sm" for="fot">📷 Agregar fotos</label><input type="file" id="fot" accept="image/*" multiple class="hide">
+        <div class="dos"><label class="btn gh sm" for="fotC">📷 Tomar foto</label><label class="btn gh sm" for="fot">🖼️ Subir foto</label></div>
+        <input type="file" id="fotC" accept="image/*" capture="environment" class="hide"><input type="file" id="fot" accept="image/*" multiple class="hide">
         <div class="fotos" id="fots"></div>
       </div>
       <div class="card">
@@ -149,8 +163,9 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
         <div id="firmas"></div>
       </div>
       <div class="card">
-        <label style="display:flex;gap:10px;align-items:flex-start;font-weight:600"><input type="checkbox" id="avi" checked style="width:22px;height:22px;margin:1px 0 0">Avisar a la jefatura de cada persona por correo (con el PDF)</label>
-        <p class="hint" id="aviTxt"></p>
+        <span class="l">¿A quién avisar? (correo con el PDF y WhatsApp)</span>
+        <div id="dest"></div>
+        <p class="hint" id="aviTxt" style="margin-top:8px"></p>
         <p class="msg e" id="fmsg"></p>
         <button class="btn w na" id="guardar">Guardar observación</button>
       </div>
@@ -214,7 +229,7 @@ function iniciar(){cargando(true);apiS('obsInicio').then(function(r){S.ini=r;$('
 
 /* ---------- nueva ---------- */
 $$('.tipo').forEach(function(b){b.onclick=function(){S.tipo=b.dataset.t;S.cat='';$$('.tipo').forEach(function(x){x.classList.toggle('on',x===b)});$('#form').classList.remove('hide');$('#hecho').classList.add('hide');
-  var neg=S.tipo==='Negativa';$('#prioBox').classList.toggle('hide',!neg);$('#accBox').classList.toggle('hide',!neg);pintarCats();pintarFrec();setPrio(S.prio);pintarFirmas()}});
+  var neg=S.tipo==='Negativa';$('#prioBox').classList.toggle('hide',!neg);$('#accBox').classList.toggle('hide',!neg);pintarCats();pintarFrec();setPrio(S.prio);pintarFirmas();pintarAvisos()}});
 function pintarCats(){var c=(S.ini.categorias[S.tipo]||[]);$('#cats').innerHTML=c.map(function(t){return '<button class="chip'+(t===S.cat?' on':'')+'" data-c="'+esc(t)+'">'+esc(t)+'</button>'}).join('');
   $$('#cats .chip').forEach(function(b){b.onclick=function(){S.cat=b.dataset.c;$$('#cats .chip').forEach(function(x){x.classList.toggle('on',x===b)})}})}
 function pintarFrec(){var f=S.ini.frecuentes||{},s=$('#suc').value,lst=((f.porSucursal||{})[s]||[]).concat(f.general||[]),vis={},out=[];
@@ -227,7 +242,7 @@ function pintarFrec(){var f=S.ini.frecuentes||{},s=$('#suc').value,lst=((f.porSu
   var tx=(f.textos||[]).filter(function(x){return x.k.indexOf(S.tipo+'|')===0}).slice(0,4);
   $('#txts').innerHTML=tx.map(function(x){var t=x.k.split('|')[1];return '<button class="chip fr" data-t="'+esc(t)+'">'+esc(t.length>40?t.slice(0,40)+'…':t)+'</button>'}).join('');
   $$('#txts .chip').forEach(function(b){b.onclick=function(){var d=$('#des');d.value=d.value?d.value+' '+b.dataset.t:b.dataset.t}})}
-$('#suc').onchange=function(){ls('obs_suc',this.value);pintarFrec()};
+$('#suc').onchange=function(){ls('obs_suc',this.value);pintarFrec();pintarAvisos()};
 function setPrio(p){S.prio=p;$$('#prio button').forEach(function(b){b.classList.toggle('on',b.dataset.p===p)});var d=(S.ini.plazos||{})[p]||7;$('#pla').value=hoyMas(d);$('#plazoTxt').textContent='Plazo sugerido: '+d+' día(s). Puede cambiarlo abajo.'}
 $$('#prio button').forEach(function(b){b.onclick=function(){setPrio(b.dataset.p)}});
 
@@ -238,7 +253,8 @@ $('#bus').oninput=function(){var q=this.value.trim().toLowerCase(),k=rutK(q),r=$
   r.classList.remove('hide');$$('#res button').forEach(function(b){b.onclick=function(){agregarP(b.dataset.r)}})};
 function agregarP(run){if(S.pers.some(function(p){return rutK(p.run)===rutK(run)}))return;var w=S.ini.nomina.filter(function(x){return x.r===run})[0];
   var p={run:run,nombre:w.n,cargo:w.c,sucursal:w.s,ficha:null};S.pers.push(p);$('#bus').value='';$('#res').classList.add('hide');pintarP();
-  apiS('obsFicha',[run]).then(function(f){p.ficha=f;pintarP()}).catch(function(e){p.err=e.message;pintarP()})}
+  if(S.pers.length===1&&w.s){var op=[].slice.call($('#suc').options).filter(function(o){return o.value.toUpperCase()===String(w.s).toUpperCase()})[0];if(op&&$('#suc').value!==op.value){$('#suc').value=op.value;pintarFrec()}}
+  apiS('obsFicha',[run]).then(function(f){p.ficha=f;var j=(f.jefaturas||[])[0];if(j&&S.tipo==='Negativa'&&(!$('#resp').value.trim()||S.respAuto))setResp(j,true);pintarP()}).catch(function(e){p.err=e.message;pintarP()})}
 $('#manual').onclick=function(){$('#manBox').classList.toggle('hide')};
 $('#manOk').onclick=function(){var n=$('#manN').value.trim();if(n.split(/\s+/).length<2){alertaF('Escriba nombre y apellido de la persona.');return}
   S.pers.push({run:'',nombre:n,cargo:$('#manC').value.trim(),manual:true});$('#manN').value='';$('#manC').value='';$('#manBox').classList.add('hide');pintarP()};
@@ -250,6 +266,20 @@ function pintarP(){$('#pers').innerHTML=S.pers.map(function(p,i){var f=p.ficha,c
    '<div class="g"><div><i>Charlas</i>'+capT+'</div><div><i>EPP</i>'+eppT+'</div><div><i>Antecedentes</i>'+antT+'</div></div>'+
    (f&&f.jefaturas&&f.jefaturas.length?'<p class="hint">Jefatura: '+esc(f.jefaturas.map(function(j){return j.nombre}).join(', '))+'</p>':(f?'<p class="hint mal">Sin jefatura con correo en la nómina</p>':''))+'</div>'}).join('');
   $$('#pers .x').forEach(function(b){b.onclick=function(){S.pers.splice(+b.dataset.i,1);pintarP()}});pintarAvisos();pintarFirmas()}
+/* buscador de la nómina reutilizable */
+function buscaNom(q){var k=rutK(q);q=q.toLowerCase();return (S.ini.nomina||[]).filter(function(w){return (k.length>=4&&rutK(w.r).indexOf(k)===0)||q.split(/\s+/).every(function(t){return w.n.toLowerCase().indexOf(t)>-1})}).slice(0,8)}
+function autoNom(inp,box,pick){inp.addEventListener('input',function(){var q=inp.value.trim(),r=box;if(q.length<2){r.classList.add('hide');return}var n=buscaNom(q);
+  if(!n.length){r.classList.add('hide');return}
+  r.innerHTML=n.map(function(w){return '<button type="button" data-r="'+esc(w.r)+'">'+esc(w.n)+'<br><small>'+esc([w.c,w.s,w.m].filter(String).join(' · '))+'</small></button>'}).join('');r.classList.remove('hide');
+  Array.prototype.forEach.call(r.querySelectorAll('button'),function(b){b.onclick=function(){var w=S.ini.nomina.filter(function(x){return x.r===b.dataset.r})[0];r.classList.add('hide');pick(w)}})})}
+/* responsable: desde la nómina, con correo y WhatsApp anticipados */
+function setResp(x,auto){if(!x)return;setTimeout(pintarAvisos,0);$('#resp').value=x.n||x.nombre||'';$('#respMail').value=x.m||x.correo||'';$('#respTel').value=x.t||x.telefono||'';$('#respAvi').checked=!!($('#respMail').value||$('#respTel').value);
+  $('#respBox').classList.remove('hide');S.respAuto=!!auto}
+autoNom($('#resp'),$('#respRes'),function(w){setResp(w,false)});
+$('#resp').addEventListener('input',function(){S.respAuto=false;$('#respBox').classList.toggle('hide',!this.value.trim())});
+/* hay personas */
+$$('#hayP button').forEach(function(b){b.onclick=function(){var no=b.dataset.h==='no';S.sinP=no;$$('#hayP button').forEach(function(x){x.classList.toggle('on',x===b)});
+  $('#conP').classList.toggle('hide',no);$('#sinPTxt').classList.toggle('hide',!no);if(no){S.pers=[];$('#bus').value='';$('#res').classList.add('hide')}pintarP()}});
 /* firmas */
 var FK='';
 function pintarFirmas(forzar){var k=S.pers.map(function(p){return p.nombre}).join('|');if(!forzar&&k===FK&&$('#firmas').children.length)return;FK=k;
@@ -260,26 +290,45 @@ function pintarFirmas(forzar){var k=S.pers.map(function(p){return p.nombre}).joi
     var pt=function(e){var r=c.getBoundingClientRect();return [(e.clientX-r.left)*c.width/r.width,(e.clientY-r.top)*c.height/r.height]};
     c.onpointerdown=function(e){e.preventDefault();c.setPointerCapture(e.pointerId);dib=true;ul=pt(e);x.beginPath();x.arc(ul[0],ul[1],1.5,0,7);x.fillStyle='#102a5c';x.fill()};
     c.onpointermove=function(e){if(!dib)return;e.preventDefault();var p=pt(e);x.beginPath();x.moveTo(ul[0],ul[1]);x.lineTo(p[0],p[1]);x.stroke();ul=p};
-    c.onpointerup=c.onpointercancel=function(){if(!dib)return;dib=false;var b=c.toDataURL('image/png').split(',')[1];if(k==='I')S.firmaI=b;else if(S.pers[+k])S.pers[+k].firma=b}});
+    c.onpointerup=c.onpointercancel=function(){if(!dib)return;dib=false;c.classList.remove('req');var b=c.toDataURL('image/png').split(',')[1];if(k==='I')S.firmaI=b;else if(S.pers[+k])S.pers[+k].firma=b}});
   $$('#firmas [data-b]').forEach(function(b){b.onclick=function(){var k=b.dataset.b;if(k==='I')S.firmaI='';else if(S.pers[+k])S.pers[+k].firma='';var c=$('#firmas canvas[data-k="'+k+'"]');c.getContext('2d').clearRect(0,0,c.width,c.height)}})}
-function pintarAvisos(){var j={};S.pers.forEach(function(p){(p.ficha&&p.ficha.jefaturas||[]).forEach(function(x){j[x.nombre]=1})});var n=Object.keys(j);
-  $('#aviTxt').textContent=n.length?'Se avisará a: '+n.join(', ')+' (con copia a usted).':'Sin personas con jefatura: el aviso le llegará solo a usted.'}
+/* destinatarios: jefaturas de las personas, responsable, jefaturas de la sucursal y gerencia general */
+S.dsel={};S.dest=[];
+function nk(s){return String(s||'').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim()}
+var RX_GG=/GERENTE GENERAL|GERENCIA GENERAL|SUBGERENTE GENERAL|REPRESENTANTE LEGAL/, RX_JEF=/GERENTE|JEFE|JEFA|SUPERVISOR|ENCARGAD|ADMINISTRADOR|COORDINADOR/;
+function pintarAvisos(){if(!S.ini)return;var vis={},grupos=[],suc=$('#suc').value;
+  var add=function(g,x,def){var k=nk(x.nombre);if(!k||vis[k])return;vis[k]=1;g.items.push({k:k,nombre:x.nombre,cargo:x.cargo||'',correo:String(x.correo||'').trim(),telefono:String(x.telefono||'').trim(),def:def})};
+  var g1={t:'Jefatura de las personas',items:[]};S.pers.forEach(function(p){(p.ficha&&p.ficha.jefaturas||[]).forEach(function(x){add(g1,x,true)})});
+  var g2={t:'Responsable',items:[]};if($('#resp').value.trim())add(g2,{nombre:$('#resp').value.trim(),cargo:'Responsable de la acción',correo:$('#respMail').value,telefono:$('#respTel').value},true);
+  var nom=S.ini.nomina||[];
+  var g3={t:'Jefaturas de '+(suc||'la sucursal'),items:[]};nom.filter(function(w){return nk(w.s)===nk(suc)&&RX_JEF.test(nk(w.c))&&!RX_GG.test(nk(w.c))}).slice(0,10).forEach(function(w){add(g3,{nombre:w.n,cargo:w.c,correo:w.m,telefono:w.t},!S.pers.length&&/GERENTE/.test(nk(w.c)))});
+  var g4={t:'Gerencia general',items:[]};nom.filter(function(w){return RX_GG.test(nk(w.c))}).slice(0,6).forEach(function(w){add(g4,{nombre:w.n,cargo:w.c,correo:w.m,telefono:w.t},false)});
+  grupos=[g1,g2,g3,g4].filter(function(g){return g.items.length});
+  $('#dest').innerHTML=grupos.length?grupos.map(function(g){return '<div class="dg">'+esc(g.t)+'</div>'+g.items.map(function(x){var ok=!!(x.correo||x.telefono),on=ok&&(S.dsel[x.k]!==undefined?S.dsel[x.k]:x.def);
+    return '<label class="dr'+(ok?'':' off')+'"><input type="checkbox" data-k="'+esc(x.k)+'"'+(on?' checked':'')+(ok?'':' disabled')+'><span><b>'+esc(x.nombre)+'</b><small>'+esc(x.cargo)+'</small><small>'+(x.correo?'✉️ '+esc(x.correo):'✉️ sin correo')+' · '+(x.telefono?'📱 '+esc(x.telefono):'📱 sin WhatsApp')+'</small></span></label>'}).join('')}).join(''):'<p class="hint">No hay sugerencias para esta sucursal.</p>';
+  var todos=[].concat.apply([],grupos.map(function(g){return g.items}));
+  var leer=function(){S.dest=todos.filter(function(x){var c=$('#dest input[data-k="'+x.k.replace(/"/g,'')+'"]');return c&&c.checked});
+    $('#aviTxt').textContent=S.dest.length?'Se avisará a '+S.dest.length+' persona(s), con copia a usted.':'No se avisará a nadie; solo quedará registrada (le llega copia a usted).';
+    $('#guardar').textContent=S.dest.length?'Guardar y avisar':'Guardar sin avisar'};
+  $$('#dest input').forEach(function(c){c.onchange=function(){S.dsel[c.dataset.k]=c.checked;leer()}});leer()}
+['#respMail','#respTel'].forEach(function(s){$(s).addEventListener('change',pintarAvisos)});
+$('#resp').addEventListener('change',pintarAvisos);
 
 /* fotos */
 function comprimir(file){return new Promise(function(ok){var fr=new FileReader();fr.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,1280/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);ok(c.toDataURL('image/jpeg',.72).split(',')[1])};im.src=fr.result};fr.readAsDataURL(file)})}
-$('#fot').onchange=function(){var fs=Array.prototype.slice.call(this.files).slice(0,6-S.fotos.length);Promise.all(fs.map(comprimir)).then(function(a){S.fotos=S.fotos.concat(a);pintarF()});this.value=''};
+$('#fotC').onchange=$('#fot').onchange=function(){var fs=Array.prototype.slice.call(this.files).slice(0,6-S.fotos.length);Promise.all(fs.map(comprimir)).then(function(a){S.fotos=S.fotos.concat(a);pintarF()});this.value=''};
 function pintarF(){$('#fots').innerHTML=S.fotos.map(function(b,i){return '<img src="data:image/jpeg;base64,'+b+'" data-i="'+i+'" title="Tocar para quitar">'}).join('');$$('#fots img').forEach(function(im){im.onclick=function(){S.fotos.splice(+im.dataset.i,1);pintarF()}})}
 function alertaF(t){$('#fmsg').textContent=t}
 
 /* guardar */
 $('#guardar').onclick=function(){alertaF('');if(!S.tipo){alertaF('Indique si es algo bueno o malo.');return}if(!S.cat){alertaF('Elija el tema.');return}
   if($('#des').value.trim().length<5){alertaF('Describa lo que vio.');return}
-  if(!S.firmaI){alertaF('Falta la firma de quien inspecciona (recuadro de firmas).');return}
+  if(!S.firmaI){alertaF('Falta su firma: firme con el dedo en el recuadro rojo de arriba.');var fc=$('#firmas canvas[data-k="I"]');if(fc){fc.classList.add('req');fc.scrollIntoView({behavior:'smooth',block:'center'})}return}
   var o={tipo:S.tipo,categoria:S.cat,prioridad:S.tipo==='Negativa'?S.prio:'',sucursal:$('#suc').value,lugar:$('#lug').value.trim(),descripcion:$('#des').value.trim(),
-    accion:$('#acc').value.trim(),responsable:$('#resp').value.trim(),plazo:S.tipo==='Negativa'?aDMA($('#pla').value):'',avisar:$('#avi').checked,fotos:S.fotos,
+    accion:$('#acc').value.trim(),responsable:$('#resp').value.trim(),respCorreo:'',respTel:'',plazo:S.tipo==='Negativa'?aDMA($('#pla').value):'',avisar:S.dest.length>0,destinos:S.dest.map(function(x){return {nombre:x.nombre,cargo:x.cargo,correo:x.correo,telefono:x.telefono}}),fotos:S.fotos,
     personas:S.pers.map(function(p){return {run:p.run,nombre:p.nombre,cargo:p.cargo,firma:p.firma||''}}),firmaInspector:S.firmaI,logo:LOGO};
   var b=this;b.disabled=true;cargando(true);apiS('obsGuardar',[o]).then(function(r){mostrarHecho(r,o);limpiar()}).catch(function(e){alertaF(e.message)}).finally(function(){b.disabled=false;cargando(false)})};
-function limpiar(){S.cat='';S.pers=[];S.fotos=[];S.firmaI='';['#lug','#des','#acc','#resp'].forEach(function(s){$(s).value=''});pintarP();pintarF();pintarFirmas(true);$('#form').classList.add('hide');$$('.tipo').forEach(function(x){x.classList.remove('on')});S.tipo=''}
+function limpiar(){S.cat='';S.pers=[];S.fotos=[];S.firmaI='';S.sinP=false;$$('#hayP button').forEach(function(x){x.classList.toggle('on',x.dataset.h==='si')});$('#conP').classList.remove('hide');$('#sinPTxt').classList.add('hide');['#lug','#des','#acc','#resp','#respMail','#respTel'].forEach(function(s){$(s).value=''});$('#respBox').classList.add('hide');S.respAuto=false;pintarP();pintarF();pintarFirmas(true);$('#form').classList.add('hide');$$('.tipo').forEach(function(x){x.classList.remove('on')});S.tipo=''}
 function mostrarHecho(r,o){var h=$('#hecho');h.classList.remove('hide');
   h.innerHTML='<div class="card" style="border-left:6px solid '+(o.tipo==='Positiva'?'var(--ve)':'var(--na)')+'"><h2>✅ Observación '+esc(r.id)+' guardada</h2>'+
    '<p>Estado: <b>'+esc(r.estado)+'</b>'+(r.prioridad?' · Prioridad <b>'+esc(r.prioridad)+'</b> · Plazo '+esc(r.plazo):'')+'</p>'+
@@ -319,10 +368,10 @@ function abrir(id){var o=S.lista.filter(function(x){return x.id===id})[0];if(!o)
    (o.personas?'<p><b>Personas:</b> '+esc(o.personas)+'</p>':'')+'<p>'+esc(o.descripcion)+'</p>'+(o.reinc?'<div class="falta v">⚠️ <span>'+esc(o.reinc)+'</span></div>':'')+
    (o.avisado?'<p class="hint">Avisado a: '+esc(o.avisado)+'</p>':'')+(o.pdf?'<a class="btn gh sm" href="'+esc(o.pdf)+'" target="_blank" rel="noopener">📄 Ver PDF</a>':'')+'</div>'+
    (o.tipo==='Negativa'?'<div class="card"><label class="l" for="dAcc">Acción</label><input type="text" id="dAcc" value="'+esc(o.accion)+'"><div style="height:10px"></div><div class="dos"><div><label class="l" for="dResp">Responsable</label><input type="text" id="dResp" value="'+esc(o.responsable)+'"></div><div><label class="l" for="dPla">Plazo</label><input type="date" id="dPla" value="'+esc(String(o.plazo).split('-').reverse().join('-'))+'"></div></div></div>':'')+
-   '<div class="card"><label class="l" for="dNota">Nota de seguimiento</label><textarea id="dNota" placeholder="Qué se hizo o se conversó"></textarea><div style="height:8px"></div><label class="btn gh sm" for="dFot">📷 Foto de evidencia</label><input type="file" id="dFot" accept="image/*" multiple class="hide"><div class="fotos" id="dFots"></div>'+
+   '<div class="card"><label class="l" for="dNota">Nota de seguimiento</label><textarea id="dNota" placeholder="Qué se hizo o se conversó"></textarea><div style="height:8px"></div><span class="l">Foto de evidencia</span><div class="dos"><label class="btn gh sm" for="dFotC">📷 Tomar foto</label><label class="btn gh sm" for="dFot">🖼️ Subir foto</label></div><input type="file" id="dFotC" accept="image/*" capture="environment" class="hide"><input type="file" id="dFot" accept="image/*" multiple class="hide"><div class="fotos" id="dFots"></div>'+
    '<p class="msg" id="dMsg"></p><button class="btn w" id="dGuardar">Guardar cambios</button></div>'+
    '<div class="card"><span class="l">Historial</span><ul class="hist">'+(o.historial||[]).map(function(h){return '<li><small>'+esc(h.f)+'</small><br><b>'+esc(h.e)+'</b>'+(h.por?' — '+esc(h.por):'')+(h.nota?'<br>'+esc(h.nota):'')+'</li>'}).join('')+'</ul></div>';
-  var ev=[];$('#dFot').onchange=function(){Promise.all(Array.prototype.slice.call(this.files).slice(0,4).map(comprimir)).then(function(a){ev=ev.concat(a).slice(0,4);$('#dFots').innerHTML=ev.map(function(b){return '<img src="data:image/jpeg;base64,'+b+'">'}).join('')})};
+  var ev=[];$('#dFotC').onchange=$('#dFot').onchange=function(){Promise.all(Array.prototype.slice.call(this.files).slice(0,4).map(comprimir)).then(function(a){ev=ev.concat(a).slice(0,4);$('#dFots').innerHTML=ev.map(function(b){return '<img src="data:image/jpeg;base64,'+b+'">'}).join('')})};
   var enviar=function(estado){var c={nota:$('#dNota').value.trim(),fotos:ev,logo:LOGO};if(estado)c.estado=estado;if(o.tipo==='Negativa'){c.accion=$('#dAcc').value.trim();c.responsable=$('#dResp').value.trim();c.plazo=aDMA($('#dPla').value)}
     $('#dMsg').className='msg';$('#dMsg').textContent='Guardando…';apiS('obsActualizar',[o.id,c]).then(function(){$('#dMsg').className='msg o';$('#dMsg').textContent='Guardado.';
       return apiS('obsLista').then(function(l){S.lista=l;pintarPend();pintarMatriz();var sc=$('#shB').scrollTop;abrir(o.id);$('#shB').scrollTop=sc})}).catch(function(e){$('#dMsg').className='msg e';$('#dMsg').textContent=e.message})};
@@ -338,9 +387,9 @@ function vistaJefatura(tk){ver('jef');var v=$('#v-jef');v.innerHTML='<div class=
     (o.personas?'<p><b>Personas:</b> '+esc(o.personas)+'</p>':'')+'<p>'+esc(o.descripcion)+'</p>'+(o.accion?'<p><b>Acción solicitada:</b> '+esc(o.accion)+'</p>':'')+'</div>'+
     (cerrada?'<div class="vacio">Esta observación ya fue respondida. Gracias.</div>':
     '<div class="card"><label class="l" for="jN">Su nombre</label><input type="text" id="jN"><div style="height:10px"></div><label class="l" for="jC">'+(pos?'Comentario (opcional)':'¿Qué se hizo para corregirlo?')+'</label><textarea id="jC"></textarea>'+
-    (pos?'':'<div style="height:10px"></div><label class="btn gh sm" for="jF">📷 Foto de evidencia (obligatoria)</label><input type="file" id="jF" accept="image/*" multiple class="hide"><div class="fotos" id="jFs"></div>')+
+    (pos?'':'<div style="height:10px"></div><span class="l">Foto de evidencia (obligatoria)</span><div class="dos"><label class="btn gh sm" for="jFC">📷 Tomar foto</label><label class="btn gh sm" for="jF">🖼️ Subir foto</label></div><input type="file" id="jFC" accept="image/*" capture="environment" class="hide"><input type="file" id="jF" accept="image/*" multiple class="hide"><div class="fotos" id="jFs"></div>')+
     '<p class="msg e" id="jM"></p><button class="btn w na" id="jE">'+(pos?'Confirmar reconocimiento':'Informar corrección')+'</button></div>');
-   if(cerrada)return;var fs=[];if($('#jF'))$('#jF').onchange=function(){Promise.all(Array.prototype.slice.call(this.files).slice(0,4).map(comprimir)).then(function(a){fs=fs.concat(a).slice(0,4);$('#jFs').innerHTML=fs.map(function(b){return '<img src="data:image/jpeg;base64,'+b+'">'}).join('')})};
+   if(cerrada)return;var fs=[];if($('#jF'))$('#jFC').onchange=$('#jF').onchange=function(){Promise.all(Array.prototype.slice.call(this.files).slice(0,4).map(comprimir)).then(function(a){fs=fs.concat(a).slice(0,4);$('#jFs').innerHTML=fs.map(function(b){return '<img src="data:image/jpeg;base64,'+b+'">'}).join('')})};
    $('#jE').onclick=function(){var n=$('#jN').value.trim();if(n.split(/\s+/).length<2){$('#jM').textContent='Escriba su nombre y apellido.';return}if(!pos&&!fs.length){$('#jM').textContent='Adjunte al menos una foto de evidencia.';return}
     cargando(true);api('obsResponder',[tk,{nombre:n,nota:$('#jC').value.trim(),fotos:fs,logo:LOGO}]).then(function(){v.innerHTML='<div class="card"><h2>✅ Muchas gracias</h2><p>Su respuesta quedó registrada y Prevención de Riesgos fue notificada.</p></div>'}).catch(function(e){$('#jM').textContent=e.message}).finally(function(){cargando(false)})}})
   .catch(function(e){v.innerHTML='<div class="vacio">'+esc(e.message)+'</div>'})}
