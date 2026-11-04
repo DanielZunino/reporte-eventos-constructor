@@ -213,6 +213,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 
 <script src="portal-integra-fuente/logos.js"></script>
 <script>
+/* auto-actualización: si hay una versión nueva publicada, la página se recarga sola (así nunca queda una versión vieja guardada en el celular) */
+var PAG_VER='30';
+(function(){try{fetch(location.pathname+'?n='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=t.match(/PAG_VER='(\d+)'/);
+  if(m&&m[1]!==PAG_VER){var k='obsRec'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){}var u=new URL(location.href);u.searchParams.set('v',m[1]);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();
 var API='https://script.google.com/macros/s/AKfycbyFetoPIT053n1kiihmhFB5XhUF9sti1t96umwnhKn2rIe2oseukyDzn1EZCLtHV7Qx/exec';
 var $=function(s){return document.querySelector(s)}, $$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
 var S={tk:'',ini:null,tipo:'',cat:'',prio:'Media',pers:[],fotos:[],lista:[]};
@@ -370,7 +374,7 @@ function mostrarHecho(r,o){var h=$('#hecho');h.classList.remove('hide');
    (r.reinc?'<div class="falta v">⚠️ <span><b>Reincidencia:</b> '+esc(r.reinc)+'</span></div>':'')+
    '<div class="falta">👉 <span><b>Falta:</b> '+esc(r.falta)+'</span></div>'+
    '<div style="display:grid;gap:8px;margin-top:12px"><a class="btn" href="'+esc(r.pdf)+'" target="_blank" rel="noopener">📄 Ver PDF</a>'+
-   (r.whatsapp||[]).map(function(w){return '<a class="btn ve" target="_blank" rel="noopener" href="https://wa.me/'+waNum(w.telefono)+'?text='+encodeURIComponent(w.texto)+'">WhatsApp a '+esc(w.nombre.split(' ')[0])+'</a>'}).join('')+
+   (r.whatsapp||[]).map(function(w){return '<a class="btn ve waLog" data-id="'+esc(r.id)+'" data-n="'+esc(w.nombre)+'" data-t="'+esc(w.telefono)+'" target="_blank" rel="noopener" href="https://wa.me/'+waNum(w.telefono)+'?text='+encodeURIComponent(w.texto)+'">📱 WhatsApp a '+esc(w.nombre.split(' ').slice(0,2).join(' '))+'</a>'}).join('')+
    '<button class="btn gh" onclick="document.getElementById(\'hecho\').classList.add(\'hide\');window.scrollTo(0,0)">Registrar otra</button></div></div>';
   window.scrollTo(0,0)}
 
@@ -430,12 +434,12 @@ function abrir(id){var o=S.lista.filter(function(x){return x.id===id})[0];if(!o)
      '<label class="l" for="eLug">Lugar</label><input type="text" id="eLug" value="'+esc(o.lugar)+'"><div style="height:10px"></div>'+
      '<label class="l" for="eDes">Descripción</label><textarea id="eDes">'+esc(o.descripcion)+'</textarea>'+
      '<p class="hint">Los cambios se guardan con el botón "Guardar cambios" de arriba y quedan anotados en el historial.</p></div>'+
-   '<div class="card"><span class="l">Volver a avisar</span><p class="hint">Agregue a quién avisar: de la nómina, sugeridos o alguien de afuera.</p>'+
+   '<div class="card"><span class="l">Reenviar reporte</span><p class="hint">Elija a quién: de la nómina, sugeridos o alguien de afuera. Por correo se envía con el PDF; por WhatsApp, con el enlace del informe. Cada envío queda registrado en el historial con nombre, correo o teléfono.</p>'+
      '<div class="chips" id="rSug"></div>'+
      '<input type="search" id="rBus" placeholder="Nombre o RUT de la nómina" autocomplete="off" style="margin-top:8px"><div class="res hide" id="rRes"></div>'+
      '<button class="btn gh sm" id="rManBtn" style="margin-top:8px">+ Alguien que no está en la nómina</button>'+
      '<div id="rMan" class="hide" style="margin-top:8px"><input type="text" id="rN" placeholder="Nombre y apellido"><div style="height:8px"></div><input type="text" inputmode="email" id="rM" placeholder="Correo"><div style="height:8px"></div><input type="text" inputmode="tel" id="rT" placeholder="WhatsApp (opcional)"><button class="btn sm" id="rOk" style="margin-top:8px">Agregar</button></div>'+
-     '<div id="rList" style="margin-top:8px"></div><p class="msg" id="rMsg"></p><button class="btn w ve" id="rEnv">Enviar aviso</button><div id="rWa" style="display:grid;gap:8px;margin-top:8px"></div></div>'+
+     '<div id="rList" style="margin-top:8px"></div><p class="msg" id="rMsg"></p><button class="btn w ve" id="rEnv">✉️ Enviar por correo y preparar WhatsApp</button><div id="rWa" style="display:grid;gap:8px;margin-top:8px"></div></div>'+
    '<div class="card"><span class="l">Eliminar</span><p class="hint">Se va a la papelera (pestaña Matriz → Papelera) y se puede restaurar. Solo usted puede eliminar.</p><button class="btn w" id="dDel" style="background:var(--ro);color:#fff;border-color:var(--ro)">🗑️ Eliminar observación</button></div>'+
    '<div class="card"><span class="l">Historial</span><ul class="hist">'+(o.historial||[]).map(function(h){return '<li><small>'+esc(h.f)+'</small><br><b>'+esc(h.e)+'</b>'+(h.por?' — '+esc(h.por):'')+(h.nota?'<br>'+esc(h.nota):'')+'</li>'}).join('')+'</ul></div>';
   var ev=[];$('#dFotC').onchange=$('#dFot').onchange=function(){Promise.all(Array.prototype.slice.call(this.files).slice(0,4).map(comprimir)).then(function(a){ev=ev.concat(a).slice(0,4);$('#dFots').innerHTML=ev.map(function(b){return '<img src="data:image/jpeg;base64,'+b+'">'}).join('')})};
@@ -459,12 +463,15 @@ function abrir(id){var o=S.lista.filter(function(x){return x.id===id})[0];if(!o)
     $('#rMsg').textContent='';addR({nombre:n,cargo:'Agregado manualmente',correo:m,telefono:t});['#rN','#rM','#rT'].forEach(function(s){$(s).value=''});$('#rMan').classList.add('hide')};
   $('#rEnv').onclick=function(){if(!rd.length){faltaEn($('#rBus'),'Agregue al menos una persona a quien avisar.',true);return}var b=this;b.disabled=true;$('#rMsg').className='msg';$('#rMsg').textContent='Enviando…';
     apiS('obsReavisar',[o.id,rd]).then(function(r){$('#rMsg').className='msg o';$('#rMsg').textContent='Aviso enviado'+(r.enviados&&r.enviados.length?' por correo a: '+r.enviados.join(', '):'')+'.';
-      $('#rWa').innerHTML=(r.whatsapp||[]).map(function(w){return '<a class="btn ve" target="_blank" rel="noopener" href="https://wa.me/'+waNum(w.telefono)+'?text='+encodeURIComponent(w.texto)+'">WhatsApp a '+esc(w.nombre.split(' ')[0])+'</a>'}).join('');
+      $('#rWa').innerHTML=(r.whatsapp||[]).map(function(w){return '<a class="btn ve waLog" data-id="'+esc(o.id)+'" data-n="'+esc(w.nombre)+'" data-t="'+esc(w.telefono)+'" target="_blank" rel="noopener" href="https://wa.me/'+waNum(w.telefono)+'?text='+encodeURIComponent(w.texto)+'">📱 WhatsApp a '+esc(w.nombre.split(' ').slice(0,2).join(' '))+'</a>'}).join('');
       rd=[];pintR();apiS('obsLista').then(function(l){S.lista=l;pintarPend();pintarMatriz()})}).catch(function(e){$('#rMsg').className='msg e';$('#rMsg').textContent=e.message}).finally(function(){b.disabled=false})};
   /* eliminar: a la papelera, con segundo toque de confirmación */
   var delArm=false;$('#dDel').onclick=function(){var b=this;if(!delArm){delArm=true;b.textContent='Toque otra vez para confirmar';setTimeout(function(){delArm=false;b.textContent='🗑️ Eliminar observación'},5000);return}
     b.disabled=true;b.textContent='Eliminando…';apiS('obsEliminar',[o.id]).then(function(){$('#sheet').classList.add('hide');document.body.style.overflow='';cargarLista()}).catch(function(e){b.disabled=false;b.textContent='🗑️ Eliminar observación';$('#dMsg').className='msg e';$('#dMsg').textContent=e.message})};
   $('#sheet').classList.remove('hide');document.body.style.overflow='hidden'}
+/* registro de cada envío por WhatsApp (nombre y teléfono quedan en el historial) */
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a.waLog');if(!a||a.dataset.reg)return;a.dataset.reg='1';a.textContent='✔ '+a.textContent.replace(/^📱 /,'')+' (registrado)';
+  apiS('obsRegistrarEnvio',[a.dataset.id,{nombre:a.dataset.n,telefono:a.dataset.t}]).catch(function(){a.dataset.reg=''})});
 /* papelera */
 $('#mPap').onclick=function(){$('#shT').textContent='Papelera';$('#shB').innerHTML='<div class="vacio">Cargando…</div>';$('#sheet').classList.remove('hide');document.body.style.overflow='hidden';
   apiS('obsPapelera').then(function(l){$('#shB').innerHTML=l.length?l.map(function(x){return '<div class="card"><b>'+esc(x.id)+' · '+esc(x.categoria)+'</b><p class="hint">'+esc(x.fecha+' · '+x.sucursal+' · '+x.tipo)+'</p><p>'+esc(x.descripcion)+'</p><p class="hint">Eliminada el '+esc(x.eliminada)+' por '+esc(x.por)+'</p><button class="btn gh sm" data-r="'+esc(x.id)+'">↩️ Restaurar</button></div>'}).join(''):'<div class="vacio">La papelera está vacía.</div>';
@@ -477,11 +484,13 @@ function vistaJefatura(tk){ver('jef');var v=$('#v-jef');v.innerHTML='<div class=
   api('obsPublica',[tk]).then(function(o){var pos=o.tipo==='Positiva',cerrada=['Cerrada','Reconocida','Corregida (por verificar)'].indexOf(o.estado)>-1;
    v.innerHTML='<div class="card"><h2>'+(pos?'👍 Reconocimiento':'⚠️ Observación que requiere su gestión')+'</h2><p class="hint">'+esc(o.id+' · '+o.fecha+' · '+o.sucursal)+'</p>'+tlHTML(o)+
     '<div class="falta">👉 <span><b>Falta:</b> '+esc(o.falta)+'</span></div><p><b>'+esc(o.categoria)+'</b>'+(o.prioridad?' · Prioridad '+esc(o.prioridad)+' · Plazo '+esc(o.plazo):'')+'</p>'+
-    (o.personas?'<p><b>Personas:</b> '+esc(o.personas)+'</p>':'')+'<p>'+esc(o.descripcion)+'</p>'+(o.accion?'<p><b>Acción solicitada:</b> '+esc(o.accion)+'</p>':'')+'</div>'+
+    (o.personas?'<p><b>Personas:</b> '+esc(o.personas)+'</p>':'')+'<p>'+esc(o.descripcion)+'</p>'+(o.accion?'<p><b>Acción solicitada:</b> '+esc(o.accion)+'</p>':'')+(o.pdf?'<button class="btn gh sm" id="jPdf">📄 Descargar informe PDF</button>':'')+'</div>'+
     (cerrada?'<div class="vacio">Esta observación ya fue respondida. Gracias.</div>':
     '<div class="card"><label class="l" for="jN">Su nombre</label><input type="text" id="jN"><div style="height:10px"></div><label class="l" for="jC">'+(pos?'Comentario (opcional)':'¿Qué se hizo para corregirlo?')+'</label><textarea id="jC"></textarea>'+
     (pos?'':'<div style="height:10px"></div><span class="l">Foto de evidencia (obligatoria)</span><div class="dos"><label class="btn gh sm" for="jFC">📷 Tomar foto</label><label class="btn gh sm" for="jF">🖼️ Subir foto</label></div><input type="file" id="jFC" accept="image/*" capture="environment" class="hide"><input type="file" id="jF" accept="image/*" multiple class="hide"><div class="fotos" id="jFs"></div>')+
     '<p class="msg e" id="jM"></p><button class="btn w na" id="jE">'+(pos?'Confirmar reconocimiento':'Informar corrección')+'</button></div>');
+   if($('#jPdf'))$('#jPdf').onclick=function(){var b=this;b.disabled=true;b.textContent='Descargando…';api('obsPdfPublico',[tk]).then(function(r){var by=atob(r.b64),u=new Uint8Array(by.length);for(var i=0;i<by.length;i++)u[i]=by.charCodeAt(i);
+  var url=URL.createObjectURL(new Blob([u],{type:'application/pdf'})),a=document.createElement('a');a.href=url;a.download=r.nombre;document.body.appendChild(a);a.click();a.remove();b.textContent='📄 Descargar informe PDF'}).catch(function(e){b.textContent=e.message}).finally(function(){b.disabled=false})};
    if(cerrada)return;var fs=[];if($('#jF'))$('#jFC').onchange=$('#jF').onchange=function(){Promise.all(Array.prototype.slice.call(this.files).slice(0,4).map(comprimir)).then(function(a){fs=fs.concat(a).slice(0,4);$('#jFs').innerHTML=fs.map(function(b){return '<img src="data:image/jpeg;base64,'+b+'">'}).join('')})};
    $('#jE').onclick=function(){var n=$('#jN').value.trim();if(n.split(/\s+/).length<2){$('#jM').textContent='Escriba su nombre y apellido.';return}if(!pos&&!fs.length){$('#jM').textContent='Adjunte al menos una foto de evidencia.';return}
     cargando(true);api('obsResponder',[tk,{nombre:n,nota:$('#jC').value.trim(),fotos:fs,logo:LOGO}]).then(function(){v.innerHTML='<div class="card"><h2>✅ Muchas gracias</h2><p>Su respuesta quedó registrada y Prevención de Riesgos fue notificada.</p></div>'}).catch(function(e){$('#jM').textContent=e.message}).finally(function(){cargando(false)})}})
