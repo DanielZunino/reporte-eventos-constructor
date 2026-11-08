@@ -214,7 +214,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 <script src="portal-integra-fuente/logos.js"></script>
 <script>
 /* auto-actualización: si hay una versión nueva publicada, la página se recarga sola (así nunca queda una versión vieja guardada en el celular) */
-var PAG_VER='30';
+var PAG_VER='31';
 (function(){try{fetch(location.pathname+'?n='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=t.match(/PAG_VER='(\d+)'/);
   if(m&&m[1]!==PAG_VER){var k='obsRec'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){}var u=new URL(location.href);u.searchParams.set('v',m[1]);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();
 var API='https://script.google.com/macros/s/AKfycbyFetoPIT053n1kiihmhFB5XhUF9sti1t96umwnhKn2rIe2oseukyDzn1EZCLtHV7Qx/exec';
@@ -244,7 +244,7 @@ $('#entrar').onclick=function(){var u=$('#usr').value.trim(),c=$('#cla').value.t
   cargando(true);api('login',[u,c]).then(function(r){S.tk=r.token;ls('obs_tk',r.token);ls('obs_u',u);ls('obs_c',c);iniciar()}).catch(function(e){$('#lmsg').textContent=e.message}).finally(function(){cargando(false)})};
 function iniciar(){cargando(true);apiS('obsInicio').then(function(r){S.ini=r;$('#tabs').classList.remove('hide');
   var ops=r.sucursales.map(function(s){return '<option>'+esc(s)+'</option>'}).join('');$('#suc').innerHTML=ops;$('#pSuc').innerHTML='<option value="">Todas las sucursales</option>'+ops;$('#mSuc').innerHTML=$('#pSuc').innerHTML;
-  if(ls('obs_suc'))$('#suc').value=ls('obs_suc');if(r.matriz)$('#mLink').href=r.matriz;else $('#mLink').classList.add('hide');ver('nueva')})
+  if(ls('obs_suc'))$('#suc').value=ls('obs_suc');if(r.matriz)$('#mLink').href=r.matriz;else $('#mLink').classList.add('hide');ver('nueva');accionCorreo()})
   .catch(function(e){ls('obs_tk',null);ver('login');$('#lmsg').textContent=e.message}).finally(function(){cargando(false)})}
 
 /* ---------- nueva ---------- */
@@ -424,7 +424,8 @@ function abrir(id){var o=S.lista.filter(function(x){return x.id===id})[0];if(!o)
    '<div class="card"><p><b>'+(o.tipo==='Positiva'?'👍 ':'⚠️ ')+esc(o.categoria)+'</b>'+(o.prioridad?' · Prioridad '+esc(o.prioridad):'')+'</p><p class="hint">'+esc(o.fecha+' '+o.hora+' · '+o.sucursal+(o.lugar?' · '+o.lugar:''))+'</p>'+
    (o.personas?'<p><b>Personas:</b> '+esc(o.personas)+'</p>':'')+'<p>'+esc(o.descripcion)+'</p>'+(o.reinc?'<div class="falta v">⚠️ <span>'+esc(o.reinc)+'</span></div>':'')+
    (o.avisado?'<p class="hint">Avisado a: '+esc(o.avisado)+'</p>':'')+(o.pdf?'<a class="btn gh sm" href="'+esc(o.pdf)+'" target="_blank" rel="noopener">📄 Ver PDF</a>':'')+'</div>'+
-   (o.tipo==='Negativa'?'<div class="card"><label class="l" for="dAcc">Acción</label><input type="text" id="dAcc" value="'+esc(o.accion)+'"><div style="height:10px"></div><div class="dos"><div><label class="l" for="dResp">Responsable</label><input type="text" id="dResp" value="'+esc(o.responsable)+'"></div><div><label class="l" for="dPla">Plazo</label><input type="date" id="dPla" value="'+esc(String(o.plazo).split('-').reverse().join('-'))+'"></div></div></div>':'')+
+   (o.tipo==='Negativa'?'<div class="card"><label class="l" for="dAcc">Acción</label><input type="text" id="dAcc" value="'+esc(o.accion)+'"><div style="height:10px"></div><div class="dos"><div><label class="l" for="dResp">Responsable</label><input type="text" id="dResp" value="'+esc(o.responsable)+'"></div><div><label class="l" for="dPla">Plazo</label><input type="date" id="dPla" value="'+esc(String(o.plazo).split('-').reverse().join('-'))+'"></div></div>'+
+     (o.abierta?'<div style="margin-top:10px"><span class="l">Dar más plazo</span><div class="chips" id="dMas">'+[3,7,15,30].map(function(n){return '<button class="chip" data-d="'+n+'">➕ '+n+' días</button>'}).join('')+'</div><p class="hint">Se suma desde el plazo actual (o desde hoy si ya venció) y queda anotado en el historial.</p></div>':'')+'</div>':'')+
    '<div class="card"><label class="l" for="dNota">Nota de seguimiento</label><textarea id="dNota" placeholder="Qué se hizo o se conversó"></textarea><div style="height:8px"></div><span class="l">Foto de evidencia</span><div class="dos"><label class="btn gh sm" for="dFotC">📷 Tomar foto</label><label class="btn gh sm" for="dFot">🖼️ Subir foto</label></div><input type="file" id="dFotC" accept="image/*" capture="environment" class="hide"><input type="file" id="dFot" accept="image/*" multiple class="hide"><div class="fotos" id="dFots"></div>'+
    '<p class="msg" id="dMsg"></p><button class="btn w" id="dGuardar">Guardar cambios</button></div>'+
    '<div class="card"><span class="l">Editar datos</span>'+
@@ -448,7 +449,9 @@ function abrir(id){var o=S.lista.filter(function(x){return x.id===id})[0];if(!o)
     var ds=$('#eDes').value.trim();if(ds&&ds!==o.descripcion){if(ds.length<5){faltaEn($('#eDes'),'La descripción es muy corta.',true);return}c.descripcion=ds}
     $('#dMsg').className='msg';$('#dMsg').textContent='Guardando…';apiS('obsActualizar',[o.id,c]).then(function(){$('#dMsg').className='msg o';$('#dMsg').textContent='Guardado.';
       return apiS('obsLista').then(function(l){S.lista=l;pintarPend();pintarMatriz();var sc=$('#shB').scrollTop;abrir(o.id);$('#shB').scrollTop=sc})}).catch(function(e){$('#dMsg').className='msg e';$('#dMsg').textContent=e.message})};
-  $('#dGuardar').onclick=function(){enviar('')};if($('#dSig'))$('#dSig').onclick=function(){enviar(sig)};
+  $('#dGuardar').onclick=function(){enviar('')};
+  $$('#dMas [data-d]').forEach(function(b){b.onclick=function(){var n=+b.dataset.d,nuevo=masDias(o.plazo,n);$('#dPla').value=aISO(nuevo);
+    var t='Plazo extendido del '+(o.plazo||'—')+' al '+nuevo+' (+'+n+' días).';$('#dNota').value=$('#dNota').value.trim()?$('#dNota').value.trim()+' '+t:t;enviar('')}});if($('#dSig'))$('#dSig').onclick=function(){enviar(sig)};
   /* volver a avisar */
   var rd=[],addR=function(x){if(!x||!x.nombre||rd.some(function(y){return nk(y.nombre)===nk(x.nombre)}))return;rd.push(x);pintR()};
   var pintR=function(){$('#rList').innerHTML=rd.map(function(x,i){return '<div class="dr"><span style="flex:1"><b>'+esc(x.nombre)+'</b><small>'+(x.correo?'✉️ '+esc(x.correo):'✉️ sin correo')+' · '+(x.telefono?'📱 '+esc(x.telefono):'📱 sin WhatsApp')+'</small></span><button class="btn gh sm" data-q="'+i+'">Quitar</button></div>'}).join('');
@@ -472,6 +475,31 @@ function abrir(id){var o=S.lista.filter(function(x){return x.id===id})[0];if(!o)
 /* registro de cada envío por WhatsApp (nombre y teléfono quedan en el historial) */
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a.waLog');if(!a||a.dataset.reg)return;a.dataset.reg='1';a.textContent='✔ '+a.textContent.replace(/^📱 /,'')+' (registrado)';
   apiS('obsRegistrarEnvio',[a.dataset.id,{nombre:a.dataset.n,telefono:a.dataset.t}]).catch(function(){a.dataset.reg=''})});
+/* plazos: suma días desde el plazo actual, o desde hoy si ya venció */
+function aISO(dma){return dma?String(dma).split('-').reverse().join('-'):''}
+function masDias(dma,n){var p=String(dma||'').split('-'),b=p.length===3?new Date(+p[2],+p[1]-1,+p[0]):new Date(),h=new Date();h.setHours(0,0,0,0);if(isNaN(b)||b<h)b=h;b.setDate(b.getDate()+n);
+  return ('0'+b.getDate()).slice(-2)+'-'+('0'+(b.getMonth()+1)).slice(-2)+'-'+b.getFullYear()}
+/* menú rápido desde el correo de seguimiento: ?id=OBS-...&acc=plazo7|cerrar|devolver|abrir */
+var QA=(function(){try{var q=new URLSearchParams(location.search);return q.get('id')?{id:q.get('id'),acc:q.get('acc')||'abrir'}:null}catch(e){return null}})();
+function accionCorreo(){if(!QA)return;var qa=QA;QA=null;try{var u=new URL(location.href);u.searchParams.delete('id');u.searchParams.delete('acc');history.replaceState(null,'',u.toString())}catch(e){}
+  cargando(true);apiS('obsLista').then(function(l){S.lista=l;pintarPend();pintarMatriz();var o=l.filter(function(x){return x.id===qa.id})[0];
+    if(!o){faltaEn(null,'No encontré la observación '+qa.id+' (puede estar en la papelera).');return}
+    abrir(o.id);
+    if(qa.acc==='editar'){setTimeout(function(){var e=$('#eCat'),cd=e&&e.closest('.card');if(cd){cd.classList.add('destello');cd.scrollIntoView({behavior:'smooth',block:'start'});setTimeout(function(){cd.classList.remove('destello')},3500)}},300);return}
+    var m=String(qa.acc).match(/^plazo(\d+)$/),txt,c;
+    if(m){var n=+m[1],nuevo=masDias(o.plazo,n);txt='Dar '+n+' días más: el plazo pasa del '+(o.plazo||'—')+' al '+nuevo+'.';c={plazo:nuevo,nota:'Plazo extendido del '+(o.plazo||'—')+' al '+nuevo+' (+'+n+' días, desde el correo de seguimiento).'}}
+    else if(qa.acc==='cerrar'){txt='Verificar y cerrar esta observación.';c={estado:'Cerrada',nota:'Verificado y cerrado (desde el correo de seguimiento).'}}
+    else if(qa.acc==='devolver'){txt='Devolver a corrección: la corrección no quedó bien.';c={estado:'En corrección',nota:'Devuelto a corrección: la corrección informada no se verificó (desde el correo de seguimiento).'}}
+    if(!c)return;
+    var box=document.createElement('div');box.className='card';box.style.cssText='border:2px solid var(--na);background:#fff7ec';
+    box.innerHTML='<span class="l">Acción rápida desde el correo</span><p><b>'+esc(txt)+'</b></p><div class="dos"><button class="btn na" id="qaOk">Confirmar</button><button class="btn gh" id="qaNo">Cancelar</button></div><p class="msg" id="qaMsg"></p>';
+    $('#shB').insertBefore(box,$('#shB').firstChild);$('#shB').scrollTop=0;
+    $('#qaNo').onclick=function(){box.remove()};
+    $('#qaOk').onclick=function(){var b=this;b.disabled=true;$('#qaMsg').className='msg';$('#qaMsg').textContent='Guardando…';
+      apiS('obsActualizar',[o.id,c]).then(function(){return apiS('obsLista')}).then(function(l2){S.lista=l2;pintarPend();pintarMatriz();abrir(o.id);
+        var ok=document.createElement('div');ok.className='card';ok.style.cssText='border:2px solid var(--ve);background:#eef8ef';ok.innerHTML='<b>✔ Listo:</b> '+esc(txt)+' Quedó registrado en el historial.';$('#shB').insertBefore(ok,$('#shB').firstChild);$('#shB').scrollTop=0})
+      .catch(function(e){b.disabled=false;$('#qaMsg').className='msg e';$('#qaMsg').textContent=e.message})}})
+  .catch(function(e){faltaEn(null,e.message)}).finally(function(){cargando(false)})}
 /* papelera */
 $('#mPap').onclick=function(){$('#shT').textContent='Papelera';$('#shB').innerHTML='<div class="vacio">Cargando…</div>';$('#sheet').classList.remove('hide');document.body.style.overflow='hidden';
   apiS('obsPapelera').then(function(l){$('#shB').innerHTML=l.length?l.map(function(x){return '<div class="card"><b>'+esc(x.id)+' · '+esc(x.categoria)+'</b><p class="hint">'+esc(x.fecha+' · '+x.sucursal+' · '+x.tipo)+'</p><p>'+esc(x.descripcion)+'</p><p class="hint">Eliminada el '+esc(x.eliminada)+' por '+esc(x.por)+'</p><button class="btn gh sm" data-r="'+esc(x.id)+'">↩️ Restaurar</button></div>'}).join(''):'<div class="vacio">La papelera está vacía.</div>';
