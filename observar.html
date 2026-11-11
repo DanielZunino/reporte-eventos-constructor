@@ -71,7 +71,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 .item .row{display:flex;gap:10px;align-items:flex-start}.item .tx{flex:1;min-width:0}
 .mi{width:64px;height:64px;flex:none;border-radius:8px;background:#eef2f8 center/cover no-repeat;border:1px solid var(--bo);display:flex;align-items:center;justify-content:center;color:#8a94a6;font-size:11px;text-align:center;line-height:1.1}
 .mi.ok{font-size:0}
-.item .s{font-size:13.5px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.item .s{display:block;font-size:13.5px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
 .pill{font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:12px;background:var(--gr);color:var(--az);white-space:nowrap;flex:none}
 .pill.v{background:#ffebee;color:var(--ro)}.pill.c{background:#e8f5e9;color:var(--ve)}
 .falta{display:flex;gap:8px;background:#fff4e5;border:1px solid var(--na);border-radius:9px;padding:8px 10px;font-size:14px;margin-top:8px}
@@ -217,7 +217,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 <script src="portal-integra-fuente/logos.js"></script>
 <script>
 /* auto-actualización: si hay una versión nueva publicada, la página se recarga sola (así nunca queda una versión vieja guardada en el celular) */
-var PAG_VER='32';
+var PAG_VER='33';
 (function(){try{fetch(location.pathname+'?n='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=t.match(/PAG_VER='(\d+)'/);
   if(m&&m[1]!==PAG_VER){var k='obsRec'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){}var u=new URL(location.href);u.searchParams.set('v',m[1]);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();
 var API='https://script.google.com/macros/s/AKfycbyFetoPIT053n1kiihmhFB5XhUF9sti1t96umwnhKn2rIe2oseukyDzn1EZCLtHV7Qx/exec';
