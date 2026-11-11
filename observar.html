@@ -106,6 +106,14 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 .sheet .ph{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:#fff;border-bottom:3px solid var(--na)}
 .sheet .pb{flex:1;overflow-y:auto;padding:14px;overscroll-behavior:contain}
 .hist{font-size:13.5px;margin:0;padding:0;list-style:none}.hist li{padding:6px 0;border-bottom:1px solid var(--gr)}.hist small{color:var(--mu)}
+.hist .tg{display:inline-block;background:#e3ecfb;color:var(--az);font-size:11px;font-weight:700;border-radius:9px;padding:1px 8px;margin-left:4px}.hist .hx{display:block;font-size:12.5px;color:var(--mu);margin-top:2px;word-break:break-word}.hist .hx b{color:var(--tx);font-weight:600}
+.hist .ha{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}.hist .ha a{font-size:12.5px;border:1px solid var(--bo);border-radius:14px;padding:3px 9px;text-decoration:none;color:var(--az);background:#fff}
+.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:2.5px dashed var(--az);background:#f3f7fe;border-radius:12px;padding:22px 12px;text-align:center;cursor:pointer;color:var(--az);font-size:15.5px}.drop span{font-size:13px;color:var(--mu)}.drop.on{background:#e3ecfb;border-color:var(--na)}
+.arch{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}.arch .af{position:relative}.arch img{width:78px;height:78px;object-fit:cover;border-radius:8px;border:1px solid var(--bo);display:block}
+.arch .dc{display:flex;align-items:center;gap:6px;border:1px solid var(--bo);border-radius:8px;padding:8px 12px;font-size:13px;max-width:250px;background:#fff;min-height:44px;word-break:break-word}
+.arch .q{position:absolute;top:-7px;right:-7px;width:22px;height:22px;border-radius:50%;border:0;background:var(--ro);color:#fff;font-weight:700;cursor:pointer;line-height:22px;padding:0;font-size:13px}
+.docs a{display:flex;gap:8px;align-items:center;border:1px solid var(--bo);border-radius:9px;padding:9px 11px;margin-top:6px;text-decoration:none;color:var(--tx);font-size:13.5px;background:#fff}.docs a small{color:var(--mu);margin-left:auto;white-space:nowrap}
+.cmp .de .fph.sube{cursor:pointer;border:2px dashed var(--ve);color:var(--ve);font-weight:700;background:#f3faf4}
 .hide{display:none!important}
 .vacio{text-align:center;color:var(--mu);padding:26px 12px;border:1.5px dashed var(--bo);border-radius:12px;background:#fff}
 .load{position:fixed;inset:0;background:rgba(255,255,255,.75);z-index:30;display:grid;place-items:center;font-weight:700;color:var(--az)}
@@ -239,7 +247,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 <script src="portal-integra-fuente/logos.js"></script>
 <script>
 /* auto-actualización: si hay una versión nueva publicada, la página se recarga sola (así nunca queda una versión vieja guardada en el celular) */
-var PAG_VER='36';
+var PAG_VER='37';
 (function(){try{fetch(location.pathname+'?n='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=t.match(/PAG_VER='(\d+)'/);
   if(m&&m[1]!==PAG_VER){var k='obsRec'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){}var u=new URL(location.href);u.searchParams.set('v',m[1]);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();
 var API='https://script.google.com/macros/s/AKfycbyFetoPIT053n1kiihmhFB5XhUF9sti1t96umwnhKn2rIe2oseukyDzn1EZCLtHV7Qx/exec';
@@ -475,12 +483,20 @@ function pintarMatriz(){var l=S.lista,s=$('#mSuc').value,e=$('#mEst').value;
   var f=l.filter(function(o){return (!s||o.sucursal===s)&&(!e||o.estado===e)});$('#mLista').innerHTML=f.length?f.map(itemHTML).join(''):'<div class="vacio">Sin observaciones con ese filtro.</div>';enlazar('#mLista');cargarMinis('#mLista')}
 ['#pSuc','#pTipo'].forEach(function(x){$(x).onchange=pintarPend});['#mSuc','#mEst'].forEach(function(x){$(x).onchange=pintarMatriz});['#cSuc','#cTipo'].forEach(function(x){$(x).onchange=pintarCerr});
 
+/* ---------- historial detallado ---------- */
+function histLi(h){var x=h.x||{},tg=x.tipo==='correo'?'✉️ Correo enviado':x.tipo==='respuesta'?'📥 Respuesta recibida':x.tipo==='whatsapp'?'📱 WhatsApp':(h.adj&&h.adj.length?'📎 Archivos':'');
+  return '<li><small>'+esc(h.f)+'</small><br><b>'+esc(h.e)+'</b>'+(tg?'<span class="tg">'+tg+'</span>':'')+(h.por?' — '+esc(h.por):'')+(h.nota?'<br>'+esc(h.nota):'')+
+    (x.para?'<span class="hx"><b>Para:</b> '+esc(x.para)+(x.cc?' · <b>Copia:</b> '+esc(x.cc):'')+'</span>':'')+(x.de?'<span class="hx"><b>De:</b> '+esc(x.de)+(x.recibido?' · '+esc(x.recibido):'')+'</span>':'')+
+    (x.asunto?'<span class="hx"><b>Asunto:</b> '+esc(x.asunto)+'</span>':'')+(x.adj?'<span class="hx"><b>Adjunto:</b> '+esc(x.adj)+'</span>':'')+
+    ((h.adj||[]).length?'<span class="ha">'+h.adj.map(function(a){return '<a href="'+esc(a.u)+'" target="_blank" rel="noopener">'+(a.t==='foto'?'📷 ':'📄 ')+esc(a.n)+'</a>'}).join('')+'</span>':'')+'</li>'}
+
 /* ---------- fotos del detalle (antes / después) ---------- */
 function fotosDetalle(o){var id=o.id;apiS('obsFotos',[id]).then(function(r){var c=$('#dCmp');if(!c||$('#shT').textContent!==id)return;
   var im=function(l,vacio){return l.length?l.map(function(x){return '<img src="'+x.u+'" alt="Foto"'+(x.f?' title="'+esc(x.f)+'"':'')+'>'}).join(''):'<div class="fph">'+vacio+'</div>'};
   if(o.tipo!=='Negativa'){c.style.gridTemplateColumns='1fr';c.innerHTML='<div>'+im(r.antes.concat(r.despues),'Sin fotos')+'</div>';}
   else{c.querySelector('.an').innerHTML='<h4>ANTES · '+esc(o.fecha)+'</h4>'+im(r.antes,'Sin foto del registro');
-    c.querySelector('.de').innerHTML='<h4>DESPUÉS'+(r.cerrada?' · '+esc(r.cerrada):'')+'</h4>'+im(r.despues,o.abierta?'Aún sin foto de la mejora.<br>Agréguela abajo y toque “Cerrar con la foto de la mejora”.':'Sin foto de la mejora')}
+    c.querySelector('.de').innerHTML='<h4>DESPUÉS'+(r.cerrada?' · '+esc(r.cerrada):'')+'</h4>'+im(r.despues,o.abierta?'📷 Aún sin foto de la mejora.<br>Toque aquí para subirla.':'Sin foto de la mejora');var sp=c.querySelector('.de .fph');if(sp&&o.abierta){sp.classList.add('sube');sp.onclick=function(){$('#dFot').click()}}}
+  var dd=$('#dDocs');if(dd)dd.innerHTML=(r.docs||[]).length?'<span class="l" style="margin-top:12px">📄 Documentos adjuntos</span>'+r.docs.map(function(x){return '<a href="'+esc(x.u)+'" target="_blank" rel="noopener">📄 <span>'+esc(x.n)+'</span><small>'+esc(x.f)+(x.kb?' · '+x.kb+' KB':'')+'</small></a>'}).join(''):'';
   Array.prototype.forEach.call(c.querySelectorAll('img'),function(x){x.onclick=function(){var g=document.createElement('div');g.id='fotoGrande';g.innerHTML='<img src="'+x.src+'" alt="Foto">';g.onclick=function(){g.remove()};document.body.appendChild(g)}})})
   .catch(function(){var c=$('#dCmp');if(c)Array.prototype.forEach.call(c.querySelectorAll('.fph'),function(p){p.textContent='No se pudieron cargar las fotos.'})})}
 
@@ -489,15 +505,19 @@ function abrir(id){var o=S.lista.filter(function(x){return x.id===id})[0];if(!o)
   $('#shT').textContent=o.id;
   $('#shB').innerHTML='<div class="card">'+tlHTML(o)+'<div class="falta '+(o.falta==='Completo'?'f':o.vencida?'v':'')+'">'+(o.falta==='Completo'?'✔':'👉')+' <span><b>'+(o.falta==='Completo'?(o.estado==='Cerrada'?'Cerrada el '+esc(fEstado(o,'Cerrada'))+(diasEntre(o.fecha,fEstado(o,'Cerrada'))!==null?' · resuelta en '+diasEntre(o.fecha,fEstado(o,'Cerrada'))+' días':''):'Completo'):'Falta:')+'</b> '+(o.falta==='Completo'?'':esc(o.falta))+'</span></div>'+
    (sig?'<button class="btn na w" id="dSig" style="margin-top:10px">👉 Pasar a: '+esc(sig)+'</button>':'')+'</div>'+
-   '<div class="card"><span class="l">'+(o.tipo==='Negativa'?'Fotos: antes y después':'Fotos')+'</span><div class="cmp" id="dCmp"><div class="an"><h4>ANTES · '+esc(o.fecha)+'</h4><div class="fph">Cargando fotos…</div></div><div class="de"><h4>DESPUÉS'+(o.estado==='Cerrada'?' · '+esc(fEstado(o,'Cerrada')):'')+'</h4><div class="fph">Cargando fotos…</div></div></div></div>'+
+   '<div class="card"><span class="l">'+(o.tipo==='Negativa'?'Fotos: antes y después':'Fotos')+'</span><div class="cmp" id="dCmp"><div class="an"><h4>ANTES · '+esc(o.fecha)+'</h4><div class="fph">Cargando fotos…</div></div><div class="de"><h4>DESPUÉS'+(o.estado==='Cerrada'?' · '+esc(fEstado(o,'Cerrada')):'')+'</h4><div class="fph">Cargando fotos…</div></div></div><div class="docs" id="dDocs"></div></div>'+
    '<div class="card"><p><b>'+(o.tipo==='Positiva'?'👍 ':'⚠️ ')+esc(o.categoria)+'</b>'+(o.prioridad?' · Prioridad '+esc(o.prioridad):'')+'</p><p class="hint">'+esc(o.fecha+' '+o.hora+' · '+o.sucursal+(o.lugar?' · '+o.lugar:''))+'</p>'+
    (o.personas?'<p><b>Personas:</b> '+esc(o.personas)+'</p>':'')+'<p>'+esc(o.descripcion)+'</p>'+(o.reinc?'<div class="falta v">⚠️ <span>'+esc(o.reinc)+'</span></div>':'')+
    (o.avisado?'<p class="hint">Avisado a: '+esc(o.avisado)+'</p>':'')+(o.pdf?'<a class="btn gh sm" href="'+esc(o.pdf)+'" target="_blank" rel="noopener">📄 Ver PDF</a>':'')+'</div>'+
    (o.tipo==='Negativa'?'<div class="card"><label class="l" for="dAcc">Acción</label><input type="text" id="dAcc" value="'+esc(o.accion)+'"><div style="height:10px"></div><div class="dos"><div><label class="l" for="dResp">Responsable</label><input type="text" id="dResp" value="'+esc(o.responsable)+'"></div><div><label class="l" for="dPla">Plazo</label><input type="date" id="dPla" value="'+esc(String(o.plazo).split('-').reverse().join('-'))+'"></div></div>'+
      (o.abierta?'<div style="margin-top:10px"><span class="l">Dar más plazo</span><div class="chips" id="dMas">'+[3,7,15,30].map(function(n){return '<button class="chip" data-d="'+n+'">➕ '+n+' días</button>'}).join('')+'</div><p class="hint">Se suma desde el plazo actual (o desde hoy si ya venció) y queda anotado en el historial.</p></div>':'')+'</div>':'')+
-   '<div class="card"><label class="l" for="dNota">Nota de seguimiento</label><textarea id="dNota" placeholder="Qué se hizo o se conversó"></textarea><div style="height:8px"></div><span class="l">Foto de evidencia</span><div class="dos"><label class="btn gh sm" for="dFotC">📷 Tomar foto</label><label class="btn gh sm" for="dFot">🖼️ Subir foto</label></div><input type="file" id="dFotC" accept="image/*" capture="environment" class="hide"><input type="file" id="dFot" accept="image/*" multiple class="hide"><div class="fotos" id="dFots"></div>'+
+   '<div class="card" id="dSubir"><span class="l">📎 Subir foto de la mejora o documento</span>'+
+   '<label class="drop" id="dDrop" for="dFot"><b>⬆️ Arrastre aquí fotos o documentos (PDF)</b><span>o toque aquí para buscarlos en su equipo</span></label>'+
+   '<input type="file" id="dFot" accept="image/*,application/pdf,.pdf,.doc,.docx,.xls,.xlsx" multiple class="hide"><input type="file" id="dFotC" accept="image/*" capture="environment" class="hide">'+
+   '<label class="btn gh sm w" for="dFotC" style="margin-top:8px">📷 Tomar foto ahora con la cámara</label><div class="arch" id="dArch"></div>'+
+   '<div style="height:12px"></div><label class="l" for="dNota">Nota: qué se hizo</label><textarea id="dNota" placeholder="Por ejemplo: se retiraron los pallets y se ordenó la zona. Se adjunta acta firmada."></textarea>'+
    '<p class="msg" id="dMsg"></p><button class="btn w" id="dGuardar">Guardar cambios</button>'+
-   (o.tipo==='Negativa'&&o.abierta?'<button class="btn w ve" id="dCerrar" style="margin-top:8px">✅ Cerrar con la foto de la mejora</button><p class="hint">Agregue arriba la foto de cómo quedó (📷 o 🖼️) y toque este botón. Queda como DESPUÉS, comparada con la foto de ANTES.</p>':'')+'</div>'+
+   (o.tipo==='Negativa'&&o.abierta?'<button class="btn w ve" id="dCerrar" style="margin-top:8px">✅ Cerrar con la foto de la mejora</button><p class="hint">Suba arriba la foto de cómo quedó (y el PDF si tiene uno) y toque este botón. La foto queda como DESPUÉS, al lado de la de ANTES.</p>':'')+'</div>'+
    '<div class="card"><span class="l">Editar datos</span>'+
      '<label class="l" for="eCat">Tema</label><select id="eCat">'+(function(){var c=((S.ini&&S.ini.categorias||{})[o.tipo]||[]).filter(function(t){return !esOtra(t)});if(c.indexOf(o.categoria)<0)c.unshift(o.categoria);return c.map(function(t){return '<option'+(t===o.categoria?' selected':'')+'>'+esc(t)+'</option>'}).join('')})()+'</select><div style="height:10px"></div>'+
      (o.tipo==='Negativa'?'<label class="l" for="ePri">Prioridad</label><select id="ePri">'+['Alta','Media','Baja'].map(function(t){return '<option'+(t===o.prioridad?' selected':'')+'>'+t+'</option>'}).join('')+'</select><div style="height:10px"></div>':'')+
@@ -512,15 +532,29 @@ function abrir(id){var o=S.lista.filter(function(x){return x.id===id})[0];if(!o)
      '<div id="rMan" class="hide" style="margin-top:8px"><input type="text" id="rN" placeholder="Nombre y apellido"><div style="height:8px"></div><input type="text" inputmode="email" id="rM" placeholder="Correo"><div style="height:8px"></div><input type="text" inputmode="tel" id="rT" placeholder="WhatsApp (opcional)"><button class="btn sm" id="rOk" style="margin-top:8px">Agregar</button></div>'+
      '<div id="rList" style="margin-top:8px"></div><p class="msg" id="rMsg"></p><button class="btn w ve" id="rEnv">✉️ Enviar por correo y preparar WhatsApp</button><div id="rWa" style="display:grid;gap:8px;margin-top:8px"></div></div>'+
    '<div class="card"><span class="l">Eliminar</span><p class="hint">Se va a la papelera (pestaña Matriz → Papelera) y se puede restaurar. Solo usted puede eliminar.</p><button class="btn w" id="dDel" style="background:var(--ro);color:#fff;border-color:var(--ro)">🗑️ Eliminar observación</button></div>'+
-   '<div class="card"><span class="l">Historial</span><ul class="hist">'+(o.historial||[]).map(function(h){return '<li><small>'+esc(h.f)+'</small><br><b>'+esc(h.e)+'</b>'+(h.por?' — '+esc(h.por):'')+(h.nota?'<br>'+esc(h.nota):'')+'</li>'}).join('')+'</ul></div>';
-  var ev=[];$('#dFotC').onchange=$('#dFot').onchange=function(){Promise.all(Array.prototype.slice.call(this.files).slice(0,4).map(comprimir)).then(function(a){ev=ev.concat(a).slice(0,4);$('#dFots').innerHTML=ev.map(function(b){return '<img src="data:image/jpeg;base64,'+b+'">'}).join('')})};
-  var enviar=function(estado){var c={nota:$('#dNota').value.trim(),fotos:ev,logo:LOGO};if(estado)c.estado=estado;if(o.tipo==='Negativa'){c.accion=$('#dAcc').value.trim();c.responsable=$('#dResp').value.trim();c.plazo=aDMA($('#dPla').value);if($('#ePri').value!==o.prioridad)c.prioridad=$('#ePri').value}
+   '<div class="card"><span class="l">Historial completo</span><ul class="hist">'+(o.historial||[]).map(histLi).join('')+'</ul></div>';
+  var ev=[],dc=[];
+  var pintarArch=function(){$('#dArch').innerHTML=ev.map(function(b,i){return '<span class="af"><img src="data:image/jpeg;base64,'+b+'" alt="Foto"><button type="button" class="q" data-qf="'+i+'" aria-label="Quitar">×</button></span>'}).join('')+
+      dc.map(function(d,i){return '<span class="af"><span class="dc">📄 '+esc(d.nombre)+' <small>('+d.kb+' KB)</small></span><button type="button" class="q" data-qd="'+i+'" aria-label="Quitar">×</button></span>'}).join('');
+    $$('#dArch [data-qf]').forEach(function(b){b.onclick=function(e){e.preventDefault();ev.splice(+b.dataset.qf,1);pintarArch()}});$$('#dArch [data-qd]').forEach(function(b){b.onclick=function(e){e.preventDefault();dc.splice(+b.dataset.qd,1);pintarArch()}});
+    $('#dDrop').querySelector('b').textContent=(ev.length||dc.length)?'✔ '+[ev.length?ev.length+' foto(s)':'',dc.length?dc.length+' documento(s)':''].filter(String).join(' y ')+' listo(s) para guardar':'⬆️ Arrastre aquí fotos o documentos (PDF)'};
+  var agregarArch=function(files){var l=Array.prototype.slice.call(files||[]);if(!l.length)return;$('#dMsg').className='msg';$('#dMsg').textContent='Preparando archivos…';
+    Promise.all(l.map(function(f){if(/^image\//.test(f.type))return comprimir(f).then(function(b){if(ev.length<6)ev.push(b)});
+      if(f.size>10*1024*1024){return Promise.resolve('“'+f.name+'” pesa más de 10 MB y no se puede subir.')}
+      return new Promise(function(ok){var fr=new FileReader();fr.onload=function(){if(dc.length<5)dc.push({nombre:f.name,mime:f.type||'application/octet-stream',b64:String(fr.result).split(',')[1],kb:Math.max(1,Math.round(f.size/1024))});ok()};fr.readAsDataURL(f)})}))
+    .then(function(r){var err=r.filter(Boolean);$('#dMsg').className=err.length?'msg e':'msg';$('#dMsg').textContent=err.join(' ');pintarArch()})};
+  $('#dFotC').onchange=$('#dFot').onchange=function(){agregarArch(this.files);this.value=''};
+  var dz=$('#dDrop');['dragenter','dragover'].forEach(function(t){$('#shB').addEventListener(t,function(e){if(e.dataTransfer&&Array.prototype.indexOf.call(e.dataTransfer.types||[],'Files')>-1){e.preventDefault();dz.classList.add('on')}})});
+  ['dragleave','drop'].forEach(function(t){$('#shB').addEventListener(t,function(){dz.classList.remove('on')})});
+  $('#shB').addEventListener('drop',function(e){if(e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files.length){e.preventDefault();agregarArch(e.dataTransfer.files);dz.scrollIntoView({behavior:'smooth',block:'center'})}});
+  (function(){var fc=$('#dCmp');fc=fc&&fc.closest('.card');if(fc)fc.parentNode.insertBefore($('#dSubir'),fc.nextSibling)})();
+  var enviar=function(estado){var c={nota:$('#dNota').value.trim(),fotos:ev,docs:dc.map(function(d){return {nombre:d.nombre,mime:d.mime,b64:d.b64}}),logo:LOGO};if(estado)c.estado=estado;if(o.tipo==='Negativa'){c.accion=$('#dAcc').value.trim();c.responsable=$('#dResp').value.trim();c.plazo=aDMA($('#dPla').value);if($('#ePri').value!==o.prioridad)c.prioridad=$('#ePri').value}
     if($('#eCat').value!==o.categoria)c.categoria=$('#eCat').value;if($('#eSuc').value!==o.sucursal)c.sucursal=$('#eSuc').value;if($('#eLug').value.trim()!==String(o.lugar||''))c.lugar=$('#eLug').value.trim();
     var ds=$('#eDes').value.trim();if(ds&&ds!==o.descripcion){if(ds.length<5){faltaEn($('#eDes'),'La descripción es muy corta.',true);return}c.descripcion=ds}
     $('#dMsg').className='msg';$('#dMsg').textContent='Guardando…';apiS('obsActualizar',[o.id,c]).then(function(){$('#dMsg').className='msg o';$('#dMsg').textContent='Guardado.';
       return apiS('obsLista').then(function(l){S.lista=l;pintarPend();pintarMatriz();var sc=$('#shB').scrollTop;abrir(o.id);$('#shB').scrollTop=sc})}).catch(function(e){$('#dMsg').className='msg e';$('#dMsg').textContent=e.message})};
   $('#dGuardar').onclick=function(){enviar('')};
-  if($('#dCerrar'))$('#dCerrar').onclick=function(){if(!ev.length&&o.estado!=='Corregida (por verificar)'){faltaEn($('label[for="dFotC"]'),'Agregue la foto de la mejora (📷 Tomar foto o 🖼️ Subir foto) y vuelva a tocar Cerrar.');return}
+  if($('#dCerrar'))$('#dCerrar').onclick=function(){if(!ev.length&&o.estado!=='Corregida (por verificar)'){faltaEn($('#dDrop'),'Suba la foto de la mejora (arrástrela al recuadro o tóquelo para buscarla) y vuelva a tocar Cerrar.');return}
     if(!$('#dNota').value.trim())$('#dNota').value='Mejora implementada y verificada en terreno.';enviar('Cerrada')};
   fotosDetalle(o);
   $$('#dMas [data-d]').forEach(function(b){b.onclick=function(){var n=+b.dataset.d,nuevo=masDias(o.plazo,n);$('#dPla').value=aISO(nuevo);
