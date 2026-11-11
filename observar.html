@@ -261,7 +261,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 <script src="portal-integra-fuente/logos.js"></script>
 <script>
 /* auto-actualización: si hay una versión nueva publicada, la página se recarga sola (así nunca queda una versión vieja guardada en el celular) */
-var PAG_VER='47';
+var PAG_VER='48';
 (function(){try{fetch(location.pathname+'?n='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=t.match(/PAG_VER='(\d+)'/);
   if(m&&m[1]!==PAG_VER){var k='obsRec'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){}var u=new URL(location.href);u.searchParams.set('v',m[1]);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();
 var API='https://script.google.com/macros/s/AKfycbyFetoPIT053n1kiihmhFB5XhUF9sti1t96umwnhKn2rIe2oseukyDzn1EZCLtHV7Qx/exec';
@@ -458,12 +458,22 @@ var PRI={Alta:0,Media:1,Baja:2,'':3};
 /* lista compartida: una sola consulta a la vez y se reutiliza 20 s (más rápido); tras un cambio se fuerza */
 var _lp=null,_lt=0;function traerLista(forzar){if(!forzar&&_lp&&Date.now()-_lt<20000)return _lp;_lt=Date.now();_lp=apiS('obsLista').then(function(l){S.lista=l;return l}).catch(function(e){_lp=null;throw e});return _lp}
 function cargarLista(){if(S.lista.length){pintarPend();pintarMatriz();pintarCerr()}traerLista().then(function(l){S.lista=l;pintarPend();pintarMatriz();pintarCerr()}).catch(function(e){$('#pLista').innerHTML='<div class="vacio">'+esc(e.message)+'</div>'})}
-function tlHTML(o){var p=o.tipo==='Positiva'?POS:NEG,cur=p.indexOf(o.estado),f={},det={};
-  (o.historial||[]).forEach(function(h){if(p.indexOf(h.e)>-1){f[h.e]=String(h.f).slice(0,5);det[h.e]=h}});
-  var notas=(o.historial||[]).filter(function(h){return p.indexOf(h.e)<0});
+function soloNombres(t){return String(t||'').split(/\s*,\s*/).map(function(x){var n=x.replace(/<.*$/,'').trim();return n||x.replace(/[<>]/g,'').trim()}).filter(String).join(', ')}
+function tlHTML(o){var p=o.tipo==='Positiva'?POS:NEG,cur=p.indexOf(o.estado),f={},det={},hs=o.historial||[];
+  hs.forEach(function(h){if(p.indexOf(h.e)>-1){f[h.e]=String(h.f).slice(0,5);det[h.e]=h}});
+  var notas=hs.filter(function(h){return p.indexOf(h.e)<0});
+  var fT=function(t){var m=String(t||'').match(/(\d{2})-(\d{2})-(\d{4})\s*(\d{2}:\d{2})?/);return m?m[3]+m[2]+m[1]+(m[4]||''):''};
   return '<div class="tl" style="grid-template-columns:repeat('+p.length+',1fr)">'+p.map(function(s,i){var h=det[s],tip;
-    if(i<=cur&&h){tip='<b>'+esc(s)+'</b><br>📅 '+esc(h.f)+(h.por?'<br>👤 '+esc(h.por):'')+(h.nota?'<br>📝 '+esc(String(h.nota).slice(0,140)):'');
-      if(i===cur){var ult=notas.filter(function(n){return String(n.f)>=String(h.f)}).slice(-2);if(ult.length)tip+='<br><br><b>Después:</b>'+ult.map(function(n){return '<br>• '+esc(n.f.slice(0,5))+' '+esc(n.e)+(n.nota?': '+esc(String(n.nota).slice(0,80)):'')}).join('');
+    if(i<=cur&&h){var sigH=p.slice(i+1).map(function(x){return det[x]}).filter(Boolean)[0],desde=fT(h.f),hasta=sigH?fT(sigH.f):'99999999';
+      var tramo=notas.filter(function(n){var t=fT(n.f);return t>=desde&&t<hasta}),env=tramo.filter(function(n){var x=n.x||{};return x.tipo==='correo'||x.tipo==='whatsapp'||x.tipo==='respuesta'});
+      var porCorreo=/^Correo a /.test(h.por||'');
+      tip='<b>'+esc(s)+'</b><br>📅 '+esc(h.f)+(h.por&&!porCorreo?'<br>👤 '+esc(h.por):'')+(h.nota?'<br>📝 '+esc(String(h.nota).slice(0,140)):'')+
+        (porCorreo?'<br>✉️ <b>Enviado a:</b> '+esc(String(h.por).replace(/^Correo a /,'')):'')+
+        env.map(function(n){var x=n.x||{};return x.tipo==='correo'?'<br>✉️ <b>'+(/cierre/i.test((n.nota||'')+(n.por||''))?(/^Reenviado/i.test(n.nota||'')?'Aviso de cierre reenviado a':'Aviso de cierre a'):/^Reenviado/i.test(n.nota||'')?'Reenviado a':'Correo a')+':</b> '+esc(soloNombres(x.para))+(x.cc?' <span style="opacity:.75">(copia: '+esc(soloNombres(x.cc))+')</span>':''):
+          x.tipo==='whatsapp'?'<br>📱 <b>WhatsApp a:</b> '+esc(x.para):'<br>📥 <b>Respuesta de:</b> '+esc(soloNombres(x.de))}).join('')+
+        (s==='Cerrada'&&o.estado==='Cerrada'&&!env.some(function(n){return (n.x||{}).tipo==='correo'})?'<br>✉️ Cerrada sin aviso por correo':'');
+      if(i===cur){var vista={};vista[String(h.nota||'').trim()]=1;var ult=tramo.filter(function(n){var t=String(n.nota||'').trim();if(env.indexOf(n)>-1||!t||vista[t])return false;vista[t]=1;return true}).slice(-2);
+        if(ult.length)tip+='<br><br><b>Después:</b>'+ult.map(function(n){return '<br>• '+esc(n.f.slice(0,5))+' '+esc(n.e)+': '+esc(String(n.nota).slice(0,80))}).join('');
         if(o.falta&&o.falta!=='Completo')tip+='<br><br>👉 <b>Falta:</b> '+esc(o.falta)}}
     else if(i===cur){tip='<b>'+esc(s)+'</b><br>Etapa actual'+(o.falta&&o.falta!=='Completo'?'<br>👉 '+esc(o.falta):'')}
     else if(i<cur){tip='<b>'+esc(s)+'</b><br>Etapa superada'}
@@ -577,7 +587,7 @@ function fotosDetalle(o){var id=o.id,kc=id+'|'+(o.historial||[]).length;S.fotosC
 function abrir(id){var o=S.lista.filter(function(x){return x.id===id})[0];if(!o)return;var p=o.tipo==='Positiva'?POS:NEG,i=p.indexOf(o.estado),sig=p[i+1];
   var conMejora=o.tipo==='Negativa'&&o.abierta&&(o.historial||[]).some(function(h){return (h.adj||[]).some(function(a){return a.t==='foto'})});
   $('#shT').textContent=o.id;
-  $('#shB').innerHTML='<div class="card">'+tlHTML(o)+'<div class="falta '+(o.falta==='Completo'?'f':o.vencida?'v':'')+'">'+(o.falta==='Completo'?'✔':'👉')+' <span><b>'+(o.falta==='Completo'?(o.estado==='Cerrada'?'Cerrada el '+esc(fEstado(o,'Cerrada'))+(diasEntre(o.fecha,fEstado(o,'Cerrada'))!==null?' · resuelta en '+diasEntre(o.fecha,fEstado(o,'Cerrada'))+' días':''):'Completo'):'Falta:')+'</b> '+(o.falta==='Completo'?'':esc(o.falta))+'</span></div>'+
+  $('#shB').innerHTML='<div class="card">'+tlHTML(o)+'<div class="falta '+(o.falta==='Completo'?'f':o.vencida?'v':'')+'">'+(o.falta==='Completo'?'✔':'👉')+' <span><b>'+(o.falta==='Completo'?(o.estado==='Cerrada'?'Cerrada el '+esc(fEstado(o,'Cerrada'))+(diasEntre(o.fecha,fEstado(o,'Cerrada'))!==null?' · resuelta en '+diasEntre(o.fecha,fEstado(o,'Cerrada'))+' días':'')+(function(){var av=(o.historial||[]).filter(function(h){var x=h.x||{};return x.tipo==='correo'&&/cierre/i.test((h.nota||'')+(h.por||''))}).map(function(h){return soloNombres(h.x.para)}).join(', ');return '</b><br><span style="font-weight:400">✉️ Aviso de cierre enviado a: '+esc(av||'nadie (cerrada sin aviso)')+'</span><b>'})():'Completo'):'Falta:')+'</b> '+(o.falta==='Completo'?'':esc(o.falta))+'</span></div>'+
    (sig&&!conMejora?'<button class="btn na w" id="dSig" style="margin-top:10px">👉 Pasar a: '+esc(sig)+'</button>':'')+'</div>'+
    (conMejora?'<div class="card" style="border:2px solid var(--ve);background:#eef8ef"><b style="color:var(--ve)">📸 Ya subió la foto de la mejora, pero el caso sigue abierto.</b><p class="hint" style="margin:6px 0 10px">Para terminar, toque el botón: el caso queda <b>Cerrado</b>, el informe final muestra ANTES y DESPUÉS, y se avisa por correo a todos los que fueron avisados.</p><button class="btn w ve" id="dCerrarYa">✅ Cerrar el caso ahora</button></div>':'')+
    '<div class="card"><span class="l">'+(o.tipo==='Negativa'?'Fotos: antes y después':'Fotos')+'</span><div class="cmp" id="dCmp"><div class="an"><h4>ANTES · '+esc(o.fecha)+'</h4><div class="fph">Cargando fotos…</div></div><div class="de"><h4>DESPUÉS'+(o.estado==='Cerrada'?' · '+esc(fEstado(o,'Cerrada')):'')+'</h4><div class="fph">Cargando fotos…</div></div></div><div class="docs" id="dDocs"></div></div>'+
