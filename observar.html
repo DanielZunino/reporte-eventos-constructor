@@ -249,7 +249,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 <script src="portal-integra-fuente/logos.js"></script>
 <script>
 /* auto-actualización: si hay una versión nueva publicada, la página se recarga sola (así nunca queda una versión vieja guardada en el celular) */
-var PAG_VER='40';
+var PAG_VER='41';
 (function(){try{fetch(location.pathname+'?n='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=t.match(/PAG_VER='(\d+)'/);
   if(m&&m[1]!==PAG_VER){var k='obsRec'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){}var u=new URL(location.href);u.searchParams.set('v',m[1]);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();
 var API='https://script.google.com/macros/s/AKfycbyFetoPIT053n1kiihmhFB5XhUF9sti1t96umwnhKn2rIe2oseukyDzn1EZCLtHV7Qx/exec';
@@ -486,6 +486,7 @@ function pintarMatriz(){var l=S.lista,s=$('#mSuc').value,e=$('#mEst').value;
 ['#pSuc','#pTipo'].forEach(function(x){$(x).onchange=pintarPend});['#mSuc','#mEst'].forEach(function(x){$(x).onchange=pintarMatriz});['#cSuc','#cTipo'].forEach(function(x){$(x).onchange=pintarCerr});
 
 /* ---------- historial detallado ---------- */
+function refrescarHist(id){apiS('obsLista').then(function(l){S.lista=l;pintarPend();pintarMatriz();pintarCerr();var x=l.filter(function(y){return y.id===id})[0],h=$('#shB .hist');if(x&&h&&$('#shT').textContent===id)h.innerHTML=(x.historial||[]).map(histLi).join('')}).catch(function(){})}
 function histLi(h){var x=h.x||{},tg=x.tipo==='correo'?'✉️ Correo enviado':x.tipo==='respuesta'?'📥 Respuesta recibida':x.tipo==='whatsapp'?'📱 WhatsApp':(h.adj&&h.adj.length?'📎 Archivos':'');
   return '<li><small>'+esc(h.f)+'</small><br><b>'+esc(h.e)+'</b>'+(tg?'<span class="tg">'+tg+'</span>':'')+(h.por?' — '+esc(h.por):'')+(h.nota?'<br>'+esc(h.nota):'')+
     (x.para?'<span class="hx"><b>Para:</b> '+esc(x.para)+(x.cc?' · <b>Copia:</b> '+esc(x.cc):'')+'</span>':'')+(x.de?'<span class="hx"><b>De:</b> '+esc(x.de)+(x.recibido?' · '+esc(x.recibido):'')+'</span>':'')+
@@ -578,14 +579,14 @@ function abrir(id){var o=S.lista.filter(function(x){return x.id===id})[0];if(!o)
   $('#rEnv').onclick=function(){if(!rd.length){faltaEn($('#rBus'),'Agregue al menos una persona a quien avisar.',true);return}var b=this;b.disabled=true;$('#rMsg').className='msg';$('#rMsg').textContent='Enviando…';
     apiS('obsReavisar',[o.id,rd]).then(function(r){$('#rMsg').className='msg o';$('#rMsg').textContent='Aviso enviado'+(r.enviados&&r.enviados.length?' por correo a: '+r.enviados.join(', '):'')+'.';
       $('#rWa').innerHTML=(r.whatsapp||[]).map(function(w){return '<a class="btn ve waLog" data-id="'+esc(o.id)+'" data-n="'+esc(w.nombre)+'" data-t="'+esc(w.telefono)+'" target="_blank" rel="noopener" href="https://wa.me/'+waNum(w.telefono)+'?text='+encodeURIComponent(w.texto)+'">📱 WhatsApp a '+esc(w.nombre.split(' ').slice(0,2).join(' '))+'</a>'}).join('');
-      rd=[];pintR();apiS('obsLista').then(function(l){S.lista=l;pintarPend();pintarMatriz()})}).catch(function(e){$('#rMsg').className='msg e';$('#rMsg').textContent=e.message}).finally(function(){b.disabled=false})};
+      rd=[];pintR();refrescarHist(o.id)}).catch(function(e){$('#rMsg').className='msg e';$('#rMsg').textContent=e.message}).finally(function(){b.disabled=false})};
   /* eliminar: a la papelera, con segundo toque de confirmación */
   var delArm=false;$('#dDel').onclick=function(){var b=this;if(!delArm){delArm=true;b.textContent='Toque otra vez para confirmar';setTimeout(function(){delArm=false;b.textContent='🗑️ Eliminar observación'},5000);return}
     b.disabled=true;b.textContent='Eliminando…';apiS('obsEliminar',[o.id]).then(function(){$('#sheet').classList.add('hide');document.body.style.overflow='';cargarLista()}).catch(function(e){b.disabled=false;b.textContent='🗑️ Eliminar observación';$('#dMsg').className='msg e';$('#dMsg').textContent=e.message})};
   $('#sheet').classList.remove('hide');document.body.style.overflow='hidden'}
 /* registro de cada envío por WhatsApp (nombre y teléfono quedan en el historial) */
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a.waLog');if(!a||a.dataset.reg)return;a.dataset.reg='1';a.textContent='✔ '+a.textContent.replace(/^📱 /,'')+' (registrado)';
-  apiS('obsRegistrarEnvio',[a.dataset.id,{nombre:a.dataset.n,telefono:a.dataset.t}]).catch(function(){a.dataset.reg=''})});
+  apiS('obsRegistrarEnvio',[a.dataset.id,{nombre:a.dataset.n,telefono:a.dataset.t}]).then(function(){refrescarHist(a.dataset.id)}).catch(function(){a.dataset.reg=''})});
 /* plazos: suma días desde el plazo actual, o desde hoy si ya venció */
 function aISO(dma){return dma?String(dma).split('-').reverse().join('-'):''}
 function masDias(dma,n){var p=String(dma||'').split('-'),b=p.length===3?new Date(+p[2],+p[1]-1,+p[0]):new Date(),h=new Date();h.setHours(0,0,0,0);if(isNaN(b)||b<h)b=h;b.setDate(b.getDate()+n);
