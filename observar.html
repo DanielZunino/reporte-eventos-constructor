@@ -49,7 +49,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{border:1.5px solid var(--bo);background:#fff;border-radius:20px;padding:9px 13px;font:inherit;font-size:14.5px;cursor:pointer;line-height:1.2}
 .chip.on{border-color:var(--az);background:#e3ecfb;color:var(--az);font-weight:700}
-#rSug .chip.on{border-color:var(--ve);background:#2e7d32;color:#fff}#rSug .chip.on small{color:#e8f5e9}
+#rSug .chip.on,#cieL .chip.on{border-color:var(--ve);background:#2e7d32;color:#fff}#rSug .chip.on small,#cieL .chip.on small{color:#e8f5e9}
 .chip.fr{border-style:dashed;border-color:var(--na);background:#fff7ef}
 .chip small{color:var(--mu);font-size:12px}
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
@@ -261,7 +261,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 <script src="portal-integra-fuente/logos.js"></script>
 <script>
 /* auto-actualización: si hay una versión nueva publicada, la página se recarga sola (así nunca queda una versión vieja guardada en el celular) */
-var PAG_VER='45';
+var PAG_VER='47';
 (function(){try{fetch(location.pathname+'?n='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=t.match(/PAG_VER='(\d+)'/);
   if(m&&m[1]!==PAG_VER){var k='obsRec'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){}var u=new URL(location.href);u.searchParams.set('v',m[1]);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();
 var API='https://script.google.com/macros/s/AKfycbyFetoPIT053n1kiihmhFB5XhUF9sti1t96umwnhKn2rIe2oseukyDzn1EZCLtHV7Qx/exec';
@@ -508,11 +508,50 @@ function pintarMatriz(){var l=S.lista,s=$('#mSuc').value,e=$('#mEst').value;
   var f=l.filter(function(o){return (!s||o.sucursal===s)&&(!e||o.estado===e)});$('#mLista').innerHTML=f.length?f.map(itemHTML).join(''):'<div class="vacio">Sin observaciones con ese filtro.</div>';enlazar('#mLista');cargarMinis('#mLista')}
 ['#pSuc','#pTipo'].forEach(function(x){$(x).onchange=pintarPend});['#mSuc','#mEst'].forEach(function(x){$(x).onchange=pintarMatriz});['#cSuc','#cTipo'].forEach(function(x){$(x).onchange=pintarCerr});
 
+/* ---------- al cerrar: preguntar a quién se le informa ---------- */
+function candidatosCierre(o){var nom=(S.ini&&S.ini.nomina)||[],yo=nk(S.ini&&S.ini.u&&S.ini.u.nombre),out=[],ya={};
+  var add=function(n,m,t,c,on){n=String(n||'').trim();m=String(m||'').trim();if(!n&&!m)return;if(n&&nk(n)===yo)return;var w=n?nom.filter(function(x){return nk(x.n)===nk(n)})[0]:null;
+    if(!w&&m)w=nom.filter(function(x){return x.m&&String(x.m).toLowerCase()===m.toLowerCase()})[0];
+    if(w){n=w.n;m=m||w.m||'';t=t||w.t||'';c=c||w.c||''}if(/zunino\.prevencion@/i.test(m))return;
+    var k=nk(n||m),p=ya[k];if(p){if(on)p.on=true;if(m&&!p.correo)p.correo=m;if(t&&!p.telefono)p.telefono=t;return}
+    p={nombre:n||m,correo:m,telefono:t||'',cargo:c||'',on:!!on};ya[k]=p;out.push(p)};
+  String(o.avisado||'').split(/\s*,\s*/).forEach(function(n){add(n,'','','',true)});
+  (o.historial||[]).forEach(function(h){var x=h.x||{};
+    if(/^Correo a /.test(h.por||''))String(h.por).replace(/^Correo a /,'').split(/\s*,\s*/).forEach(function(n){add(n,'','','',true)});
+    if(x.tipo==='correo'&&x.para&&!/aviso de cierre/i.test(h.por||''))String(x.para).split(/\s*,\s*/).forEach(function(t){var mm=t.match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/);add(t.replace(/<.*$/,'').replace(/[\w.+-]+@[\w-]+(\.[\w-]+)+/,'').trim(),mm?mm[0]:'','','',true)})});
+  if(o.responsable)add(o.responsable,'','','',true);
+  nom.filter(function(w){return (nk(w.s)===nk(o.sucursal)&&RX_JEF.test(nk(w.c)))||RX_GG.test(nk(w.c))}).filter(function(w){return w.m||w.t}).slice(0,10).forEach(function(w){add(w.n,w.m,w.t,w.c,false)});
+  return out}
+function elegirCierre(o,ok){var L=candidatosCierre(o),m=document.createElement('div');m.className='sheet';m.style.cssText='z-index:40;align-items:center';
+  m.innerHTML='<div class="card" style="max-width:520px;width:calc(100% - 24px);max-height:88vh;overflow:auto;margin:0">'+
+    '<h2 style="margin:0 0 2px;color:var(--ve)">✅ Cerrar '+esc(o.id)+'</h2><p style="margin:0 0 8px;font-size:17px"><b>¿A quién se le informa el cierre?</b></p>'+
+    '<p class="hint" style="margin:0 0 10px">Toque para marcar (✔) o desmarcar. Les llega el correo <b>"Caso cerrado y corregido"</b> con las fotos de antes y después y el informe final; a quienes tengan WhatsApp les aparece el botón para avisar también por ahí. Usted recibe copia.</p>'+
+    '<div class="chips" id="cieL"></div>'+
+    '<input type="search" id="cieBus" placeholder="Agregar a alguien de la nómina (nombre o RUT)" autocomplete="off" style="margin-top:12px"><div class="res hide" id="cieRes"></div>'+
+    '<div style="display:flex;gap:8px;margin-top:8px"><input type="text" inputmode="email" id="cieMail" placeholder="O un correo de alguien de afuera" style="flex:1"><button class="btn gh sm" id="cieAdd">Agregar</button></div>'+
+    '<p class="msg" id="cieMsg"></p><button class="btn w ve" id="cieOk" style="margin-top:4px"></button>'+
+    '<div class="dos" style="margin-top:8px"><button class="btn gh sm" id="cieSin">Cerrar sin avisar</button><button class="btn gh sm" id="cieNo">Volver</button></div></div>';
+  document.body.appendChild(m);
+  var pinta=function(){$('#cieL').innerHTML=L.length?L.map(function(p,i){return '<button class="chip'+(p.on?' on':'')+'" data-i="'+i+'">'+(p.on?'✔ ':'+ ')+esc(p.nombre.split(' ').slice(0,2).join(' '))+' <small>'+esc(p.correo||'sin correo')+(p.telefono?' · 📱':'')+'</small></button>'}).join(''):'<p class="hint">Nadie sugerido: agregue a alguien abajo.</p>';
+    $$('#cieL [data-i]').forEach(function(b){b.onclick=function(e){e.preventDefault();L[+b.dataset.i].on=!L[+b.dataset.i].on;pinta()}});
+    var n=L.filter(function(p){return p.on}).length;$('#cieOk').textContent=n?'✅ Cerrar y avisar a '+n+' persona'+(n>1?'s':''):'✅ Cerrar y avisar (marque a alguien)'};
+  pinta();
+  autoNom($('#cieBus'),$('#cieRes'),function(w){var p=L.filter(function(x){return nk(x.nombre)===nk(w.n)})[0];if(p)p.on=true;else L.push({nombre:w.n,correo:w.m||'',telefono:w.t||'',cargo:w.c||'',on:true});$('#cieBus').value='';pinta()});
+  $('#cieAdd').onclick=function(e){e.preventDefault();var v=$('#cieMail').value.trim();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)){$('#cieMsg').className='msg e';$('#cieMsg').textContent='Revise el correo.';return}
+    $('#cieMsg').textContent='';if(!L.some(function(x){return String(x.correo).toLowerCase()===v.toLowerCase()}))L.push({nombre:v,correo:v,telefono:'',on:true});$('#cieMail').value='';pinta()};
+  $('#cieNo').onclick=function(){m.remove()};
+  $('#cieSin').onclick=function(){m.remove();ok([])};
+  $('#cieOk').onclick=function(){var sel=L.filter(function(p){return p.on});if(!sel.length){$('#cieMsg').className='msg e';$('#cieMsg').textContent='Marque al menos una persona, o toque "Cerrar sin avisar".';return}
+    var sin=sel.filter(function(p){return !p.correo&&!p.telefono});if(sin.length){$('#cieMsg').className='msg e';$('#cieMsg').textContent=sin.map(function(p){return p.nombre}).join(', ')+' no tiene correo ni WhatsApp: desmárquelo o agréguelo con su correo.';return}
+    m.remove();ok(sel.map(function(p){return {nombre:p.nombre,correo:p.correo,telefono:p.telefono}}))}}
+
 /* ---------- aviso de cierre ---------- */
 function mostrarCierre(id,r){if(!r||!r.cierre||$('#shT').textContent!==id)return;var c=r.cierre,box=document.createElement('div');box.className='card';box.style.cssText='border:2px solid var(--ve);background:#eef8ef';
   box.innerHTML='<h2 style="color:var(--ve);margin:0 0 6px">✅ Caso cerrado</h2>'+(c.error?'<p class="msg e">No se pudo enviar el correo de cierre: '+esc(c.error)+'</p>':'<p>Se envió el <b>aviso de cierre por correo</b> (con fotos de antes y después y el informe final en PDF) a: '+esc((c.enviados||[]).join(', '))+'.</p>')+
     ((c.whatsapp||[]).length?'<p class="hint">Avisar también por WhatsApp:</p><div style="display:grid;gap:8px">'+c.whatsapp.map(function(w){return '<a class="btn ve waLog" data-id="'+esc(id)+'" data-n="'+esc(w.nombre)+'" data-t="'+esc(w.telefono)+'" target="_blank" rel="noopener" href="https://wa.me/'+waNum(w.telefono)+'?text='+encodeURIComponent(w.texto)+'">📱 WhatsApp a '+esc(w.nombre.split(' ').slice(0,2).join(' '))+'</a>'}).join('')+'</div>':'');
-  $('#shB').insertBefore(box,$('#shB').firstChild);$('#shB').scrollTop=0}
+  box.insertAdjacentHTML('beforeend','<button class="btn gh w" id="cieMas" style="margin-top:10px">➕ Avisar el cierre a alguien más</button>');
+  $('#shB').insertBefore(box,$('#shB').firstChild);$('#shB').scrollTop=0;
+  $('#cieMas').onclick=function(){var cd=$('#rCard');if(!cd)return;cd.scrollIntoView({behavior:'smooth',block:'start'});cd.style.boxShadow='0 0 0 5px rgba(46,125,50,.45)';setTimeout(function(){cd.style.boxShadow=''},3000);setTimeout(function(){if($('#rBus'))$('#rBus').focus({preventScroll:true})},500)}}
 
 /* ---------- historial detallado ---------- */
 function refrescarHist(id){traerLista(true).then(function(l){S.lista=l;pintarPend();pintarMatriz();pintarCerr();var x=l.filter(function(y){return y.id===id})[0],h=$('#shB .hist');if(x&&h&&$('#shT').textContent===id)h.innerHTML=(x.historial||[]).map(histLi).join('')}).catch(function(){})}
@@ -561,7 +600,8 @@ function abrir(id){var o=S.lista.filter(function(x){return x.id===id})[0];if(!o)
      '<label class="l" for="eLug">Lugar</label><input type="text" id="eLug" value="'+esc(o.lugar)+'"><div style="height:10px"></div>'+
      '<label class="l" for="eDes">Descripción</label><textarea id="eDes">'+esc(o.descripcion)+'</textarea>'+
      '<p class="hint">Los cambios se guardan con el botón "Guardar cambios" de arriba y quedan anotados en el historial.</p></div>'+
-   '<div class="card"><span class="l">Reenviar reporte</span><p class="hint">Elija a quién: de la nómina, sugeridos o alguien de afuera. Por correo se envía con el PDF; por WhatsApp, con el enlace del informe. Cada envío queda registrado en el historial con nombre, correo o teléfono.</p>'+
+   (o.estado==='Cerrada'&&o.tipo==='Negativa'?'<div class="card" id="rCard" style="border:2px solid var(--ve)"><span class="l" style="color:var(--ve)">✅ Enviar el aviso de cierre a alguien más</span><p class="hint">Si le faltó avisar a alguien, márquelo aquí: le llega el mismo correo "Caso cerrado y corregido" con las fotos de antes y después y el informe final en PDF; por WhatsApp, con el enlace del informe. Queda registrado en el historial.</p>':
+   '<div class="card" id="rCard"><span class="l">Reenviar reporte</span><p class="hint">Elija a quién: de la nómina, sugeridos o alguien de afuera. Por correo se envía con el PDF; por WhatsApp, con el enlace del informe. Cada envío queda registrado en el historial con nombre, correo o teléfono.</p>')+
      '<span class="l" style="margin-top:6px">Toque para marcar (✔) a quién enviar</span><div class="chips" id="rSug"></div><div id="rList" style="margin-top:8px"></div>'+
      '<input type="search" id="rBus" placeholder="Nombre o RUT de la nómina" autocomplete="off" style="margin-top:8px"><div class="res hide" id="rRes"></div>'+
      '<button class="btn gh sm" id="rManBtn" style="margin-top:8px">+ Alguien que no está en la nómina</button>'+
@@ -584,34 +624,37 @@ function abrir(id){var o=S.lista.filter(function(x){return x.id===id})[0];if(!o)
   ['dragleave','drop'].forEach(function(t){$('#shB').addEventListener(t,function(){dz.classList.remove('on')})});
   $('#shB').addEventListener('drop',function(e){if(e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files.length){e.preventDefault();agregarArch(e.dataTransfer.files);dz.scrollIntoView({behavior:'smooth',block:'center'})}});
   (function(){var fc=$('#dCmp');fc=fc&&fc.closest('.card');if(fc)fc.parentNode.insertBefore($('#dSubir'),fc.nextSibling)})();
-  var enviar=function(estado){var c={nota:$('#dNota').value.trim(),fotos:ev,docs:dc.map(function(d){return {nombre:d.nombre,mime:d.mime,b64:d.b64}}),logo:LOGO};if(estado)c.estado=estado;if(o.tipo==='Negativa'){c.accion=$('#dAcc').value.trim();c.responsable=$('#dResp').value.trim();c.plazo=aDMA($('#dPla').value);if($('#ePri').value!==o.prioridad)c.prioridad=$('#ePri').value}
+  var enviar=function(estado,extra){var c={nota:$('#dNota').value.trim(),fotos:ev,docs:dc.map(function(d){return {nombre:d.nombre,mime:d.mime,b64:d.b64}}),logo:LOGO};if(estado)c.estado=estado;if(extra)for(var kx in extra)c[kx]=extra[kx];if(o.tipo==='Negativa'){c.accion=$('#dAcc').value.trim();c.responsable=$('#dResp').value.trim();c.plazo=aDMA($('#dPla').value);if($('#ePri').value!==o.prioridad)c.prioridad=$('#ePri').value}
     if($('#eCat').value!==o.categoria)c.categoria=$('#eCat').value;if($('#eSuc').value!==o.sucursal)c.sucursal=$('#eSuc').value;if($('#eLug').value.trim()!==String(o.lugar||''))c.lugar=$('#eLug').value.trim();
     var ds=$('#eDes').value.trim();if(ds&&ds!==o.descripcion){if(ds.length<5){faltaEn($('#eDes'),'La descripción es muy corta.',true);return}c.descripcion=ds}
     $('#dMsg').className='msg';$('#dMsg').textContent='Guardando…';apiS('obsActualizar',[o.id,c]).then(function(rr){$('#dMsg').className='msg o';$('#dMsg').textContent='Guardado.';
       return traerLista(true).then(function(l){S.lista=l;pintarPend();pintarMatriz();pintarCerr();var sc=$('#shB').scrollTop;abrir(o.id);$('#shB').scrollTop=sc;mostrarCierre(o.id,rr)})}).catch(function(e){$('#dMsg').className='msg e';$('#dMsg').textContent=e.message})};
   $('#dGuardar').onclick=function(){enviar('')};
-  if($('#dCerrarYa'))$('#dCerrarYa').onclick=function(){$('#dCerrar').onclick()};
+  if($('#dCerrarYa'))$('#dCerrarYa').onclick=function(){$('#dCerrar').onclick.call(this)};
   if($('#dCerrar'))$('#dCerrar').onclick=function(){if(!ev.length&&!conMejora&&o.estado!=='Corregida (por verificar)'){faltaEn($('#dDrop'),'Suba la foto de la mejora (arrástrela al recuadro o tóquelo para buscarla) y vuelva a tocar Cerrar.');return}
-    if(!$('#dNota').value.trim())$('#dNota').value='Mejora implementada y verificada en terreno.';enviar('Cerrada')};
+    if(!$('#dNota').value.trim())$('#dNota').value='Mejora implementada y verificada en terreno.';
+    var bt=this&&this.classList?this:($('#dCerrarYa')||$('#dCerrar'));
+    elegirCierre(o,function(sel){ultBtn=bt;ultT=Date.now();enviar('Cerrada',sel.length?{cierreA:sel}:{avisoCierre:false})})};
   fotosDetalle(o);
   $$('#dMas [data-d]').forEach(function(b){b.onclick=function(){var n=+b.dataset.d,nuevo=masDias(o.plazo,n);$('#dPla').value=aISO(nuevo);
-    var t='Plazo extendido del '+(o.plazo||'—')+' al '+nuevo+' (+'+n+' días).';$('#dNota').value=$('#dNota').value.trim()?$('#dNota').value.trim()+' '+t:t;enviar('')}});if($('#dSig'))$('#dSig').onclick=function(){enviar(sig)};
+    var t='Plazo extendido del '+(o.plazo||'—')+' al '+nuevo+' (+'+n+' días).';$('#dNota').value=$('#dNota').value.trim()?$('#dNota').value.trim()+' '+t:t;enviar('')}});if($('#dSig'))$('#dSig').onclick=function(){if(sig==='Cerrada'&&o.tipo==='Negativa'&&$('#dCerrar'))$('#dCerrar').onclick.call(this);else enviar(sig)};
   /* volver a avisar */
   var rd=[],addR=function(x){if(!x||!x.nombre||rd.some(function(y){return nk(y.nombre)===nk(x.nombre)}))return;rd.push(x);pintR()};
   var pintR=function(){$('#rList').innerHTML=rd.map(function(x,i){if((sug||[]).some(function(w){return nk(w.n)===nk(x.nombre)}))return '';return '<div class="dr"><span style="flex:1"><b>'+esc(x.nombre)+'</b><small>'+(x.correo?'✉️ '+esc(x.correo):'✉️ sin correo')+' · '+(x.telefono?'📱 '+esc(x.telefono):'📱 sin WhatsApp')+'</small></span><button class="btn gh sm" data-q="'+i+'">Quitar</button></div>'}).join('');
     $$('#rList [data-q]').forEach(function(b){b.onclick=function(){rd.splice(+b.dataset.q,1);pintR()}});
     $$('#rSug [data-s]').forEach(function(b){var w=sug[+b.dataset.s],on=rd.some(function(y){return nk(y.nombre)===nk(w.n)});b.classList.toggle('on',on);b.firstChild.textContent=(on?'✔ ':'+ ')+w.n.split(' ').slice(0,2).join(' ')+' '});
-    $('#rEnv').textContent=rd.length?'✉️ Enviar a '+rd.length+' persona'+(rd.length>1?'s':'')+' (correo y WhatsApp)':'✉️ Enviar por correo y preparar WhatsApp'};
+    var cie=o.estado==='Cerrada'&&o.tipo==='Negativa';$('#rEnv').textContent=rd.length?(cie?'✅ Enviar aviso de cierre a ':'✉️ Enviar a ')+rd.length+' persona'+(rd.length>1?'s':'')+' (correo y WhatsApp)':(cie?'✅ Enviar aviso de cierre (marque a alguien)':'✉️ Enviar por correo y preparar WhatsApp')};
   var nom=(S.ini&&S.ini.nomina)||[],sug=nom.filter(function(w){return (nk(w.s)===nk(o.sucursal)&&RX_JEF.test(nk(w.c)))||RX_GG.test(nk(w.c))}).filter(function(w){return w.m||w.t}).slice(0,10);
   $('#rSug').innerHTML=sug.map(function(w,i){return '<button class="chip" data-s="'+i+'">+ '+esc(w.n.split(' ').slice(0,2).join(' '))+' <small>'+esc(w.c)+'</small></button>'}).join('');
   $$('#rSug [data-s]').forEach(function(b){b.onclick=function(e){e.preventDefault();var w=sug[+b.dataset.s],k=-1;rd.forEach(function(y,i){if(nk(y.nombre)===nk(w.n))k=i});if(k>-1){rd.splice(k,1);pintR()}else addR({nombre:w.n,cargo:w.c,correo:w.m,telefono:w.t})}});
   autoNom($('#rBus'),$('#rRes'),function(w){addR({nombre:w.n,cargo:w.c,correo:w.m,telefono:w.t});$('#rBus').value=''});
+  pintR();
   $('#rManBtn').onclick=function(){$('#rMan').classList.toggle('hide')};
   $('#rOk').onclick=function(){var n=$('#rN').value.trim(),m=$('#rM').value.trim(),t=$('#rT').value.trim();$('#rMsg').className='msg e';
     if(n.split(/\s+/).length<2){faltaEn($('#rN'),'Escriba nombre y apellido.',true);return}if(m&&!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m)){faltaEn($('#rM'),'Revise el correo.',true);return}if(!m&&!t){faltaEn($('#rM'),'Escriba un correo o un WhatsApp.',true);return}
     $('#rMsg').textContent='';addR({nombre:n,cargo:'Agregado manualmente',correo:m,telefono:t});['#rN','#rM','#rT'].forEach(function(s){$(s).value=''});$('#rMan').classList.add('hide')};
   $('#rEnv').onclick=function(){if(!rd.length){faltaEn($('#rBus'),'Agregue al menos una persona a quien avisar.',true);return}var b=this;b.disabled=true;$('#rMsg').className='msg';$('#rMsg').textContent='Enviando…';
-    apiS('obsReavisar',[o.id,rd]).then(function(r){$('#rMsg').className='msg o';$('#rMsg').textContent='Aviso enviado'+(r.enviados&&r.enviados.length?' por correo a: '+r.enviados.join(', '):'')+'.';
+    apiS(o.estado==='Cerrada'&&o.tipo==='Negativa'?'obsReenviarCierre':'obsReavisar',[o.id,rd]).then(function(r){$('#rMsg').className='msg o';$('#rMsg').textContent=(o.estado==='Cerrada'?'Aviso de cierre enviado':'Aviso enviado')+(r.enviados&&r.enviados.length?' por correo a: '+r.enviados.join(', '):'')+'.';
       $('#rWa').innerHTML=(r.whatsapp||[]).map(function(w){return '<a class="btn ve waLog" data-id="'+esc(o.id)+'" data-n="'+esc(w.nombre)+'" data-t="'+esc(w.telefono)+'" target="_blank" rel="noopener" href="https://wa.me/'+waNum(w.telefono)+'?text='+encodeURIComponent(w.texto)+'">📱 WhatsApp a '+esc(w.nombre.split(' ').slice(0,2).join(' '))+'</a>'}).join('');
       rd=[];pintR();refrescarHist(o.id)}).catch(function(e){$('#rMsg').className='msg e';$('#rMsg').textContent=e.message}).finally(function(){b.disabled=false})};
   /* eliminar: a la papelera, con segundo toque de confirmación */
@@ -637,6 +680,9 @@ function accionCorreo(){if(!QA)return;var qa=QA;QA=null;try{var u=new URL(locati
     else if(qa.acc==='cerrar'){txt='Verificar y cerrar esta observación.';c={estado:'Cerrada',nota:'Verificado y cerrado (desde el correo de seguimiento).'}}
     else if(qa.acc==='devolver'){txt='Devolver a corrección: la corrección no quedó bien.';c={estado:'En corrección',nota:'Devuelto a corrección: la corrección informada no se verificó (desde el correo de seguimiento).'}}
     if(!c)return;
+    if(qa.acc==='cerrar'&&o.tipo==='Negativa'){elegirCierre(o,function(sel){if(sel.length)c.cierreA=sel;else c.avisoCierre=false;cargando(true);var rr=null;
+      apiS('obsActualizar',[o.id,c]).then(function(x){rr=x;return traerLista(true)}).then(function(l2){S.lista=l2;pintarPend();pintarMatriz();pintarCerr();abrir(o.id);mostrarCierre(o.id,rr)})
+      .catch(function(e){faltaEn(null,e.message)}).finally(function(){cargando(false)})});return}
     var box=document.createElement('div');box.className='card';box.style.cssText='border:2px solid var(--na);background:#fff7ec';
     box.innerHTML='<span class="l">Acción rápida desde el correo</span><p><b>'+esc(txt)+'</b></p><div class="dos"><button class="btn na" id="qaOk">Confirmar</button><button class="btn gh" id="qaNo">Cancelar</button></div><p class="msg" id="qaMsg"></p>';
     $('#shB').insertBefore(box,$('#shB').firstChild);$('#shB').scrollTop=0;
