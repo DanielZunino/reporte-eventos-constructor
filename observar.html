@@ -28,6 +28,17 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 .btn.na{background:var(--na)}.btn.ve{background:var(--ve)}.btn.gh{background:#fff;color:var(--az);border:1.5px solid var(--az)}
 .btn.sm{min-height:40px;font-size:14px;padding:6px 12px}.btn.w{width:100%}
 .btn:disabled{opacity:.5}
+/* se nota al presionar: se hunde, se oscurece y vibra; mientras trabaja muestra una ruedita; al terminar, borde verde (o rojo si falló) */
+.btn{position:relative}
+.btn,.chip,button{transition:transform .08s ease,filter .08s ease,box-shadow .2s ease;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.btn:active,.chip:active,button:active,.pulsado{transform:scale(.95);filter:brightness(.85)}
+.btn.ocupado{pointer-events:none;color:transparent!important}
+.btn.ocupado>*{visibility:hidden}
+.btn.ocupado::after{content:'';position:absolute;left:50%;top:50%;width:20px;height:20px;margin:-10px 0 0 -10px;border:3px solid #fff;border-right-color:transparent;border-radius:50%;animation:gira .7s linear infinite}
+.btn.gh.ocupado::after{border-color:var(--az);border-right-color:transparent}
+.btn.hecho{box-shadow:0 0 0 4px rgba(46,125,50,.45)}
+.btn.fallo{box-shadow:0 0 0 4px rgba(198,40,40,.5)}
+@keyframes gira{to{transform:rotate(360deg)}}
 .dos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .tipo{min-height:92px;font-size:18px;flex-direction:column;border:2.5px solid var(--bo);background:#fff;color:var(--tx)}
 .tipo b{font-size:30px}.tipo small{display:block;font-size:12px;font-weight:400;color:var(--mu);margin-top:2px;line-height:1.25}
@@ -250,7 +261,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 <script src="portal-integra-fuente/logos.js"></script>
 <script>
 /* auto-actualización: si hay una versión nueva publicada, la página se recarga sola (así nunca queda una versión vieja guardada en el celular) */
-var PAG_VER='44';
+var PAG_VER='45';
 (function(){try{fetch(location.pathname+'?n='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=t.match(/PAG_VER='(\d+)'/);
   if(m&&m[1]!==PAG_VER){var k='obsRec'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){}var u=new URL(location.href);u.searchParams.set('v',m[1]);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();
 var API='https://script.google.com/macros/s/AKfycbyFetoPIT053n1kiihmhFB5XhUF9sti1t96umwnhKn2rIe2oseukyDzn1EZCLtHV7Qx/exec';
@@ -261,7 +272,15 @@ function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){retur
 function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null)localStorage.removeItem(k);else localStorage.setItem(k,v)}catch(e){return null}}
 function cargando(on){$('#load').classList.toggle('hide',!on)}
 function api(fn,args){return fetch(API,{method:'POST',credentials:'omit',redirect:'follow',body:JSON.stringify({fn:fn,args:args||[]})}).then(function(r){return r.json()}).then(function(j){if(!j.ok)throw new Error(j.e);return j.r})}
-function apiS(fn,args){return api(fn,[S.tk].concat(args||[])).catch(function(e){
+/* respuesta visible al tocar: hundido + vibración corta; si el toque dispara una acción, el botón muestra la ruedita hasta que termina */
+var ultBtn=null,ultT=0;
+document.addEventListener('pointerdown',function(e){var b=e.target.closest&&e.target.closest('.btn,.chip,button');if(!b||b.disabled)return;b.classList.add('pulsado');setTimeout(function(){b.classList.remove('pulsado')},170);try{if(navigator.vibrate)navigator.vibrate(12)}catch(x){}},true);
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('.btn,button');if(b){ultBtn=b;ultT=Date.now()}},true);
+function marcar(p){var b=ultBtn&&Date.now()-ultT<600&&document.contains(ultBtn)&&ultBtn.classList.contains('btn')?ultBtn:null;ultBtn=null;if(!b)return p;b.classList.add('ocupado');
+  var fin=function(c){b.classList.remove('ocupado');b.classList.add(c);setTimeout(function(){b.classList.remove(c)},1300)};
+  return p.then(function(r){fin('hecho');return r},function(e){fin('fallo');throw e})}
+function apiS(fn,args){return marcar(apiS0(fn,args))}
+function apiS0(fn,args){return api(fn,[S.tk].concat(args||[])).catch(function(e){
   if(/SESION/.test(e.message)&&ls('obs_u')){return api('login',[ls('obs_u'),ls('obs_c')]).then(function(r){S.tk=r.token;ls('obs_tk',r.token);return api(fn,[S.tk].concat(args||[]))})}
   throw e})}
 function rutK(s){return String(s||'').toUpperCase().replace(/[^0-9K]/g,'').replace(/^0+/,'')}
