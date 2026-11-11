@@ -113,6 +113,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 .arch .dc{display:flex;align-items:center;gap:6px;border:1px solid var(--bo);border-radius:8px;padding:8px 12px;font-size:13px;max-width:250px;background:#fff;min-height:44px;word-break:break-word}
 .arch .q{position:absolute;top:-7px;right:-7px;width:22px;height:22px;border-radius:50%;border:0;background:var(--ro);color:#fff;font-weight:700;cursor:pointer;line-height:22px;padding:0;font-size:13px}
 .docs a{display:flex;gap:8px;align-items:center;border:1px solid var(--bo);border-radius:9px;padding:9px 11px;margin-top:6px;text-decoration:none;color:var(--tx);font-size:13.5px;background:#fff}.docs a small{color:var(--mu);margin-left:auto;white-space:nowrap}
+.cmp img.chica{width:31%;display:inline-block;margin:0 2% 6px 0;aspect-ratio:1/1}
 .cmp .de .fph.sube{cursor:pointer;border:2px dashed var(--ve);color:var(--ve);font-weight:700;background:#f3faf4}
 .hide{display:none!important}
 .vacio{text-align:center;color:var(--mu);padding:26px 12px;border:1.5px dashed var(--bo);border-radius:12px;background:#fff}
@@ -247,7 +248,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 <script src="portal-integra-fuente/logos.js"></script>
 <script>
 /* auto-actualización: si hay una versión nueva publicada, la página se recarga sola (así nunca queda una versión vieja guardada en el celular) */
-var PAG_VER='37';
+var PAG_VER='38';
 (function(){try{fetch(location.pathname+'?n='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=t.match(/PAG_VER='(\d+)'/);
   if(m&&m[1]!==PAG_VER){var k='obsRec'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){}var u=new URL(location.href);u.searchParams.set('v',m[1]);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();
 var API='https://script.google.com/macros/s/AKfycbyFetoPIT053n1kiihmhFB5XhUF9sti1t96umwnhKn2rIe2oseukyDzn1EZCLtHV7Qx/exec';
@@ -492,7 +493,7 @@ function histLi(h){var x=h.x||{},tg=x.tipo==='correo'?'✉️ Correo enviado':x.
 
 /* ---------- fotos del detalle (antes / después) ---------- */
 function fotosDetalle(o){var id=o.id;apiS('obsFotos',[id]).then(function(r){var c=$('#dCmp');if(!c||$('#shT').textContent!==id)return;
-  var im=function(l,vacio){return l.length?l.map(function(x){return '<img src="'+x.u+'" alt="Foto"'+(x.f?' title="'+esc(x.f)+'"':'')+'>'}).join(''):'<div class="fph">'+vacio+'</div>'};
+  var im=function(l,vacio){return l.length?l.map(function(x,i){return '<img src="'+x.u+'" alt="Foto"'+(i?' class="chica"':'')+(x.f?' title="'+esc(x.f)+'"':'')+'>'}).join(''):'<div class="fph">'+vacio+'</div>'};
   if(o.tipo!=='Negativa'){c.style.gridTemplateColumns='1fr';c.innerHTML='<div>'+im(r.antes.concat(r.despues),'Sin fotos')+'</div>';}
   else{c.querySelector('.an').innerHTML='<h4>ANTES · '+esc(o.fecha)+'</h4>'+im(r.antes,'Sin foto del registro');
     c.querySelector('.de').innerHTML='<h4>DESPUÉS'+(r.cerrada?' · '+esc(r.cerrada):'')+'</h4>'+im(r.despues,o.abierta?'📷 Aún sin foto de la mejora.<br>Toque aquí para subirla.':'Sin foto de la mejora');var sp=c.querySelector('.de .fph');if(sp&&o.abierta){sp.classList.add('sube');sp.onclick=function(){$('#dFot').click()}}}
