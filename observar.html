@@ -70,7 +70,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 .item .t span:first-child{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .item .row{display:flex;gap:10px;align-items:flex-start}.item .tx{flex:1;min-width:0}
 .mi{width:64px;height:64px;flex:none;border-radius:8px;background:#eef2f8 center/cover no-repeat;border:1px solid var(--bo);display:flex;align-items:center;justify-content:center;color:#8a94a6;font-size:11px;text-align:center;line-height:1.1}
-.mi.ok{font-size:0}
+.mi.ok{font-size:0;cursor:zoom-in}
+#zoomMini{position:fixed;z-index:9999;width:300px;height:300px;border-radius:12px;background:#fff center/contain no-repeat;box-shadow:0 8px 28px rgba(0,0,0,.35);border:3px solid #fff;pointer-events:none;display:none}
 .item .s{display:block;font-size:13.5px;color:var(--mu);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
 .pill{font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:12px;background:var(--gr);color:var(--az);white-space:nowrap;flex:none}
 .pill.v{background:#ffebee;color:var(--ro)}.pill.c{background:#e8f5e9;color:var(--ve)}
@@ -217,7 +218,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 <script src="portal-integra-fuente/logos.js"></script>
 <script>
 /* auto-actualización: si hay una versión nueva publicada, la página se recarga sola (así nunca queda una versión vieja guardada en el celular) */
-var PAG_VER='33';
+var PAG_VER='34';
 (function(){try{fetch(location.pathname+'?n='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=t.match(/PAG_VER='(\d+)'/);
   if(m&&m[1]!==PAG_VER){var k='obsRec'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){}var u=new URL(location.href);u.searchParams.set('v',m[1]);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();
 var API='https://script.google.com/macros/s/AKfycbyFetoPIT053n1kiihmhFB5XhUF9sti1t96umwnhKn2rIe2oseukyDzn1EZCLtHV7Qx/exec';
@@ -535,6 +536,12 @@ function vistaJefatura(tk){ver('jef');var v=$('#v-jef');v.innerHTML='<div class=
 /* ---------- arranque ---------- */
 (function(){var q=new URLSearchParams(location.search);if(q.get('s')){vistaJefatura(q.get('s'));return}
   S.tk=ls('obs_tk')||'';if(S.tk||ls('obs_u')){iniciar()}else ver('login')})();
+/* ---------- miniatura grande al pasar el cursor ---------- */
+(function(){var z=document.createElement('div');z.id='zoomMini';document.body.appendChild(z);
+  document.addEventListener('mouseover',function(e){var m=e.target.closest&&e.target.closest('.mi.ok');if(!m){z.style.display='none';return}
+    var r=m.getBoundingClientRect(),w=300,x=r.right+10,y=Math.max(8,Math.min(r.top-20,innerHeight-w-8));if(x+w>innerWidth-8)x=Math.max(8,r.left-w-10);
+    z.style.backgroundImage=m.style.backgroundImage;z.style.left=x+'px';z.style.top=y+'px';z.style.display='block'});
+  window.addEventListener('scroll',function(){z.style.display='none'},true)})();
 </script>
 </body>
 </html>
