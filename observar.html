@@ -261,7 +261,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--az)}
 <script src="portal-integra-fuente/logos.js"></script>
 <script>
 /* auto-actualización: si hay una versión nueva publicada, la página se recarga sola (así nunca queda una versión vieja guardada en el celular) */
-var PAG_VER='48';
+var PAG_VER='49';
 (function(){try{fetch(location.pathname+'?n='+Date.now(),{cache:'no-store'}).then(function(r){return r.text()}).then(function(t){var m=t.match(/PAG_VER='(\d+)'/);
   if(m&&m[1]!==PAG_VER){var k='obsRec'+m[1];try{if(sessionStorage.getItem(k))return;sessionStorage.setItem(k,'1')}catch(e){}var u=new URL(location.href);u.searchParams.set('v',m[1]);location.replace(u.toString())}}).catch(function(){})}catch(e){}})();
 var API='https://script.google.com/macros/s/AKfycbyFetoPIT053n1kiihmhFB5XhUF9sti1t96umwnhKn2rIe2oseukyDzn1EZCLtHV7Qx/exec';
@@ -373,15 +373,30 @@ function pintarFirmas(forzar){var k=S.pers.map(function(p){return p.nombre}).joi
 S.dsel={};S.dest=[];
 function nk(s){return String(s||'').toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ').trim()}
 var RX_GG=/GERENTE GENERAL|GERENCIA GENERAL|SUBGERENTE GENERAL|REPRESENTANTE LEGAL/, RX_JEF=/GERENTE|JEFE|JEFA|SUPERVISOR|ENCARGAD|ADMINISTRADOR|COORDINADOR/;
+/* sugeridos para avisar: siempre gerencia general, Patricio, Mario (y usted, si corresponde); después las jefaturas de la sucursal.
+   Aprende solo: cuenta a quién se ha avisado en todos los casos (más peso si es de la misma sucursal) y ordena por eso */
+var FIJOS=['PATRICIO ANDRES PIZARRO','MARIO ALEXIS GONZALEZ'];
+function frecAvisos(){var l=S.lista||[],clave=l.length+'|'+l.reduce(function(a,o){return a+(o.historial||[]).length},0);if(S._fa&&S._faK===clave)return S._fa;var F={};
+  l.forEach(function(o){var vis={},su=nk(o.sucursal),add=function(n){n=String(n||'').replace(/<.*$/,'').replace(/\(.*\)\s*$/,'').trim();var k=nk(n);if(!k||/@/.test(n)||vis[k])return;vis[k]=1;var e=F[k]||(F[k]={g:0,s:{}});e.g++;e.s[su]=(e.s[su]||0)+1};
+    String(o.avisado||'').split(/\s*,\s*/).forEach(add);
+    (o.historial||[]).forEach(function(h){var x=h.x||{};if(/^Correo a /.test(h.por||''))String(h.por).replace(/^Correo a /,'').split(/\s*,\s*/).forEach(add);if((x.tipo==='correo'||x.tipo==='whatsapp')&&x.para)String(x.para).split(/\s*,\s*/).forEach(add)})});
+  S._fa=F;S._faK=clave;return F}
+function sugeridos(suc,conYo){var nom=(S.ini&&S.ini.nomina)||[],F=frecAvisos(),out=[],vis={},yo=(S.ini&&S.ini.u)||{},su=nk(suc);
+  var push=function(w,fijo){var k=nk(w.n);if(!k||vis[k]||!(w.m||w.t))return;vis[k]=1;var f=F[k]||{g:0,s:{}};out.push({n:w.n,c:w.c||'',m:w.m||'',t:w.t||'',s:w.s||'',fijo:fijo,sc:(f.s[su]||0)*2+f.g})};
+  nom.forEach(function(w){if(RX_GG.test(nk(w.c))||FIJOS.some(function(p){return nk(w.n).indexOf(p)===0}))push(w,true)});
+  if(conYo)push({n:yo.nombre||'Daniel Zunino Urrutia',c:'Usted · Prevención de Riesgos',m:yo.correo||'zunino.prevencion@gmail.com',t:''},true);
+  nom.forEach(function(w){var f=F[nk(w.n)];if((nk(w.s)===su&&RX_JEF.test(nk(w.c)))||(f&&f.g>=2))push(w,false)});
+  var ord=function(a,b){return b.sc-a.sc||((/GERENTE/.test(nk(b.c))?1:0)-(/GERENTE/.test(nk(a.c))?1:0))};
+  return out.filter(function(x){return x.fijo}).sort(ord).concat(out.filter(function(x){return !x.fijo}).sort(ord)).slice(0,12)}
 function pintarAvisos(){if(!S.ini)return;var vis={},grupos=[],suc=$('#suc').value;
   var add=function(g,x,def){var k=nk(x.nombre);if(!k||vis[k])return;vis[k]=1;g.items.push({k:k,nombre:x.nombre,cargo:x.cargo||'',correo:String(x.correo||'').trim(),telefono:String(x.telefono||'').trim(),def:def})};
   var g0={t:'Agregados por usted',items:[]};(S.extra||[]).forEach(function(x){add(g0,x,true)});
   var g1={t:'Jefatura de las personas',items:[]};S.pers.forEach(function(p){(p.ficha&&p.ficha.jefaturas||[]).forEach(function(x){add(g1,x,true)})});
   var g2={t:'Responsable',items:[]};if($('#resp').value.trim())add(g2,{nombre:$('#resp').value.trim(),cargo:'Responsable de la acción',correo:$('#respMail').value,telefono:$('#respTel').value},true);
   var nom=S.ini.nomina||[];
-  var g3={t:'Jefaturas de '+(suc||'la sucursal'),items:[]};nom.filter(function(w){return nk(w.s)===nk(suc)&&RX_JEF.test(nk(w.c))&&!RX_GG.test(nk(w.c))}).slice(0,10).forEach(function(w){add(g3,{nombre:w.n,cargo:w.c,correo:w.m,telefono:w.t},!S.pers.length&&/GERENTE/.test(nk(w.c)))});
-  var g4={t:'Gerencia general',items:[]};nom.filter(function(w){return RX_GG.test(nk(w.c))}).slice(0,6).forEach(function(w){add(g4,{nombre:w.n,cargo:w.c,correo:w.m,telefono:w.t},false)});
-  grupos=[g0,g1,g2,g3,g4].filter(function(g){return g.items.length});
+  var g3={t:'Sugeridos (los más avisados primero)',items:[]};sugeridos(suc,false).forEach(function(w){add(g3,{nombre:w.n,cargo:w.c,correo:w.m,telefono:w.t},!S.pers.length&&!w.fijo&&nk(w.s)===nk(suc)&&/GERENTE/.test(nk(w.c))&&!RX_GG.test(nk(w.c)))});
+  var g4={t:'',items:[]};
+  grupos=[g0,g1,g2,g3].filter(function(g){return g.items.length});
   $('#dest').innerHTML=grupos.length?grupos.map(function(g){return '<div class="dg">'+esc(g.t)+'</div>'+g.items.map(function(x){var ok=!!(x.correo||x.telefono),on=ok&&(S.dsel[x.k]!==undefined?S.dsel[x.k]:x.def);
     return '<label class="dr'+(ok?'':' off')+'"><input type="checkbox" data-k="'+esc(x.k)+'"'+(on?' checked':'')+(ok?'':' disabled')+'><span><b>'+esc(x.nombre)+'</b><small>'+esc(x.cargo)+'</small><small>'+(x.correo?'✉️ '+esc(x.correo):'✉️ sin correo')+' · '+(x.telefono?'📱 '+esc(x.telefono):'📱 sin WhatsApp')+'</small></span></label>'}).join('')}).join(''):'<p class="hint">No hay sugerencias para esta sucursal.</p>';
   var todos=[].concat.apply([],grupos.map(function(g){return g.items}));
@@ -530,7 +545,7 @@ function candidatosCierre(o){var nom=(S.ini&&S.ini.nomina)||[],yo=nk(S.ini&&S.in
     if(/^Correo a /.test(h.por||''))String(h.por).replace(/^Correo a /,'').split(/\s*,\s*/).forEach(function(n){add(n,'','','',true)});
     if(x.tipo==='correo'&&x.para&&!/aviso de cierre/i.test(h.por||''))String(x.para).split(/\s*,\s*/).forEach(function(t){var mm=t.match(/[\w.+-]+@[\w-]+(\.[\w-]+)+/);add(t.replace(/<.*$/,'').replace(/[\w.+-]+@[\w-]+(\.[\w-]+)+/,'').trim(),mm?mm[0]:'','','',true)})});
   if(o.responsable)add(o.responsable,'','','',true);
-  nom.filter(function(w){return (nk(w.s)===nk(o.sucursal)&&RX_JEF.test(nk(w.c)))||RX_GG.test(nk(w.c))}).filter(function(w){return w.m||w.t}).slice(0,10).forEach(function(w){add(w.n,w.m,w.t,w.c,false)});
+  sugeridos(o.sucursal,false).forEach(function(w){add(w.n,w.m,w.t,w.c,false)});
   return out}
 function elegirCierre(o,ok){var L=candidatosCierre(o),m=document.createElement('div');m.className='sheet';m.style.cssText='z-index:40;align-items:center';
   m.innerHTML='<div class="card" style="max-width:520px;width:calc(100% - 24px);max-height:88vh;overflow:auto;margin:0">'+
@@ -654,7 +669,7 @@ function abrir(id){var o=S.lista.filter(function(x){return x.id===id})[0];if(!o)
     $$('#rList [data-q]').forEach(function(b){b.onclick=function(){rd.splice(+b.dataset.q,1);pintR()}});
     $$('#rSug [data-s]').forEach(function(b){var w=sug[+b.dataset.s],on=rd.some(function(y){return nk(y.nombre)===nk(w.n)});b.classList.toggle('on',on);b.firstChild.textContent=(on?'✔ ':'+ ')+w.n.split(' ').slice(0,2).join(' ')+' '});
     var cie=o.estado==='Cerrada'&&o.tipo==='Negativa';$('#rEnv').textContent=rd.length?(cie?'✅ Enviar aviso de cierre a ':'✉️ Enviar a ')+rd.length+' persona'+(rd.length>1?'s':'')+' (correo y WhatsApp)':(cie?'✅ Enviar aviso de cierre (marque a alguien)':'✉️ Enviar por correo y preparar WhatsApp')};
-  var nom=(S.ini&&S.ini.nomina)||[],sug=nom.filter(function(w){return (nk(w.s)===nk(o.sucursal)&&RX_JEF.test(nk(w.c)))||RX_GG.test(nk(w.c))}).filter(function(w){return w.m||w.t}).slice(0,10);
+  var nom=(S.ini&&S.ini.nomina)||[],sug=sugeridos(o.sucursal,true);
   $('#rSug').innerHTML=sug.map(function(w,i){return '<button class="chip" data-s="'+i+'">+ '+esc(w.n.split(' ').slice(0,2).join(' '))+' <small>'+esc(w.c)+'</small></button>'}).join('');
   $$('#rSug [data-s]').forEach(function(b){b.onclick=function(e){e.preventDefault();var w=sug[+b.dataset.s],k=-1;rd.forEach(function(y,i){if(nk(y.nombre)===nk(w.n))k=i});if(k>-1){rd.splice(k,1);pintR()}else addR({nombre:w.n,cargo:w.c,correo:w.m,telefono:w.t})}});
   autoNom($('#rBus'),$('#rRes'),function(w){addR({nombre:w.n,cargo:w.c,correo:w.m,telefono:w.t});$('#rBus').value=''});
