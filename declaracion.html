@@ -118,16 +118,23 @@ function pad(id){
 }
 
 function val(i){var e=$(i);return e?e.value.trim():''}
+function aviso(t){var o=document.getElementById('avisoBox');if(o)o.remove();var d=document.createElement('div');d.id='avisoBox';
+  d.style.cssText='position:fixed;left:50%;top:18%;transform:translateX(-50%);z-index:99999;background:#fff;border:3px solid #f28c28;border-radius:12px;padding:16px 18px;max-width:92vw;width:360px;box-shadow:0 8px 30px rgba(0,0,0,.35);font-size:16px;color:#1f2733;font-family:Arial,sans-serif';
+  var m=document.createElement('div');m.style.marginBottom='12px';m.textContent=t;var b=document.createElement('button');b.textContent='Entendido';
+  b.style.cssText='width:100%;padding:12px;font-size:16px;border:0;border-radius:8px;background:#0b3d91;color:#fff;font-weight:bold';b.onclick=function(){d.remove()};d.appendChild(m);d.appendChild(b);document.body.appendChild(d)}
+function rutOk(r){r=String(r||'').toUpperCase().replace(/[^0-9K]/g,'');if(r.length<2)return false;var c=r.slice(0,-1),dv=r.slice(-1),sum=0,m=2;if(!/^\d+$/.test(c))return false;
+  for(var i=c.length-1;i>=0;i--){sum+=+c[i]*m;m=m===7?2:m+1}var e=11-(sum%11);e=e===11?'0':e===10?'K':String(e);return e===dv}
 function enviar(){
-  if(!val('relato')){alert('Falta el relato.');return}
-  if(PD.vacio()){alert('Falta la firma del declarante.');return}
-  if(PT.vacio()){alert('Falta la firma de quien toma la declaración.');return}
-  if(!$('conf').checked){alert('Marca la casilla de conformidad.');return}
+  if(val('run')&&!rutOk(val('run'))){aviso('El RUN no es válido. Revise los números y el dígito verificador.');return}
+  if(!val('relato')){aviso('Falta el relato.');return}
+  if(PD.vacio()){aviso('Falta la firma del declarante.');return}
+  if(PT.vacio()){aviso('Falta la firma de quien toma la declaración.');return}
+  if(!$('conf').checked){aviso('Marca la casilla de conformidad.');return}
   var b=$('enviar');b.disabled=true;b.textContent='Guardando... no cierres esta página';
   google.script.run.withSuccessHandler(function(r){
     window.scrollTo(0,0);
     msg('<b>✔ Declaración firmada y guardada en el caso '+esc(r.id)+'.</b><br><br>Ya puedes cerrar esta página.','ok');
-  }).withFailureHandler(function(e){b.disabled=false;b.textContent='✍ Firmar y guardar declaración';alert('Error: '+e.message)})
+  }).withFailureHandler(function(e){b.disabled=false;b.textContent='✍ Firmar y guardar declaración';aviso('Error: '+e.message)})
   .firmarDeclaracion(TK,{run:val('run'),cargo:val('cargo'),labor:val('labor'),habitual:HAB,deporte:val('deporte'),relato:val('relato'),firmaD:PD.png(),firmaT:PT.png()});
 }
 </script>
