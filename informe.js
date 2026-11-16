@@ -205,7 +205,8 @@ var dot = vacio(d.hombres) && vacio(d.mujeres) ? 'No informada' : (s(d.hombres) 
 var b1 = [sec('Datos generales del evento'), kv([['Fecha del evento', dma(d.fechaDMA || d.fecha)], ['Hora aproximada', horaTxt],
 lugarEv(d), ['Área / lugar exacto', ni(d.area)], ['Horario de trabajo ese día', horario],
 ['Dotación de la sucursal', dot], ['Dirección del lugar', ni(d.lugarDireccion, true)],
-d.gravedad ? ['Gravedad', d.gravedad] : null])];
+d.gravedad ? ['Gravedad', d.gravedad] : null,
+(d.afectados || []).length ? ['Otras personas afectadas', (d.afectados || []).map(function (a) { return titulo(s(a.nombre)) + (vacio(a.run) ? '' : ' (RUN ' + s(a.run) + ')') + (vacio(a.cargo) ? '' : ', ' + s(a.cargo)); }).join(' · '), 'full'] : null])];
 cont.push({ stack: b1 });
 if (tiene(d, 'Daño material')) {
 cont.push({ stack: [subtitulo('Daño material producido'), kv([
