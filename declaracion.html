@@ -68,7 +68,7 @@ function pintar(r){
   if(r.usada){$('sub').textContent='';msg('Este enlace ya fue usado (la declaración ya está firmada) o no es válido.');return}
   D=r;var af=r.dec.rol==='Afectado',soloLK=r.tipos.length===1&&r.tipos[0]==='Ley Karin';
   $('sub').textContent=r.cliente+' · Caso '+r.id;
-  var h='<div class="info">Lean juntos la declaración antes de firmar. Al enviar, el PDF firmado queda guardado en el caso y el enlace deja de funcionar.</div>';
+  var h='<div class="info">Lean juntos la declaración antes de firmar. Al enviar, el PDF firmado queda guardado en el caso, con la fecha y hora de la firma, y el enlace deja de funcionar. Este enlace puede compartirse con la persona que declara; sirve una sola vez y vence a los 30 días.</div>';
   h+='<div class="card" style="margin-top:12px"><h2>Evento</h2><div class="in"><table>'+
     '<tr><td>Caso</td><td>'+esc(r.id)+'</td></tr><tr><td>Tipo</td><td>'+esc(r.tipos.join(' + '))+'</td></tr>'+
     '<tr><td>Fecha / hora</td><td>'+esc(r.fecha+' '+r.hora)+'</td></tr><tr><td>Lugar</td><td>'+esc(r.area)+'</td></tr>'+
@@ -84,10 +84,8 @@ function pintar(r){
   }
   h+='</div></div>';
   h+='<div class="card"><h2>Relato</h2><div class="in">'+
-    '<details><summary style="cursor:pointer;color:var(--az);font-weight:bold;font-size:14px">Preguntas guía</summary><ol>'+
-    '<li>Relate en orden todo lo que recuerda desde que comenzó la actividad.</li><li>¿Dónde estaba exactamente y qué hacía al momento del hecho?</li>'+
-    '<li>¿Cómo hizo el trabajo, paso a paso?</li><li>¿Cómo estaba el lugar, el equipo y el clima?</li><li>¿Quién estaba a cargo? ¿Qué instrucciones recibió?</li>'+
-    '<li>¿Ha pasado algo parecido antes?</li><li>¿Por qué cree que pasó? ¿Qué se pudo hacer para evitarlo?</li></ol></details>'+
+    '<div class="info" style="margin-bottom:8px">Responda estas preguntas dentro de su relato. Si algo no lo sabe o no lo recuerda, escriba "no sé".</div>'+
+    '<ol style="margin-top:0">'+guia(r.tipos,af).map(function(q){return '<li>'+q+'</li>'}).join('')+'</ol>'+
     '<label>YO, '+esc(r.dec.nombre.toUpperCase())+', DECLARO QUE:</label><textarea id="relato" placeholder="Con sus propias palabras...">'+esc(r.pre.relato)+'</textarea></div></div>';
   h+='<div class="card"><h2>Firmas</h2><div class="in">'+
     '<div class="fh"><b>Firma de '+esc(r.dec.nombre)+'</b><button class="borrar" onclick="PD.borrar()">Borrar</button></div><canvas id="cD"></canvas>'+
@@ -98,6 +96,36 @@ function pintar(r){
   $('m').innerHTML=h;
   if(r.pre.habitual)hab(r.pre.habitual);
   PD=pad('cD');PT=pad('cT');
+}
+function guia(tipos,af){
+  var t=tipos||[],q=[];
+  var tray=t.indexOf('Accidente de trayecto')>-1,trab=t.indexOf('Accidente del trabajo')>-1,dano=t.indexOf('Daño material')>-1,inc=t.indexOf('Incidente / cuasi accidente')>-1,ep=t.indexOf('Posible enfermedad profesional')>-1,lk=t.indexOf('Ley Karin')>-1;
+  var base=!af;
+  if(af&&tray){q.push('¿Venía de su casa al trabajo, volvía del trabajo a su casa, o iba entre dos trabajos? ¿A qué hora salió?');
+    q.push('¿Desde dónde venía y hacia dónde iba? ¿Por qué ruta?');
+    q.push('¿Cómo se movía (a pie, bus, auto, moto, bicicleta, transporte de la empresa)? ¿Iba solo o acompañado?');
+    q.push('¿Dónde ocurrió exactamente (calle, esquina, sector) y a qué hora? ¿Cómo estaba el tránsito, el clima y la luz?');
+    q.push('Relate en orden qué pasó. ¿Hubo otro vehículo o persona involucrada?');
+    q.push('¿Hubo testigos? ¿Llegó Carabineros o dejó constancia? ¿Lo atendieron en un servicio de urgencia? ¿Dónde?');
+    q.push('¿Hizo algún desvío o alguna parada distinta al camino directo? ¿Cuál y por qué?');}
+  if(af&&trab){q.push('Relate en orden todo lo que recuerda desde que comenzó la actividad.');
+    q.push('¿Dónde estaba exactamente y qué hacía al momento del hecho? ¿Cómo hizo el trabajo, paso a paso?');
+    q.push('¿Cómo estaba el lugar, el equipo y el clima? ¿Usaba sus elementos de protección personal?');
+    q.push('¿Quién estaba a cargo? ¿Qué instrucciones recibió?');
+    q.push('¿Qué parte del cuerpo se lesionó y cómo? ¿Qué hizo después y quién lo ayudó?');}
+  if(dano){q.push('¿Qué se dañó (vehículo, equipo, producto, instalación)? ¿De quién es?');
+    q.push('¿Quién lo operaba o lo tenía a cargo en ese momento? ¿Qué se estaba haciendo?');
+    q.push('Relate en orden cómo ocurrió el daño. ¿Había otra persona, vehículo o empresa involucrada?');
+    q.push('¿Cómo era el estado del equipo o del lugar antes (mantención, señalización, visibilidad)?');
+    q.push('¿Alguien resultó lesionado? Si es así, ¿quién?');}
+  if(inc&&!trab&&!tray){q.push('¿Qué estaba pasando justo antes? ¿Qué estuvo a punto de ocurrir?');
+    q.push('¿Por qué no pasó a mayores? ¿Qué podría haber ocurrido?');}
+  if(ep&&af){q.push('¿Qué molestia o síntoma siente y desde cuándo?');q.push('¿Qué tarea hace cuando aparece o empeora? ¿A qué está expuesto (ruido, polvo, químicos, esfuerzo, posturas)?');}
+  if(lk&&af){q.push('¿Qué conductas ocurrieron, cuándo y dónde? ¿Quién las realizó?');q.push('¿Hubo testigos? ¿Ha ocurrido más de una vez? ¿Ha pedido medidas de resguardo?');}
+  if(!af){q.push('Relate en orden lo que usted vio u oyó, y en qué lugar estaba.');q.push('¿Qué hacía la persona afectada justo antes? ¿Quién más estaba presente?');q.push('Diga solo lo que le consta; si supo algo por otra persona, indique quién se lo contó.');}
+  if(!q.length||(af&&!tray&&!trab&&!dano&&!inc&&!ep&&!lk))q.push('Relate en orden todo lo que recuerda desde que comenzó la actividad.');
+  q.push('¿Ha pasado algo parecido antes?');q.push('¿Por qué cree que pasó? ¿Qué se podría hacer para evitarlo?');
+  return q;
 }
 function hab(v){HAB=v;document.querySelectorAll('#hab .chip').forEach(function(c){c.classList.toggle('on',c.textContent===v)})}
 
