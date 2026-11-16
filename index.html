@@ -2033,7 +2033,7 @@ function cargarLibsInforme(){if(LIBS)return LIBS;
   LIBS=(async function(){
     if(!window.pdfMake)await cargaScript('https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.10/pdfmake.min.js');
     if(!window.PDFLib)await cargaScript('https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js');
-    if(!window.Informe)await cargaScript(BASE_PUB+'informe.js?v=6');
+    if(!window.Informe)await cargaScript(BASE_PUB+'informe.js?v=7');
     var FU='https://cdn.jsdelivr.net/npm/@fontsource/lato@5.0.20/files/lato-latin-';
     var F={normal:'400-normal.woff',bold:'700-normal.woff',italics:'400-italic.woff',bolditalics:'700-italic.woff'},vfs={},buf={};
     await Promise.all(Object.keys(F).map(function(k){return fetch(FU+F[k]).then(function(r){if(!r.ok)throw new Error('No se pudo cargar la letra del informe');return r.arrayBuffer()}).then(function(b){buf[k]=b;vfs[F[k]]=bufB64(b)})}));
