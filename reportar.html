@@ -483,7 +483,7 @@ var PASOS={
      '<div class="yo"><div class="nom">'+esc(INV.nombre)+'</div><small>'+esc(CALIDAD[INV.tipo]||'')+'</small></div>'+
      '<label class="l">Tu RUT</label>'+campo('run','12345678-9','text','autocapitalize="characters"')+
      '<label class="l">'+(INV.externo?'¿De dónde eres? (empresa o relación)':'Tu cargo')+'</label>'+campo('cargo',INV.externo?'Ej: cliente, chofer de Transportes X':'Ej: operador de grúa')+altFila();
- },ok:function(){return ((INV.externo||(R.run||'').trim().length>6)&&(R.cargo||'').trim().length>1)||'Escribe tu RUT y tu cargo (o toca "No sé")'}},
+ },ok:function(){var run=(R.run||'').trim();if(!INV.externo&&run.length>6&&!rutOk(run))return 'El RUT no es válido. Revise los números y el dígito verificador (el último, puede ser K).';return ((INV.externo||run.length>6)&&(R.cargo||'').trim().length>1)||'Escriba su RUT y su cargo (o toque "No sé")'}},
  ap_donde:{auto:1,alt:1,campos:['comoSupo'],html:function(){
    var dir=INV.tipo==='directo';
    return titulo(dir?'¿Dónde estabas tú cuando pasó?':'¿Cómo te enteraste de lo que pasó?')+
@@ -558,16 +558,23 @@ var ORDEN_AP=['inicio','ap_datos','ap_donde','ap_vio','relato','fotos','sugerenc
 function ordenActual(){return MODO==='aporte'?ORDEN_AP:MODO==='trab'?ORDEN_TRAB:ORDEN}
 
 // ================== MOTOR ==================
+function rutOk(r){r=String(r||'').toUpperCase().replace(/[^0-9K]/g,'');if(r.length<2)return false;var c=r.slice(0,-1),dv=r.slice(-1),sum=0,m=2;if(!/^\d+$/.test(c))return false;
+  for(var i=c.length-1;i>=0;i--){sum+=+c[i]*m;m=m===7?2:m+1}var e=11-(sum%11);e=e===11?'0':e===10?'K':String(e);return e===dv}
+// Lo que la voz dice: siglas y abreviaturas como palabras
+function hablable(t){return String(t||'').replace(/\bEj\.?:?/g,'por ejemplo').replace(/\bN°/g,'número').replace(/\bAv\./g,'avenida').replace(/\bRUT\b/g,'rut').replace(/\bRUN\b/g,'run')
+  .replace(/\bDIAT\b/g,'diat').replace(/\bDIEP\b/g,'diep').replace(/\bEVA\b/g,'eva').replace(/\bOAL\b/g,'o a ele').replace(/\bAFP\b/g,'a efe pe').replace(/\bACHS\b/g,'a ce hache ese').replace(/\bhrs?\.?\b/gi,'horas').replace(/\bSEREMI\b/g,'seremi')}
+var _UP=null;
 function visible(id){var p=PASOS[id];return !p.ver||p.ver()}
 function pintar(){
-  var p=PASOS[ACT];
+  var p=PASOS[ACT],mismo=(_UP===ACT),y0=window.scrollY;_UP=ACT;
   $('m').innerHTML=p.html();
   var nav=p.nav!==0;$('nav').classList.toggle('hide',!nav);
   if(p.despues)p.despues();
   var vis=ordenActual().filter(visible),i=vis.indexOf(ACT);
   $('prog').style.width=(ACT==='fin'?100:Math.max(3,Math.round((i<0?0:i)/(vis.length-1)*100)))+'%';
   botones();
-  if(VOZ)setTimeout(leer,250);
+  if(mismo)try{window.scrollTo(0,y0)}catch(e){}
+  if(VOZ&&!mismo)setTimeout(leer,250);
 }
 function valido(silencio){var p=PASOS[ACT];if(!p.ok)return true;var r=p.ok();return r===true}
 function botones(){
@@ -617,7 +624,7 @@ var VOZ_PEND=null;function vozLista(){return !navigator.userActivation||navigato
 function hablar(t,mudo){
   if(!vozLista()){VOZ_PEND=t;return}
   if(!window.speechSynthesis){aviso('Este celular no tiene voz disponible');return}
-  var s=speechSynthesis,hecho=false;try{s.cancel()}catch(e){}
+  t=hablable(t);var s=speechSynthesis,hecho=false;try{s.cancel()}catch(e){}
   var go=function(){if(hecho)return;hecho=true;var v=vozES(),u=new SpeechSynthesisUtterance(t);
     if(v){u.voice=v;u.lang=v.lang}else u.lang='es-ES';u.rate=1;u.volume=1;
     u.onerror=function(e){if(!mudo&&e.error!=='interrupted'&&e.error!=='canceled')aviso('No se pudo reproducir la voz. Sube el volumen.')};
