@@ -190,7 +190,7 @@ cont.push(cajaRedonda([{ text: 'REPORTE E INVESTIGACIÓN DE EVENTO', color: '#ff
 { text: cliente.toUpperCase(), color: C.na, bold: true, fontSize: 9, margin: [0, 4, 0, 0] }], 62, { fondo: C.az, borde: C.az, r: 6, pad: 13 }));
 var tipoTxt = (d.tipos || []).join(' + ') + (d.gravedad ? ' (' + d.gravedad.toLowerCase() + ')' : '');
 var celda = function (l, v) { return { stack: [{ text: l, fontSize: 6.4, color: C.gris, bold: true, characterSpacing: 0.3 }, { text: v, bold: true, fontSize: 10, color: C.tx, margin: [0, 3, 0, 0] }], fillColor: C.tira }; };
-cont.push({ margin: [0, 9, 0, 0], table: { widths: [150, 98, 92, '*'], body: [[celda('EMPRESA', ni(t.empresa, true)), celda('SUCURSAL', titulo(t.sucursal || d.sucursal)), celda('CASO N°', s(d.id)), celda('TIPO DE EVENTO', tipoTxt)]] },
+cont.push({ margin: [0, 9, 0, 0], table: { widths: [150, 98, 92, '*'], body: [[celda('EMPRESA', ni(t.empresa, true) + (t.condicion === 'EXTERNO' ? ' (persona externa)' : t.condicion === 'NO INSCRITO' ? ' (no inscrito en la nómina)' : '')), celda('SUCURSAL', titulo(t.sucursal || d.sucursal)), celda('CASO N°', s(d.id)), celda('TIPO DE EVENTO', tipoTxt)]] },
 layout: { hLineWidth: function () { return 0.6; }, vLineWidth: function () { return 0.6; }, hLineColor: function () { return C.borde; }, vLineColor: function () { return C.borde; },
 paddingLeft: function () { return 8; }, paddingRight: function () { return 6; }, paddingTop: function () { return 6; }, paddingBottom: function () { return 7; } } });
 if (d.gravedad === 'Grave' || d.gravedad === 'Fatal')
