@@ -573,7 +573,7 @@ textarea{overflow:hidden;resize:none;min-height:64px}
         <div class="tlc d"><label>⚡ DURANTE <small>qué pasó exactamente</small></label><textarea id="dDurante" oninput="syncDesc()" placeholder="Ej: El piso tenía aceite, se resbaló y se dobló el tobillo derecho."></textarea></div>
         <div class="tlc s"><label>➡ DESPUÉS <small>qué se hizo, cómo quedó</small></label><textarea id="dDespues" oninput="syncDesc()" placeholder="Ej: Lo llevaron a la Mutual. Se limpió el aceite."></textarea></div>
       </div>
-      <div class="tlb"><button type="button" class="btn sm gr" onmousedown="event.preventDefault()" onclick="negrita()">𝐁 Destacar lo que seleccionaste</button><button type="button" class="btn sm gr" id="bUsarDecl" onclick="invUsarDecl()">📋 Copiar la declaración del trabajador en DURANTE</button></div>
+      <div class="tlb"><button type="button" class="btn sm gr" onmousedown="event.preventDefault()" onclick="negrita()">𝐁 Destacar lo que seleccionaste</button><button type="button" class="btn sm" id="bArmarLinea" onclick="armarLinea(true)">✨ Armar con los datos del reporte</button><button type="button" class="btn sm gr" id="bUsarDecl" onclick="invUsarDecl()">📋 Copiar la declaración del trabajador en DURANTE</button></div><div class="info" id="tlInfo" style="margin-top:6px">Los recuadros se llenan solos con lo que informó el trabajador (fecha, hora, lugar, labor, relato y atención). Revise y corrija lo que falte.</div>
       <small style="color:#666">Lo destacado sale en negrita en el informe (por ejemplo, lo que muestra un video).</small>
       <textarea id="descripcion" class="hide"></textarea>
     </div>
@@ -640,6 +640,18 @@ textarea{overflow:hidden;resize:none;min-height:64px}
       <button class="btn sm" type="button" onclick="addConcl()">+ Agregar un punto</button>
       <label style="margin-top:12px">Por confirmar (opcional: algo que todavía no está claro)</label>
       <input id="porConfirmar" placeholder="Ej: la hora del evento difiere entre lo declarado y la cámara">
+      <div class="grupo" style="margin-top:14px">⚖️ Cumplimiento DS 44 <small style="font-weight:normal;color:#666">(lo exige la norma; quedará en el informe)</small></div>
+      <div class="info" style="margin-top:4px">La investigación usa la metodología del organismo administrador (<b>árbol de causas</b>), con participación de los trabajadores y enfoque de género (DS 44, art. 71).</div>
+      <div class="grid">
+        <div><label>Participación de los trabajadores *</label><select id="ds44Part" onchange="ds44Mostrar()"><option></option><option>Directa (trabajadores participaron)</option><option>A través del Comité Paritario</option><option>Ambas</option><option>No aplica (sin comité ni representantes)</option></select></div>
+        <div><label>Quién representó a los trabajadores</label><input id="ds44Repr" list="dlNomina" placeholder="Nombre del representante o integrante del comité"></div>
+        <div><label>Se informó al Comité Paritario el</label><input type="date" id="ds44Cphs"></div>
+        <div id="ds44ExtB"><label>Sesión extraordinaria del comité (accidente grave / fatal)</label><input type="date" id="ds44CphsExt"></div>
+        <div><label>¿Se revisó la matriz de riesgos tras el evento?</label><select id="ds44Matriz"><option></option><option>Sí</option><option>No</option></select></div>
+        <div><label>Fecha de la revisión de la matriz</label><input type="date" id="ds44MatrizF"></div>
+      </div>
+      <label style="margin-top:8px">Enfoque de género <small style="font-weight:normal;color:#666">(¿el puesto, los EPP, el equipo o la tarea afectan distinto a hombres y mujeres? Escriba "No se observan diferencias" si no aplica)</small></label>
+      <textarea id="ds44Genero" placeholder="Ej: El EPP disponible no tiene talla para mujeres; el trabajador era el único que operaba esta tarea."></textarea>
       <div class="grupo" style="margin-top:14px">¿Quiénes participaron en la investigación?</div>
       <div id="participantes"></div>
       <button class="btn sm" onclick="addParticipante()">+ Agregar participante</button>
@@ -773,7 +785,7 @@ var FIELDS=['sucursalEvento','lugarOtro','lugarDireccion','oficio','fecha','hora
  'labor','deporte','declaracion','declQue','declRelato','declSugerencia','entrevistador','entrevistadorCargo','fechaDeclaracion','danoMarca','danoPropietario','porConfirmar','tipoLesion','motivoNegativa','centro','folioDiat','reposoDesde','reposoHasta','diasPerdidos','fechaAlta',
  'trayectoSentido','trayectoOrigen','trayectoDestino','trayectoMedio','trayectoPrueba','danoBien','danoCodigo','danoCosto','danoDesc',
  'epInicio','epExposicion','epSintomas','epTareas','lkRecepcion','lkForma','lkInvestiga','lkAvisoDT','lkDenunciado','lkRelato',
- 'descripcion','accInseguras','condInseguras','factPersonales','factTrabajo','charla'];
+ 'descripcion','accInseguras','condInseguras','factPersonales','factTrabajo','charla','ds44Part','ds44Repr','ds44Cphs','ds44CphsExt','ds44Matriz','ds44MatrizF','ds44Genero'];
 var SINGLE=['gravedad','habitual','requiereAtencion','aceptaDerivacion','danoTerceros','lkPsico'];
 var MULTI=['epAgente','lkConducta','lkResguardo'];
 var CAMPOS_T=['nombre','run','empresa','sucursal','cargo','ingreso','nacimiento','nacionalidad','direccion','comuna','telefono','salud','emergencia','jefatura','correo'];
@@ -788,13 +800,17 @@ function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);if(v===null
 function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function hoyISO(){var h=new Date();return new Date(h-h.getTimezoneOffset()*6e4).toISOString().slice(0,10)}
 function fDMA(iso){if(!iso)return '';var p=String(iso).split('-');return p.length===3&&p[0].length===4?p[2]+'-'+p[1]+'-'+p[0]:iso}
-function toast(t){document.querySelectorAll('.toast.tt').forEach(function(x){x.remove()});var d=document.createElement('div');d.className='toast tt';d.textContent=t;document.body.appendChild(d);setTimeout(function(){d.remove()},2500)}
+function toast(t){document.querySelectorAll('.toast.tt').forEach(function(x){x.remove()});var d=document.createElement('div');d.className='toast tt';d.textContent=t;document.body.appendChild(d);setTimeout(function(){d.remove()},Math.min(2500+String(t).length*30,8000))}
+// Aviso que no congela la pantalla: queda visible hasta que se toca "Entendido"
+function aviso(t){var o=document.getElementById('avisoBox');if(o)o.remove();var d=document.createElement('div');d.id='avisoBox';
+  d.style.cssText='position:fixed;left:50%;top:18%;transform:translateX(-50%);z-index:99999;background:#fff;border:3px solid #f28c28;border-radius:12px;padding:16px 18px;max-width:92vw;width:380px;box-shadow:0 8px 30px rgba(0,0,0,.35);font-size:15px;color:#1f2733';
+  d.innerHTML='<div style="margin-bottom:12px">'+esc(String(t))+'</div><button class="btn" style="width:100%" onclick="this.parentNode.remove()">Entendido</button>';document.body.appendChild(d)}
 function run(){return google.script.run.withFailureHandler(err)}
 function err(e){
   var m=(e&&e.message)||String(e);
   if(/SESION/.test(m)){var c=credGuardada();ls('tk_eventos',null);if(c){toast('Reconectando...');entrar();return}salir();$('loginMsg').textContent='Tu sesión expiró. Vuelve a entrar.';return}
   var b=$('btnGuardar');b.disabled=false;b.textContent=EDIT?'💾 Guardar':'💾 Guardar caso y generar PDF';
-  alert('Error: '+m);
+  aviso('Error: '+m);
 }
 
 // ---------- LOGIN ----------
@@ -972,7 +988,7 @@ function aplicarTipos(){
   alertaGrave();if(AVISOS&&!EDIT)cargarAvisos();
 }
 function esGrave(){var g=ST.gravedad;return (g==='Grave'||g==='Fatal')&&!$('bGravedad').classList.contains('hide')}
-function alertaGrave(){$('alertaGrave').classList.toggle('hide',!esGrave());$('cProto').classList.toggle('hide',!esGrave())}
+function alertaGrave(){$('alertaGrave').classList.toggle('hide',!esGrave());$('cProto').classList.toggle('hide',!esGrave());try{ds44Mostrar()}catch(e){}}
 function leerProto(){var o={};document.querySelectorAll('#protoFilas .proto').forEach(function(r){o[r.dataset.p]={e:r.querySelector('[data-k="e"]').value,f:r.querySelector('[data-k="f"]').value,det:r.querySelector('[data-k="det"]').value.trim()}});return o}
 function cargaProto(p){p=p||{};document.querySelectorAll('#protoFilas .proto').forEach(function(r){var o=p[r.dataset.p]||{};r.querySelector('[data-k="e"]').value=o.e||'Pendiente';r.querySelector('[data-k="f"]').value=o.f||'';r.querySelector('[data-k="det"]').value=o.det||''});pintaProto()}
 function pintaProto(){document.querySelectorAll('#protoFilas .proto').forEach(function(r){var e=r.querySelector('[data-k="e"]');
@@ -1102,9 +1118,9 @@ function estadoTestigo(r){var n=norm(r.querySelector('[data-k="nombre"]').value)
   box.innerHTML=!x?'':x.estado==='RESPONDIDA'?'✅ Respondió por link el '+esc(x.respondida||'')+' · <a target="_blank" href="'+x.pdfUrl+'">Ver PDF firmado</a>'
     :'📨 Link enviado ('+esc(x.creada)+'), esperando respuesta · <a href="#" onclick="copiar(\''+x.link+'\');return false">Copiar link</a>'}
 function pedirTestigo(btn){
-  if(!EDIT){alert('Primero guarda el caso (botón verde de abajo). Después podrás enviarle el link al testigo.');return}
+  if(!EDIT){aviso('Primero guarda el caso (botón verde de abajo). Después podrás enviarle el link al testigo.');return}
   var r=btn.closest('.testigo'),g=function(k){return r.querySelector('[data-k="'+k+'"]').value.trim()};
-  if(!g('nombre')){alert('Escribe el nombre del testigo.');return}
+  if(!g('nombre')){aviso('Escribe el nombre del testigo.');return}
   var inv={tipo:CLASE_INV[g('clase')]||'otro',nombre:g('nombre'),run:g('run'),cargo:g('cargo'),telefono:g('telefono'),correo:'',externo:g('externo')==='SI',empresaExt:g('empresaExt')};
   btn.disabled=true;btn.textContent='Creando link...';
   run().withSuccessHandler(function(res){btn.disabled=false;btn.textContent='📲 Crear otro link';EDIT._srv.invitaciones=res.invs;pintarInv(res.invs);
@@ -1137,7 +1153,7 @@ function invOk(n){
   if(n===4){var ll=leerMedidas('medidas').filter(function(m){return m.medida||m.plazo});
     var inm=leerMedidas('inmediatas').filter(function(m){return m.medida});
     return ll.every(function(m){return m.medida&&m.responsables.length&&m.plazo})&&(ll.length+inm.length)>0&&!sinMedida().length}
-  if(n===5)return leerConcl().length>0&&filas('participantes','.fila3').some(function(x){return x.nombre});
+  if(n===5)return leerConcl().length>0&&filas('participantes','.fila3').some(function(x){return x.nombre})&&!!v('ds44Part')&&!!v('ds44Genero');
   return false}
 function pintaPasos(){var c=$('ipasos');if(!c)return;
   c.innerHTML=IPASOS.map(function(p){var n=+p[0],ok=invOk(n);return '<div class="ip'+(n===IPASO?' act':'')+(ok?' ok':'')+'" data-p="'+n+'" onclick="invPaso('+n+')"><b>'+(ok?'✔':p[1])+'</b>Paso '+n+'<br>'+p[2]+'</div>'}).join('');
@@ -1152,7 +1168,7 @@ function guardarBarra(){if(!EDIT){guardar();return}
   guardar({solo:true,luego:function(){toast('✔ Guardado. Te llevo a lo que sigue');setTimeout(function(){try{guiaA();llevar(true)}catch(e){}},400)}})}
 function invPaso(n){if(n<1)n=1;if(n>5){var g=$('btnGuardar');if(g)g.scrollIntoView({behavior:'smooth',block:'center'});return}
   IVISTO[IPASO]=1;IPASO=n;document.querySelectorAll('#cInvest .ipaso').forEach(function(d){d.classList.toggle('hide',+d.dataset.p!==n)});
-  pintaPasos();if(n===3)pintaArbol();if(n===4)pintaMedCob();if(n===5&&!$('concl').children.length)CONC_T.slice(0,0).forEach(addConcl);
+  if(n===1&&!(v('dAntes')+v('dDurante')+v('dDespues')))try{armarLinea(false)}catch(e){}pintaPasos();if(n===3)pintaArbol();if(n===4)pintaMedCob();if(n===5){ds44Mostrar();if(!$('concl').children.length)CONC_T.slice(0,0).forEach(addConcl)}
   var y=$('cInvest').getBoundingClientRect().top+window.scrollY-110;window.scrollTo({top:y,behavior:'smooth'});
   setTimeout(autoTodo,60);
   if(VOZA){var t={1:'Paso 1. Cuenta qué pasó: antes, durante y después.',2:'Paso 2. Agrega a las personas que vieron lo que pasó. Si nadie vio, toca siguiente.',3:'Paso 3. Marca las causas que apliquen y arma el árbol: lo que pasó arriba y sus porqués debajo.',4:'Paso 4. Cada causa del árbol necesita una medida, con responsable y plazo.',5:'Paso 5. Revisa las conclusiones y anota quiénes participaron.'}[n];hablar(t,1);COACH_SIL=Date.now()}
@@ -1168,6 +1184,30 @@ var ULT_TA=null;document.addEventListener('focusin',function(e){if(e.target&&e.t
 function negrita(){var t=ULT_TA;if(!t||!/^d(Antes|Durante|Despues)$/.test(t.id)){toast('Primero marca (selecciona) el texto que quieres destacar');return}
   var a=t.selectionStart,b=t.selectionEnd;if(a===b){toast('Marca (selecciona) el texto que quieres destacar');return}
   var x=t.value.slice(a,b).replace(/\*\*/g,'');t.value=t.value.slice(0,a)+'**'+x+'**'+t.value.slice(b);syncDesc();toast('Texto destacado: sale en negrita en el informe')}
+// Arma ANTES / DURANTE / DESPUÉS con lo que ya viene del reporte y la declaración (solo completa recuadros vacíos)
+function armarLinea(manual){
+  var nom=v('t_nombre')||v('buscar'),car=v('t_cargo'),f=fDMA(v('fecha')),h=v('hora'),ar=v('area'),lo=v('lugarOtro'),su=v('sucursalEvento')||v('t_sucursal'),lab=v('labor'),
+      he=v('horaEntrada'),hs=v('horaSalida'),dq=v('declQue'),dr=v('declRelato'),hab=ST.habitual;
+  var A=[],D=[],S=[];
+  if(nom){var q=(f?'El '+f:'')+(h?(f?' a las ':'A las ')+h+' hrs.':'');
+    A.push((q?q+' ':'')+nom+(car?' ('+car+')':'')+' se encontraba'+(ar||lo||su?' en '+[ar,lo||su].filter(Boolean).join(', '):'')+(lab?', realizando: '+lab:'')+'.')}
+  if(he||hs)A.push('Su horario de trabajo era '+(he||'—')+' a '+(hs||'—')+' hrs.');
+  if(hab==='SI')A.push('Realizaba su trabajo habitual.');else if(hab==='NO')A.push('No realizaba su trabajo habitual.');
+  if(dq)D.push(dq.charAt(0).toUpperCase()+dq.slice(1)+(/[.!?]$/.test(dq)?'':'.'));
+  if(dr)D.push('Según la declaración del trabajador: '+dr);
+  var tl=v('tipoLesion'),ce=v('centro'),ra=ST.requiereAtencion,ac=ST.aceptaDerivacion;
+  if(tl)S.push('Lesión informada: '+tl.toLowerCase()+'.');
+  if(ra==='SI')S.push('Requirió atención médica inmediata'+(ce?' en '+ce:'')+'.');else if(ra==='NO')S.push('No requirió atención médica inmediata.');
+  if(ac==='NO')S.push('El trabajador no aceptó la derivación al organismo administrador.');
+  var mi=leerMedidas('inmediatas').filter(function(m){return m.medida}).map(function(m){return m.medida});
+  if(mi.length)S.push('Medidas inmediatas: '+mi.join('; ')+'.');
+  var cajas=[['dAntes',A],['dDurante',D],['dDespues',S]],n=0;
+  cajas.forEach(function(c){var el=$(c[0]);if(!c[1].length)return;if(!el.value.trim()){el.value=c[1].join(' ');n++}
+    else if(manual&&c[0]==='dDurante'&&dr&&el.value.indexOf(dr)<0){el.value+='\nSegún la declaración del trabajador: '+dr;n++}});
+  syncDesc();autoTodo();
+  if(manual)toast(n?'✔ Armado con los datos del reporte. Revise y complete.':'Los recuadros ya tienen texto, o aún no hay datos del reporte.');
+  else if(n)toast('✔ Línea de tiempo prellenada con el reporte. Revise y complete.')}
+function ds44Mostrar(){var b=$('ds44ExtB');if(b)b.classList.toggle('hide',!esGrave())}
 function invUsarDecl(){var t=v('declRelato');if(!t)return toast('Todavía no hay relato del trabajador');var d=$('dDurante');
   var txt='Según la declaración del trabajador: '+t;if(d.value.trim()){if(d.value.indexOf(t)>-1)return toast('Ya está copiada');d.value+='\n'+txt}else d.value=txt;syncDesc();autoAlto(d)}
 
@@ -1432,7 +1472,7 @@ function invBox(link,nombre,tipo,tel){
     '<button class="btn sm" onclick="copiar(\''+link+'\')">Copiar link</button><a class="btn sm gr" target="_blank" href="'+link+'">Abrir</a></div>'}
 function crearInv(){
   var inv={tipo:$('invTipo').value,nombre:$('invNombre').value.trim(),run:$('invRun').value.trim(),cargo:$('invCargo').value.trim(),correo:$('invMail').value.trim(),telefono:$('invTel').value.trim(),externo:$('invExt').value==='SI',empresaExt:$('invEmpresa').value.trim()};
-  if(inv.tipo!=='trabajador'&&!inv.nombre){alert('Escribe el nombre de la persona.');return}
+  if(inv.tipo!=='trabajador'&&!inv.nombre){aviso('Escribe el nombre de la persona.');return}
   var tel=inv.tipo==='trabajador'?(EDIT.trabajador.telefono||inv.telefono):inv.telefono,nom=inv.tipo==='trabajador'?EDIT.trabajador.nombre:inv.nombre;
   run().withSuccessHandler(function(r){pintarInv(r.invs);$('invRes').innerHTML=invBox(r.link,nom,inv.tipo,tel);
     ['invNombre','invRun','invCargo','invMail','invTel'].forEach(function(i){$(i).value=''});toast(inv.correo?'Link creado y enviado por correo':'Link creado')}).invitar(TOKEN,EDIT.id,inv)}
@@ -1593,11 +1633,11 @@ function verAccesos(){toast('Revisando los gerentes de sucursal de la nómina...
     var d=document.createElement('div');d.className='modal';
     d.innerHTML='<div class="cx ancho">'+h+'<div class="bt" style="margin-top:12px"><button style="background:var(--az);color:#fff">Cerrar</button></div></div>';
     d.querySelector('.bt button').onclick=function(){d.remove()};d.onclick=function(e){if(e.target===d)d.remove()};document.body.appendChild(d);
-  }).catch(function(e){alert(e.message||e)});
+  }).catch(function(e){aviso(e.message||e)});
 }
 function guardaSucU(ix,usuario){var val=$('sucU'+ix).value,lista=val.split(',').map(function(x){return x.trim()}).filter(String);
   if(!lista.length){toast('Escriba al menos una sucursal');return}
-  llamar('sucursalesUsuario',TOKEN,usuario,lista).then(function(r){$('sucU'+ix).value=r.sucursal;toast('✔ Sucursales guardadas: '+r.sucursal)}).catch(function(e){alert(e.message||e)})}
+  llamar('sucursalesUsuario',TOKEN,usuario,lista).then(function(r){$('sucU'+ix).value=r.sucursal;toast('✔ Sucursales guardadas: '+r.sucursal)}).catch(function(e){aviso(e.message||e)})}
 // ---------- SECCIONES: el caso se completa por partes, una a la vez ----------
 var SECS=[{t:'Qué pasó',d:'Tipo y trabajador',c:['cTipo','cTrab','cInicio']},{t:'Datos del evento',d:'Fecha, hora, lugar',c:['cDatos','cProto']},
   {t:'Declaración',d:'Relato y firma',c:['cDeclaracion','cDecl','cInv']},{t:'Lesión / daño',d:'Según lo que pasó',c:['cLesion','cTrayecto','cDano','cEP','cKarin']},
@@ -1690,11 +1730,11 @@ function autoTom(){var w=buscaW($('tomNombre').value);if(w&&!$('tomCargo').value
 function solicitud(){
   if(!ST.decModo)return null;
   var s={rol:$('decRol').value,nombre:$('decNombre').value.trim(),run:$('decRun').value.trim(),cargo:$('decCargo').value.trim()};
-  if(s.rol==='Testigo'&&!s.nombre){alert('Escribe el nombre del testigo.');return false}
+  if(s.rol==='Testigo'&&!s.nombre){aviso('Escribe el nombre del testigo.');return false}
   if(ST.decModo==='Yo ahora')s.tomador={nombre:USR.nombre,cargo:USR.cargo||'',correo:''};
   else{
     s.tomador={nombre:$('tomNombre').value.trim(),cargo:$('tomCargo').value.trim(),correo:$('tomCorreo').value.trim()};
-    if(!s.tomador.nombre){alert('Escribe quién tomará la declaración.');return false}
+    if(!s.tomador.nombre){aviso('Escribe quién tomará la declaración.');return false}
   }
   return s;
 }
@@ -1742,7 +1782,7 @@ function pintarDocs(docs){
 }
 function subir(i,inp){
   var f=inp.files[0];if(!f)return;
-  if(f.size>25e6){alert('Archivo muy grande (máx. 25 MB).');inp.value='';return}
+  if(f.size>25e6){aviso('Archivo muy grande (máx. 25 MB).');inp.value='';return}
   $('upMsg'+i).textContent='Subiendo...';
   var firm=i===0&&$('upFirmada')&&$('upFirmada').checked;
   var rd=new FileReader();rd.onload=function(){
@@ -1754,10 +1794,10 @@ function subir(i,inp){
 // ---------- GUARDAR ----------
 function v(i){return ($(i).value||'').trim()}
 function guardar(op){op=op||{};
-  if(!ST.tipos.length){alert('Marca el tipo de evento.');return}
-  if(!v('t_nombre')){alert('Busca y elige al trabajador en la nómina.');return}
-  if(!EDIT&&!MODO_INI){alert('Elige cómo se toma la declaración del trabajador: la llenas tú ahora o le envías un link.');$('cInicio').scrollIntoView({behavior:'smooth'});return}
-  if(!v('fecha')){alert('Ingresa la fecha del evento.');return}
+  if(!ST.tipos.length){aviso('Marca el tipo de evento.');return}
+  if(!v('t_nombre')){aviso('Busca y elige al trabajador en la nómina.');return}
+  if(!EDIT&&!MODO_INI){aviso('Elige cómo se toma la declaración del trabajador: la llenas tú ahora o le envías un link.');$('cInicio').scrollIntoView({behavior:'smooth'});return}
+  if(!v('fecha')){aviso('Ingresa la fecha del evento.');return}
   syncDesc();
   var q=v('declQue'),rl=v('declRelato'),sg=v('declSugerencia');
   $('declaracion').value=(q?'Qué pasó: '+q.replace(/\.$/,'')+'.\n\n':'')+rl+(sg?'\n\nCómo se podría evitar (opinión del trabajador): '+sg:'');
@@ -1862,7 +1902,7 @@ function cargarEnForm(d,docs){
   $('edCerrar').textContent=est==='CERRADO'?'Reabrir caso':'Cerrar caso';
   $('btnGuardar').textContent='💾 Guardar';$('btnInforme').classList.remove('hide');
   revisarNomina();cargarAvisos(true);pintaMedCob();setTimeout(autoTodo,80);setTimeout(function(){if(!SEC_FIJA)irSec(primeraSecPendiente(),true);SEC_FIJA=false},120);
-  guiaA();
+  ds44Mostrar();guiaA();
 }
 function partirDecl(t){var dec=String(t||''),que='',sug='';
   var m1=dec.match(/^Qué pasó:\s*(.+?)\.?\s*(\n|$)/i);if(m1){que=m1[1];dec=dec.replace(m1[0],'')}
@@ -1873,8 +1913,8 @@ function cerrarCaso(){
   var est=EDIT._estado==='CERRADO'?'ABIERTO':'CERRADO';
   run().withSuccessHandler(function(r){
     if(!r.ok){
-      if(!confirm('Todavía falta para cerrar el caso:\n\n- '+r.faltan.join('\n- ')+'\n\n¿Cerrarlo igual?'))return;
-      run().withSuccessHandler(function(){toast('Caso cerrado');editar(EDIT.id,true)}).cambiarEstado(TOKEN,EDIT.id,est,true);return;
+      confirma('Todavía falta para cerrar el caso',esc('- '+r.faltan.join('\n- ')).replace(/\n/g,'<br>')+'<br><br>¿Cerrarlo igual?','Cerrar igual',function(){
+        run().withSuccessHandler(function(){toast('Caso cerrado');editar(EDIT.id,true)}).cambiarEstado(TOKEN,EDIT.id,est,true)},true);return;
     }
     toast(est==='CERRADO'?'Caso cerrado':'Caso reabierto');editar(EDIT.id,true);
   }).cambiarEstado(TOKEN,EDIT.id,est,false);
@@ -1925,7 +1965,7 @@ function pintarFotos(){var h='';
 var MINI={};
 function cargarMiniaturas(d){if(!d||!d.id||!(d.fotos||[]).length)return;var falta=d.fotos.some(function(f){return !MINI[f.id]});if(!falta){pintarFotos();return}
   llamar('miniaturas',TOKEN,d.id).then(function(m){Object.assign(MINI,m||{});pintarFotos()}).catch(function(){})}
-function colaVideo(f){if(f.size>2e9)return alert('El video es muy grande (máximo 2 GB).');
+function colaVideo(f){if(f.size>2e9)return aviso('El video es muy grande (máximo 2 GB).');
   var d=EDIT||EDIT_TMP;if(!d||!d.id){VCOLA.push(f);toast('El video se subirá apenas guardes el caso');pintarVideos();return}
   subirVideo(f,d)}
 function blobB64(b){return new Promise(function(ok,ko){var r=new FileReader();r.onload=function(){ok(String(r.result).split(',')[1]||'')};r.onerror=ko;r.readAsDataURL(b)})}
@@ -1983,7 +2023,7 @@ async function informePDF(d,op){op=op||{};if(!d||!d.id)return;if(GENERANDO){if(!
       if(EDIT&&EDIT.id===d.id){EDIT._srv.pdfUrl=r.url;$('edPdf').href=r.url}
       if($('resPdf'))$('resPdf').href=r.url;
       if(!op.silencioso||op.descargar)toast('✔ Informe guardado en la carpeta del caso: '+r.nombre)}
-  }catch(e){console.error(e);alert('No se pudo armar el informe PDF: '+(e.message||e))}
+  }catch(e){console.error(e);aviso('No se pudo armar el informe PDF: '+(e.message||e))}
   finally{GENERANDO=false;if(aviso)aviso.remove()}}
 function avisoFijo(t){var d=document.createElement('div');d.className='toast';d.style.background='var(--az)';d.textContent=t;document.body.appendChild(d);return d}
 function bajarArchivo(bytes,nombre){var b=new Blob([bytes],{type:'application/pdf'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=nombre;a.rel='noopener';document.body.appendChild(a);a.click();
