@@ -789,6 +789,10 @@ if(TK){
     }else R.cargo=INV.cargo||INV.empresaExt||'';
     pintar();
   }).withFailureHandler(function(e){$('m').innerHTML=caja('ro','No se pudo cargar: '+esc(e.message))}).getInvitacion(TK);
+}else if(!/sso=/.test(location.hash)){
+  /* Los casos los ingresa solo el personal autorizado (desde el Portal). Los demás declaran con el link personal que se les envía. */
+  $('hTit').textContent='Reporte de eventos';$('hSub').textContent='';
+  $('m').innerHTML='<div class="grande">🔒</div>'+titulo('Los casos los ingresa el equipo de prevención','Si ocurrió un accidente, un incidente o un daño, avise de inmediato a su jefatura o al área de prevención. Ellos registrarán el caso y le enviarán un <b>link personal</b> para que usted entregue su declaración.');
 }else
 google.script.run.withSuccessHandler(function(i){
   INFO=i;$('hTit').textContent='Reportar un evento — '+i.cliente;$('hSub').textContent='Accidentes, incidentes, daños, molestias y Ley Karin';pintar();
