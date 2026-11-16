@@ -382,9 +382,11 @@ textarea{overflow:hidden;resize:none;min-height:64px}
     <label>Buscar al afectado por nombre o RUN</label>
     <input id="buscar" placeholder="Escribe nombre o RUN..." oninput="sugerir()" autocomplete="off">
     <div id="sug" class="sug hide"></div>
-    <p style="margin:6px 0 0;font-size:12px;color:#666">Solo personas inscritas en la nómina. Si no aparece, primero debe completar el Formulario de Inscripción.</p>
+    <p style="margin:6px 0 0;font-size:12px;color:#666">Busque a la persona en la nómina. Si no aparece (trabajador aún no inscrito o persona externa), puede registrarla igual con los datos que usted tiene.</p>
+    <p style="margin:8px 0 0"><button type="button" class="btn sm na" onclick="fueraNomina()">➕ La persona no está en la nómina</button></p>
     <div id="trab" class="trab hide">
       <div class="grid">
+        <div id="condBox" class="hide" style="grid-column:1/-1"><label>¿Quién es?</label><select id="t_condicion" onchange="condCambia()"><option value="NO INSCRITO">Trabajador de la empresa, aún no inscrito</option><option value="EXTERNO">Persona externa / tercero (otra empresa, cliente, contratista, visita)</option></select><div id="condAviso" class="info"></div></div>
         <div><label>Nombre completo</label><input id="t_nombre"></div>
         <div><label>RUN</label><input id="t_run"></div>
         <div><label>Empresa</label><input id="t_empresa" list="empresas"></div>
@@ -796,7 +798,7 @@ var FIELDS=['sucursalEvento','lugarOtro','lugarDireccion','oficio','fecha','hora
  'descripcion','accInseguras','condInseguras','factPersonales','factTrabajo','charla','ds44Part','ds44Repr','ds44Cphs','ds44CphsExt','ds44Matriz','ds44MatrizF','ds44Genero'];
 var SINGLE=['gravedad','habitual','requiereAtencion','aceptaDerivacion','danoTerceros','lkPsico'];
 var MULTI=['epAgente','lkConducta','lkResguardo'];
-var CAMPOS_T=['nombre','run','empresa','sucursal','cargo','ingreso','nacimiento','nacionalidad','direccion','comuna','telefono','salud','emergencia','jefatura','correo'];
+var CAMPOS_T=['nombre','run','empresa','sucursal','cargo','ingreso','nacimiento','nacionalidad','direccion','comuna','telefono','salud','emergencia','jefatura','correo','condicion'];
 var PENDS=['Pendiente','No aplica','No sé'];
 var PEND_F=['hora','area','lugarDireccion','oficio','horaEntrada','horaSalida','contrato','estatura','peso','labor','deporte','tipoLesion','centro','folioDiat','motivoNegativa',
   'trayectoOrigen','trayectoDestino','trayectoMedio','trayectoPrueba','danoBien','danoCodigo','danoCosto','epInicio','epExposicion','lkDenunciado','t_direccion','t_comuna','t_telefono','t_salud','t_emergencia','t_jefatura','t_nacionalidad'];
@@ -974,7 +976,7 @@ function limpiar(){
   document.querySelectorAll('#protoFilas .proto').forEach(function(r){r.querySelector('[data-k="e"]').value='Pendiente'});
   MODO_INI='';AVISOS=null;$('opYo').classList.remove('on');$('opLink').classList.remove('on');$('bLinkTrab').classList.add('hide');
   $('avisos').innerHTML='Elige al trabajador para ver la lista.';$('dotInfo').textContent='';$('cFalta').classList.add('hide');$('cInv').classList.add('hide');
-  $('trab').classList.add('hide');$('sug').classList.add('hide');
+  $('trab').classList.add('hide');$('condBox').classList.add('hide');$('sug').classList.add('hide');
   MULTI.forEach(function(k){if(document.querySelector('[data-multi="'+k+'"]'))pintarMulti(k)});$('tipoLesionOtro').classList.add('hide');pintarPartes();
   aplicarTipos();rolDecl();modoDecl();pintaProto();ASIS={};IVISTO={};IPASO=1;GUARDAR_YA=false;COACH.msg='';COACH.dicho='';document.querySelectorAll('#cInvest .ipaso').forEach(function(d){d.classList.toggle('hide',d.dataset.p!=='1')});pintaArbol();
 }
@@ -1072,10 +1074,16 @@ function sugerir(){
   var r=NOMINA.filter(function(w){return norm(w.nombre).indexOf(qn)>-1||norm(w.run).indexOf(qn)>-1}).slice(0,15);
   box.innerHTML=r.length?r.map(function(w){var i=NOMINA.indexOf(w);
     return '<div onclick="elegir('+i+')"><b>'+esc(w.nombre)+'</b>'+(w.situacion==='INACTIVO'?'<span class="tag ina">INACTIVO</span>':'')+'<br><small>'+esc(w.run)+' · '+esc(w.cargo)+' · '+esc(w.sucursal)+' · '+esc(w.empresa)+'</small></div>'}).join('')
-    :'<div><small>No está en la nómina. Debe inscribirse primero en el Formulario de Inscripción.</small></div>';
+    :'<div onclick="fueraNomina()"><b>➕ Registrar a esta persona igual</b><br><small>No está en la nómina. Toque aquí para escribir sus datos.</small></div>';
   box.classList.remove('hide');
 }
-function elegir(i){var w=NOMINA[i];CAMPOS_T.forEach(function(k){ponValor('t_'+k,w[k]||'')});$('sug').classList.add('hide');$('buscar').value=w.nombre;$('trab').classList.remove('hide');calc();revisarNomina();
+function rutValido(s){var x=String(s||'').toUpperCase().replace(/[^0-9K]/g,'');if(x.length<2)return false;var cu=x.slice(0,-1),dv=x.slice(-1),sm=0,m=2;for(var i=cu.length-1;i>=0;i--){sm+=parseInt(cu[i],10)*m;m=m===7?2:m+1}var e=11-(sm%11),d=e===11?'0':(e===10?'K':String(e));return d===dv}
+function condCambia(){var e=$('t_condicion').value==='EXTERNO';$('condAviso').innerHTML=e?'<b>Persona externa.</b> Escriba su nombre, RUT (o documento), la empresa a la que pertenece y los datos que tenga. Queda marcada como <b>externo</b> en el caso y en el informe.':'<b>Trabajador no inscrito.</b> Escriba los datos que tenga. Queda marcado como <b>no inscrito en la nómina</b>; después conviene que complete el Formulario de Inscripción.'}
+function fueraNomina(){var q=($('buscar').value||'').trim();CAMPOS_T.forEach(function(k){ponValor('t_'+k,'')});
+  if(q){if(/^[0-9.\-kK\s]{7,}$/.test(q))ponValor('t_run',q);else ponValor('t_nombre',q)}
+  ponValor('t_condicion','NO INSCRITO');$('condBox').classList.remove('hide');condCambia();$('sug').classList.add('hide');$('trab').classList.remove('hide');$('t_nombre').focus();
+  toast('Escriba los datos de la persona: el caso se guarda igual.')}
+function elegir(i){var w=NOMINA[i];CAMPOS_T.forEach(function(k){ponValor('t_'+k,w[k]||'')});$('sug').classList.add('hide');$('buscar').value=w.nombre;$('trab').classList.remove('hide');$('condBox').classList.add('hide');calc();revisarNomina();
   var enc=encargado();if(enc)document.querySelectorAll('.med').forEach(function(r){if(!JSON.parse(r.dataset.resp||'[]').length){r.dataset.resp=JSON.stringify([enc]);pintaMed(r)}});
   if(w.situacion==='INACTIVO')toast('Ojo: aparece INACTIVO en la nómina');
   if(!$('oficio').value)$('oficio').value=w.cargo||'';
@@ -1822,7 +1830,8 @@ function subir(i,inp){
 function v(i){return ($(i).value||'').trim()}
 function guardar(op){op=op||{};
   if(!ST.tipos.length){aviso('Marca el tipo de evento.');return}
-  if(!v('t_nombre')){aviso('Busca y elige al trabajador en la nómina.');return}
+  if(!v('t_nombre')){aviso('Busca y elige a la persona en la nómina, o toca "La persona no está en la nómina" y escribe sus datos.');return}
+  if(!$('condBox').classList.contains('hide')&&v('t_run')&&/^[0-9.\-kK\s]+$/.test(v('t_run'))&&!rutValido(v('t_run'))){aviso('El RUT escrito no es válido. Revísalo (o déjalo en blanco si no lo tienes).');$('t_run').classList.add('malo');$('t_run').focus();return}
   if(!EDIT&&!MODO_INI){aviso('Elige cómo se toma la declaración del trabajador: la llenas tú ahora o le envías un link.');$('cInicio').scrollIntoView({behavior:'smooth'});return}
   if(!v('fecha')){aviso('Ingresa la fecha del evento.');return}
   syncDesc();
@@ -1913,7 +1922,7 @@ function cargarEnForm(d,docs){
   pintaArbol();
   $('cInicio').classList.add('hide');$('cInv').classList.remove('hide');pintarInv(d._srv.invitaciones);
   var fl=d._faltan||[];$('cFalta').classList.toggle('hide',!fl.length);$('faltaLista').innerHTML=fl.map(function(x,i){return '<li><a href="#" class="faltaA" onclick="irFalta('+i+');return false">'+esc(x)+' <b>→ ir</b></a></li>'}).join('');FALTAN=fl.slice();
-  $('trab').classList.remove('hide');$('buscar').value=(d.trabajador||{}).nombre||'';calc();
+  $('trab').classList.remove('hide');$('buscar').value=(d.trabajador||{}).nombre||'';$('condBox').classList.toggle('hide',['EXTERNO','NO INSCRITO'].indexOf((d.trabajador||{}).condicion)<0);if(!$('condBox').classList.contains('hide'))condCambia();calc();
   (d.inmediatas&&d.inmediatas.length?d.inmediatas:[{}]).forEach(function(m){addMedida('inmediatas',m)});
   (d.medidas||[]).forEach(function(m){addMedida('medidas',m)});
   (d.participantes&&d.participantes.length?d.participantes:[{}]).forEach(addParticipante);
