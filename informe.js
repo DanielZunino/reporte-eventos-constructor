@@ -309,6 +309,18 @@ return [{ stack: [{ canvas: [{ type: 'rect', x: 0, y: 0, w: 15, h: 15, r: 2.5, c
 paddingLeft: function (i) { return i ? 2 : 5; }, paddingRight: function () { return 6; }, paddingTop: function () { return 5; }, paddingBottom: function () { return 5; } } },
 vacio(d.porConfirmar) ? { text: '' } : { text: [{ text: 'Por confirmar: ', bold: true }, { text: s(d.porConfirmar) }], fontSize: 7.6, color: C.gris, margin: [0, 4, 0, 0] }] });
 }
+if (!esLK(d) && (s(d.ds44Part) || s(d.ds44Genero) || s(d.ds44Cphs) || s(d.ds44Matriz))) {
+var grave = d.gravedad === 'Grave' || d.gravedad === 'Fatal', gen = s((d.trabajador || {}).genero);
+cont.push({ stack: [sec('Cumplimiento del DS 44 (art. 71)', 150), kv([
+['Metodología', 'Árbol de causas (metodología del organismo administrador).'],
+['Participación de los trabajadores', ni(d.ds44Part)],
+['Representante de los trabajadores', ni(d.ds44Repr)],
+gen ? ['Sexo del trabajador', /^F/i.test(gen) ? 'Mujer' : /^M/i.test(gen) ? 'Hombre' : titulo(gen)] : null,
+['Comité Paritario informado el', ni(dma(d.ds44Cphs))],
+grave ? ['Sesión extraordinaria del comité', ni(dma(d.ds44CphsExt))] : null,
+['Matriz de riesgos revisada', s(d.ds44Matriz) ? s(d.ds44Matriz) + (s(d.ds44MatrizF) ? ' (' + dma(d.ds44MatrizF) + ')' : '') : 'No informado'],
+['Enfoque de género', { text: ni(d.ds44Genero), fontSize: 9 }, 'full']]) ] });
+}
 var parts = (d.participantes || []).filter(function (p) { return s(p.nombre); });
 if (!parts.length) parts = [{}, {}];
 cont.push({ stack: [sec('Participantes de la investigación', 110), tablaAzul(['N°', 'Nombre', 'RUN', 'Cargo', 'Firma'], [20, 160, 80, 110, '*'],
