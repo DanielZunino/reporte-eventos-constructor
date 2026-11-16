@@ -361,9 +361,10 @@ textarea{overflow:hidden;resize:none;min-height:64px}
   <div id="secNav" class="secNav"></div>
 
   <!-- 1 TIPO -->
-  <div class="card" id="cTipo"><h2><span class="n">1</span>¿Qué pasó? <small style="font-weight:normal">(puedes marcar más de uno)</small></h2><div class="in">
-    <p id="carita" style="margin:0 0 8px;font-size:15px;color:#33435c">😔 Lamentamos lo ocurrido. Marca el tipo de evento y te guiamos con lo que sigue.</p>
-    <div class="chips" id="tipos"></div>
+  <div class="card" id="cTipo"><h2><span class="n">1</span>Hubo un evento: ¿qué pasó?</h2><div class="in">
+    <p id="carita" style="margin:0 0 8px;font-size:15px;color:#33435c">😔 Lamentamos lo ocurrido. Marque qué fue y el sistema le va mostrando solo las preguntas que corresponden. <b>Puede marcar más de uno</b> (por ejemplo, accidente del trabajo y daño material).</p>
+    <div class="chips" id="tipos" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:8px"></div>
+    <div id="tiposAyuda" class="info hide" style="margin-top:10px"></div>
     <div id="bGravedad" class="hide" style="margin-top:12px">
       <label>Gravedad</label>
       <div class="si-no" data-campo="gravedad" data-opc="Leve,Grave,Fatal"></div>
@@ -377,8 +378,8 @@ textarea{overflow:hidden;resize:none;min-height:64px}
   </div></div>
 
   <!-- 2 TRABAJADOR -->
-  <div class="card" id="cTrab"><h2><span class="n">2</span>Trabajador involucrado</h2><div class="in">
-    <label>Buscar por nombre o RUN</label>
+  <div class="card" id="cTrab"><h2><span class="n">2</span>¿A quién le pasó?</h2><div class="in">
+    <label>Buscar al afectado por nombre o RUN</label>
     <input id="buscar" placeholder="Escribe nombre o RUN..." oninput="sugerir()" autocomplete="off">
     <div id="sug" class="sug hide"></div>
     <p style="margin:6px 0 0;font-size:12px;color:#666">Solo personas inscritas en la nómina. Si no aparece, primero debe completar el Formulario de Inscripción.</p>
@@ -403,6 +404,11 @@ textarea{overflow:hidden;resize:none;min-height:64px}
         <div><label>Antigüedad (auto)</label><input id="antiguedad" readonly></div>
       </div>
       <div id="avisoNomina"></div>
+    </div>
+    <div style="margin-top:12px;border-top:1px dashed #c9d3e3;padding-top:10px">
+      <b style="font-size:14px">¿Hay más personas afectadas?</b> <small style="color:#666">Agréguelas aquí; cada una puede declarar con su propio link.</small>
+      <div id="afectados"></div>
+      <button type="button" class="btn sm gr" style="margin-top:6px" onclick="addAfectado()">+ Agregar otro afectado</button>
     </div>
     <datalist id="empresas"><option>Constructor Center</option><option>Full Rental Ltda.</option><option>Sotraman Ltda.</option><option>Solintev</option><option>Sopreser Ltda.</option></datalist>
   </div></div>
@@ -673,7 +679,7 @@ textarea{overflow:hidden;resize:none;min-height:64px}
 
   <!-- INVITAR A APORTAR -->
   <div class="card hide" id="cInv"><h2><span class="n">🤝</span>Pedir declaraciones y aportes por link</h2><div class="in">
-    <div class="info" style="margin-top:0">Elige a una persona de la nómina (por nombre o RUT) o agrega a otra. Le llega un link que la guía paso a paso (con la manito y voz) y firma con el dedo. Su aporte se guarda solo en el caso.</div>
+    <div class="info" style="margin-top:0">Elija a una persona de la nómina (por nombre o RUT) o agregue a otra. Se genera un <b>link personal que usted puede compartir por WhatsApp o correo</b>: la persona lo abre en su celular, responde sola paso a paso (las preguntas cambian según sea accidente del trabajo, de trayecto o daño material) y firma con el dedo. Su declaración se guarda sola en el caso, con la fecha y hora en que se firmó. Cada link sirve para una sola persona y vence a los 30 días.</div>
     <div id="invLista"></div>
     <div class="grid">
       <div><label>Persona (nombre o RUT)</label><input id="invNombre" list="dlNomina" onchange="autoInv()" placeholder="Escribe nombre o RUT"></div>
@@ -691,7 +697,7 @@ textarea{overflow:hidden;resize:none;min-height:64px}
 
   <!-- 9 DECLARACIÓN CON FIRMA -->
   <div class="card" id="cDecl"><h2><span class="n">9</span>Toma de declaración presencial (firma en pantalla)</h2><div class="in">
-    <div class="info" style="margin-top:0">Quien toma la declaración recibe un <b>enlace</b>. Lo abre en el celular junto al declarante, completan el relato, <b>firman ambos en la pantalla</b> y el PDF firmado se guarda solo en la carpeta del caso.</div>
+    <div class="info" style="margin-top:0">Quien toma la declaración recibe un <b>enlace que puede compartirse por correo o WhatsApp</b> (sirve para una sola persona y vence a los 30 días). Lo abre en el celular junto al declarante, completan el relato, <b>firman ambos en la pantalla</b> y el PDF firmado se guarda solo en la carpeta del caso.</div>
     <div id="decLista"></div>
     <div class="grid">
       <div><label>¿Quién declara?</label><select id="decRol" onchange="rolDecl()"><option value="Afectado">Trabajador involucrado / denunciante</option><option value="Testigo">Testigo</option></select></div>
@@ -776,6 +782,8 @@ textarea{overflow:hidden;resize:none;min-height:64px}
 var CURSOS=[];
 var TOKEN='', USR=null, CHARLAS=[], NOMINA=[], ST={}, EDIT=null, CASOS=[], MEDS=[], DOT=0, SUBS=[];
 var TIPOS=['Accidente del trabajo','Accidente de trayecto','Incidente / cuasi accidente','Daño material','Posible enfermedad profesional','Ley Karin'];
+var TIPOS_DESC=['Una persona se lesionó trabajando','Una persona se lesionó yendo o volviendo del trabajo','Pudo pasar algo y no pasó (nadie lesionado)','Se dañó un vehículo, equipo, producto o instalación','Molestia o enfermedad que podría venir del trabajo','Denuncia de acoso, violencia o acoso sexual en el trabajo'];
+var TIPOS_PREG={'Accidente del trabajo':'las <b>circunstancias del accidente</b>, la lesión y la DIAT','Accidente de trayecto':'<b>desde dónde y hacia dónde iba, cómo se movía, dónde ocurrió y con qué se acredita</b> (constancia de Carabineros, testigos, atención de urgencia) y la DIAT','Incidente / cuasi accidente':'<b>qué estuvo a punto de pasar</b> y por qué','Daño material':'<b>qué se dañó, de quién es, si hay terceros y el costo estimado</b>','Posible enfermedad profesional':'<b>síntomas, desde cuándo, tarea y agente al que se expone</b> y la DIEP','Ley Karin':'la <b>conducta denunciada, a quién y las medidas de resguardo</b>'};
 var PARTES={'Cabeza y cara':['Cabeza','Nuca','Cara','Ojo|','Oreja|','Nariz','Boca / dientes','Mandíbula','Cuello'],
   'Tronco':['Hombro|','Pecho','Costado|','Abdomen','Espalda alta','Zona lumbar','Cadera|','Glúteos'],
   'Brazos y manos':['Brazo|','Codo|','Antebrazo|','Muñeca|','Mano|','Dedos mano|'],
@@ -851,7 +859,7 @@ var INIT=false;
 function init(){
   if(!INIT){
     INIT=true;
-    $('tipos').innerHTML=TIPOS.map(function(t,i){return '<span class="chip" data-t="'+i+'" onclick="toggleTipo('+i+')">'+t+'</span>'}).join('');
+    $('tipos').innerHTML=TIPOS.map(function(t,i){return '<span class="chip" data-t="'+i+'" onclick="toggleTipo('+i+')" style="border-radius:12px;padding:10px 12px;font-size:14px;text-align:left"><b>'+t+'</b><br><small style="font-weight:normal">'+TIPOS_DESC[i]+'</small></span>'}).join('');
     var h='';
     for(var g in PARTES){
       h+='<div class="grupo">'+g+'</div><div class="chips">';
@@ -934,7 +942,25 @@ var CUERPO=(function(){
 
 
 // ---------- LIMPIAR / NUEVO ----------
+var AFEC=[];
+function pintaAfec(){var c=$('afectados');if(!c)return;
+  c.innerHTML=AFEC.map(function(a,i){return '<div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px;background:#f4f6fb;border-radius:8px;padding:6px">'+
+    '<input style="flex:2;min-width:160px" list="dlNomina" placeholder="Nombre o RUN" value="'+esc(a.nombre)+'" onchange="afecDato('+i+',\'nombre\',this.value)">'+
+    '<input style="flex:1;min-width:110px" placeholder="RUN" value="'+esc(a.run)+'" onchange="afecDato('+i+',\'run\',this.value)">'+
+    '<input style="flex:1;min-width:110px" placeholder="Cargo" value="'+esc(a.cargo)+'" onchange="afecDato('+i+',\'cargo\',this.value)">'+
+    '<button type="button" class="btn sm na" onclick="afecLink('+i+')">📲 Pedir su declaración</button>'+
+    '<button type="button" class="btn sm gr" onclick="quitaAfec('+i+')">Quitar</button></div>'}).join('')}
+function addAfectado(){AFEC.push({nombre:'',run:'',cargo:''});pintaAfec()}
+function quitaAfec(i){AFEC.splice(i,1);pintaAfec()}
+function afecDato(i,k,val){var a=AFEC[i];a[k]=val.trim();
+  if(k==='nombre'){var qn=norm(val);var w=NOMINA.find(function(x){return x.nombre===val})||NOMINA.find(function(x){return qn.length>6&&norm(x.run)===qn});
+    if(w){a.nombre=w.nombre;a.run=w.run||'';a.cargo=w.cargo||'';a.correo=w.correo||'';a.telefono=w.telefono||'';pintaAfec()}}}
+function afecLink(i){var a=AFEC[i];if(!a||!a.nombre){aviso('Primero escriba el nombre de la persona afectada.');return}
+  if(!EDIT){aviso('Guarde el caso primero y luego pida la declaración de cada afectado desde "Pedir declaraciones y aportes por link".');return}
+  $('invNombre').value=a.nombre;$('invRun').value=a.run||'';$('invCargo').value=a.cargo||'';$('invMail').value=a.correo||'';$('invTel').value=a.telefono||'';$('invTipo').value='directo';
+  $('cInv').classList.remove('hide');$('cInv').scrollIntoView({behavior:'smooth',block:'center'});toast('Listo: complete y pulse "Crear link y enviar".')}
 function limpiar(){
+  AFEC=[];pintaAfec();
   ST={tipos:[],partes:[],eva:'',fotos:[],fotosNuevas:[],decModo:''};
   SINGLE.forEach(function(k){ST[k]=''});MULTI.forEach(function(k){ST[k]=[]});
   document.querySelectorAll('#vNuevo .chip').forEach(function(c){c.classList.remove('on','t-on')});
@@ -967,6 +993,7 @@ function toggleTipo(i){var t=TIPOS[i],k=ST.tipos.indexOf(t);if(k>-1)ST.tipos.spl
 function has(t){return ST.tipos.indexOf(t)>-1}
 function aplicarTipos(){
   document.querySelectorAll('#tipos .chip').forEach(function(c){c.classList.toggle('t-on',has(TIPOS[+c.dataset.t]))});
+  var ay=$('tiposAyuda');if(ay){ay.classList.toggle('hide',!ST.tipos.length);ay.innerHTML=ST.tipos.length?'Con lo que marcó, el sistema le preguntará: '+ST.tipos.map(function(t){return '• '+(TIPOS_PREG[t]||t)}).join('<br>'):''}
   var acc=has('Accidente del trabajo')||has('Accidente de trayecto');
   $('bGravedad').classList.toggle('hide',!acc);
   $('cLesion').classList.toggle('hide',!(acc||has('Posible enfermedad profesional')));
@@ -1807,6 +1834,7 @@ function guardar(op){op=op||{};
   d.tipos=ST.tipos.slice();
   d.gravedad=$('bGravedad').classList.contains('hide')?'':(ST.gravedad||'');
   d.trabajador=Object.assign({},(EDIT||{}).trabajador||{});CAMPOS_T.forEach(function(k){d.trabajador[k]=v('t_'+k)});
+  d.afectados=AFEC.filter(function(a){return a.nombre&&a.nombre.trim()}).map(function(a){return {nombre:a.nombre,run:a.run||'',cargo:a.cargo||''}});
   d.sucursal=d.trabajador.sucursal;
   FIELDS.forEach(function(k){if($(k))d[k]=v(k)});
   SINGLE.forEach(function(k){d[k]=ST[k]||''});
@@ -1867,6 +1895,7 @@ function editar(id,quieto,luego){
 }
 function cargarEnForm(d,docs){
   limpiar();EDIT=d;modoInicio('');vista('nuevo');
+  AFEC=(d.afectados||[]).map(function(a){return {nombre:a.nombre||'',run:a.run||'',cargo:a.cargo||''}});pintaAfec();
   ST.tipos=(d.tipos||[]).slice();aplicarTipos();
   SINGLE.forEach(function(k){if(d[k])setSN(k,d[k],true)});
   MULTI.forEach(function(k){multiDesdeDatos(k,Array.isArray(d[k])?d[k].slice():(d[k]?String(d[k]).split(', '):[]))});
